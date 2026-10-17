@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Complete Box</title>
+<style>
+:root{--bg:#f4f1ff;--card:#fff;--tx:#1c1633;--mu:#6b6488;--ac:#6d4aff;--ac2:#ff7a45;--bd:#e0dbf5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#14102a;--card:#1e1940;--tx:#f1eeff;--mu:#a39cc9;--bd:#2f2960;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#14102a;--card:#1e1940;--tx:#f1eeff;--mu:#a39cc9;--bd:#2f2960;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1000px 420px at 50% -120px,rgba(109,74,255,.22),transparent),var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--bd);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.logo{font-weight:800;font-size:20px;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.coins{margin-left:auto;font-weight:700;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 10px;white-space:nowrap}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 14px}
+nav button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:7px 14px;font:inherit;cursor:pointer}
+nav button.on{background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;border-color:transparent;font-weight:700}
+main{max-width:760px;margin:0 auto;padding:0 14px 40px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin:12px 0;box-shadow:0 4px 14px rgba(60,40,140,.09);animation:fi .35s}
+.rules{font-size:13px;color:var(--mu)}
+input,textarea,select{width:100%;font:inherit;font-size:16px;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px;margin:4px 0}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--ac);border-color:transparent}
+textarea{min-height:80px;resize:vertical}
+button.p{background:linear-gradient(120deg,var(--ac),#a24bff);color:#fff;border:0;border-radius:12px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(109,74,255,.35);transition:transform .1s}button.p:active{transform:scale(.95)}
+button.s{background:none;border:1px solid var(--bd);color:var(--mu);border-radius:8px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.by{font-size:12px;color:var(--mu)}
+.empty{text-align:center;color:var(--mu);padding:28px 10px}
+iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}
+iframe.g{aspect-ratio:4/3;background:#fff}
+pre{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:8px;overflow-x:auto;font-size:12px;white-space:pre;color:var(--tx)}
+.cv{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;display:block;margin-bottom:8px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--ac);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+#msgs{height:52vh;overflow-y:auto;border-radius:14px;padding:10px;border:1px solid var(--bd)}
+.m{display:flex;gap:8px;margin:8px 0;align-items:flex-start}
+.bub{background:var(--card);color:var(--tx);border-radius:12px;padding:6px 10px;max-width:80%;border:1px solid var(--bd)}
+.bub b{font-size:12px;display:block}.bub i{font-size:11px;color:var(--mu);font-style:normal}
+.sw{display:inline-block;width:28px;height:28px;border-radius:50%;border:2px solid var(--bd);cursor:pointer;margin:2px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 70px);background:var(--ac);color:#fff;padding:10px 16px;border-radius:20px;font-weight:700;z-index:9;animation:pop .5s}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}}
+.hero{margin:4px 14px 0;padding:14px 16px;border-radius:16px;color:#fff;background:linear-gradient(120deg,#6d4aff,#ff7a45);font-weight:700;box-shadow:0 6px 18px rgba(109,74,255,.3)}
+.empty{font-size:15px}
+@keyframes pop{from{transform:translate(-50%,-20px) scale(.6);opacity:0}}
+</style></head><body>
+<header><span class="logo">📦 Complete Box</span><span class="coins" id="coins">🪙 0</span></header>
+<div class="hero">Vídeos, jogos, notícias e chat com seus amigos. Ganhe Complete Coins! Entre pelo link compartilhado e publique para todo mundo ver. ✨</div>
+<nav id="nav"></nav>
+<main id="app"></main>
+<script>
+/* Versão livre: funciona em qualquer navegador, sem conta. Dados salvos só neste aparelho. */
+(function(){
+const S=(()=>{try{localStorage.setItem('_t','1');return localStorage}catch(e){const m={};return{getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=v}}}})();
+let data={};try{data=JSON.parse(S.getItem('cbfree')||'{}')}catch(e){}
+const save=()=>{try{S.setItem('cbfree',JSON.stringify(data))}catch(e){}};
+const subs=[],seg=p=>p.split('/'),cp=o=>JSON.parse(JSON.stringify(o));
+const notify=()=>subs.slice().forEach(f=>f());
+const listen=run=>{subs.push(run);setTimeout(run,0);return()=>{const i=subs.indexOf(run);if(i>=0)subs.splice(i,1)}};
+const snap=(p,ord,lim)=>{const n=seg(p).length+1;let a=Object.keys(data).filter(k=>k.startsWith(p+'/')&&seg(k).length===n).map(k=>({id:seg(k).pop(),d:data[k]}));
+ if(ord)a.sort((x,y)=>{const u=x.d[ord.f],v=y.d[ord.f];return(u>v?1:u<v?-1:0)*(ord.dir==='desc'?-1:1)});
+ if(lim)a=a.slice(0,lim);return{docs:a.map(x=>({id:x.id,data:()=>cp(x.d)})),size:a.length,empty:!a.length}};
+const query=(p,ord,lim)=>({orderBy:(f,dir)=>query(p,{f,dir},lim),limit:n=>query(p,ord,n),onSnapshot:cb=>listen(()=>cb(snap(p,ord,lim))),get:async()=>snap(p,ord,lim)});
+const db={collection:p=>Object.assign(query(p),{add:async o=>{const id=Math.random().toString(36).slice(2,12);data[p+'/'+id]=cp(o);save();notify();return{id}}}),
+ doc:p=>({set:async o=>{data[p]=cp(o);save();notify()},update:async o=>{data[p]=Object.assign(data[p]||{},cp(o));save();notify()},delete:async()=>{delete data[p];save();notify()},
+  get:async()=>({exists:p in data,id:seg(p).pop(),data:()=>data[p]?cp(data[p]):undefined}),
+  onSnapshot:cb=>listen(()=>cb({exists:p in data,id:seg(p).pop(),data:()=>data[p]?cp(data[p]):undefined}))})};
+let lid=S.getItem('cb-id');if(!lid){lid='u'+Math.random().toString(36).slice(2,9);S.setItem('cb-id',lid)}
+const user={id:async()=>lid,canEdit:()=>location.hash==='#admin'};
+window.localCB={db,user};
+})();
+</script>
+<script>
+const CU=async n=>{let r=null;try{r=window.claude&&await window.claude.use(n)}catch(e){}if(r)return r;if(n==='db')return window.localCB.db;if(n==='user')return window.localCB.user;return null};
+const TABS=[['videos','🎬 Vídeos'],['games','🎮 Jogos'],['chat','💬 Chat'],['daily','🎁 Diárias'],['missions','🎯 Missões'],['shop','🛍️ Loja'],['news','📰 Complete News'],['rank','🏆 Rankings'],['ai','🤖 Complete AI'],['speak','🗣️ Complete Speak'],['arcade','🕹️ Arcade'],['polls','📊 Enquetes'],['me','👤 Perfil']];
+const BADRX=[/porra/,/caralh/,/merda/,/\bputa\b/,/\bputo\b/,/foder|\bfoda/,/\bfdp\b/,/buceta/,/\bcu\b/,/viado/,/bosta/,/cacete/,/arrombad/,/desgraca/,/vagabund/,/\bnazi/,/estupr/,/racis/,/filho da p/];
+const SHOP=[{id:'t1',k:'badge',n:'Título ⭐ Craque',p:50,v:'⭐'},{id:'t2',k:'badge',n:'Título 🔥 Imparável',p:70,v:'🔥'},{id:'t3',k:'badge',n:'Título 👑 Rei do Box',p:120,v:'👑'},{id:'f4',k:'frame',n:'Moldura roxa',p:80,v:'#a855f7'},{id:'f1',k:'frame',n:'Moldura dourada',p:30,v:'#ffc83d'},{id:'f2',k:'frame',n:'Moldura neon',p:30,v:'#00e5ff'},{id:'f3',k:'frame',n:'Moldura de fogo',p:50,v:'#ff5a36'},{id:'n1',k:'name',n:'Nome dourado',p:40,v:'#d99a00'},{id:'n2',k:'name',n:'Nome rosa',p:40,v:'#ff4fa3'},{id:'b1',k:'bg',n:'Fundo pôr do sol',p:60,v:'linear-gradient(135deg,#ff9a8b,#ff6a88)'},{id:'b2',k:'bg',n:'Fundo galáxia',p:60,v:'linear-gradient(135deg,#1a1040,#5b2a86)'},{id:'b3',k:'bg',n:'Fundo menta',p:60,v:'linear-gradient(135deg,#a8ff78,#78ffd6)'},{id:'n3',k:'name',n:'Nome azul',p:40,v:'#2f7bff'},{id:'b4',k:'bg',n:'Fundo noite',p:80,v:'linear-gradient(135deg,#0f2027,#2c5364)'},{id:'f5',k:'frame',n:'Moldura rosa',p:40,v:'#ff4fa3'},{id:'f6',k:'frame',n:'Moldura verde',p:40,v:'#22c55e'},{id:'f7',k:'frame',n:'Moldura diamante',p:120,v:'#7dd3fc'},{id:'n4',k:'name',n:'Nome verde',p:40,v:'#16a34a'},{id:'n5',k:'name',n:'Nome vermelho',p:40,v:'#ef4444'},{id:'n6',k:'name',n:'Nome roxo',p:50,v:'#a855f7'},{id:'b5',k:'bg',n:'Fundo aurora',p:80,v:'linear-gradient(135deg,#43e97b,#38f9d7)'},{id:'b6',k:'bg',n:'Fundo oceano',p:80,v:'linear-gradient(135deg,#2193b0,#6dd5ed)'},{id:'b7',k:'bg',n:'Fundo fogo',p:100,v:'linear-gradient(135deg,#f12711,#f5af19)'},{id:'t4',k:'badge',n:'Título 💎 Lenda',p:150,v:'💎'},{id:'t5',k:'badge',n:'Título 🚀 Turbo',p:60,v:'🚀'},{id:'f8',k:'frame',n:'Moldura laranja',p:40,v:'#fb923c'},{id:'f9',k:'frame',n:'Moldura amarela',p:30,v:'#facc15'},{id:'f10',k:'frame',n:'Moldura azul',p:40,v:'#3b82f6'},{id:'f11',k:'frame',n:'Moldura vermelha',p:40,v:'#ef4444'},{id:'f12',k:'frame',n:'Moldura branca',p:30,v:'#ffffff'},{id:'f13',k:'frame',n:'Moldura preta',p:30,v:'#111827'},{id:'f14',k:'frame',n:'Moldura turquesa',p:50,v:'#14b8a6'},{id:'f15',k:'frame',n:'Moldura lilás',p:50,v:'#c084fc'},{id:'f16',k:'frame',n:'Moldura bronze',p:60,v:'#b45309'},{id:'f17',k:'frame',n:'Moldura prata',p:70,v:'#cbd5e1'},{id:'f18',k:'frame',n:'Moldura esmeralda',p:90,v:'#10b981'},{id:'f19',k:'frame',n:'Moldura rubi',p:100,v:'#e11d48'},{id:'f20',k:'frame',n:'Moldura safira',p:100,v:'#2563eb'},{id:'n7',k:'name',n:'Nome laranja',p:40,v:'#f97316'},{id:'n8',k:'name',n:'Nome amarelo',p:40,v:'#eab308'},{id:'n9',k:'name',n:'Nome ciano',p:40,v:'#06b6d4'},{id:'n10',k:'name',n:'Nome lima',p:40,v:'#84cc16'},{id:'n11',k:'name',n:'Nome magenta',p:50,v:'#d946ef'},{id:'n12',k:'name',n:'Nome coral',p:50,v:'#fb7185'},{id:'n13',k:'name',n:'Nome cinza',p:30,v:'#6b7280'},{id:'n14',k:'name',n:'Nome marinho',p:60,v:'#1e3a8a'},{id:'n15',k:'name',n:'Nome ouro real',p:80,v:'#b8860b'},{id:'n16',k:'name',n:'Nome verde neon',p:90,v:'#39ff14'},{id:'a1',k:'nfont',n:'Letra elegante',p:60,v:'Georgia,serif'},{id:'a2',k:'nfont',n:'Letra código',p:60,v:'monospace'},{id:'a3',k:'nfont',n:'Letra cursiva',p:80,v:'cursive'},{id:'a4',k:'nfont',n:'Letra forte',p:80,v:'Impact,system-ui'},{id:'a5',k:'nfont',n:'Letra máquina',p:70,v:'Courier,monospace'},{id:'a6',k:'nfont',n:'Letra clássica',p:70,v:'Palatino,serif'},{id:'b8',k:'bg',n:'Fundo amanhecer',p:60,v:'linear-gradient(135deg,#f6d365,#fda085)'},{id:'b9',k:'bg',n:'Fundo lavanda',p:60,v:'linear-gradient(135deg,#a18cd1,#fbc2eb)'},{id:'b10',k:'bg',n:'Fundo céu',p:60,v:'linear-gradient(135deg,#89f7fe,#66a6ff)'},{id:'b11',k:'bg',n:'Fundo floresta',p:80,v:'linear-gradient(135deg,#134e5e,#71b280)'},{id:'b12',k:'bg',n:'Fundo chiclete',p:60,v:'linear-gradient(135deg,#ff9a9e,#fecfef)'},{id:'b13',k:'bg',n:'Fundo vulcão',p:80,v:'linear-gradient(135deg,#42275a,#734b6d)'},{id:'b14',k:'bg',n:'Fundo neon',p:100,v:'linear-gradient(135deg,#0f0c29,#302b63,#24243e)'},{id:'b15',k:'bg',n:'Fundo praia',p:80,v:'linear-gradient(135deg,#2af598,#009efd)'},{id:'b16',k:'bg',n:'Fundo doce',p:60,v:'linear-gradient(135deg,#ffecd2,#fcb69f)'},{id:'b17',k:'bg',n:'Fundo meia-noite',p:80,v:'linear-gradient(135deg,#232526,#414345)'},{id:'b18',k:'bg',n:'Fundo ouro',p:120,v:'linear-gradient(135deg,#f7971e,#ffd200)'},{id:'b19',k:'bg',n:'Fundo arco-íris',p:150,v:'linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#4facfe,#a18cd1)'},{id:'t6',k:'badge',n:'Título 🏆 Campeão',p:120,v:'🏆'},{id:'t7',k:'badge',n:'Título ⚡ Veloz',p:70,v:'⚡'},{id:'t8',k:'badge',n:'Título 🎮 Gamer',p:60,v:'🎮'},{id:'t9',k:'badge',n:'Título 🐉 Dragão',p:130,v:'🐉'},{id:'t10',k:'badge',n:'Título 🦄 Unicórnio',p:110,v:'🦄'},{id:'t11',k:'badge',n:'Título 🎯 Mira',p:70,v:'🎯'},{id:'t12',k:'badge',n:'Título 🍀 Sortudo',p:60,v:'🍀'},{id:'t13',k:'badge',n:'Título 🧠 Gênio',p:90,v:'🧠'},{id:'t14',k:'badge',n:'Título 🎬 Diretor',p:80,v:'🎬'},{id:'t15',k:'badge',n:'Título 📰 Repórter',p:80,v:'📰'},{id:'t16',k:'badge',n:'Título 🚗 Piloto',p:70,v:'🚗'},{id:'t17',k:'badge',n:'Título ⚽ Craque de bola',p:70,v:'⚽'},{id:'t18',k:'badge',n:'Título 🥷 Ninja',p:100,v:'🥷'},{id:'t19',k:'badge',n:'Título 🔮 Mago',p:100,v:'🔮'},{id:'t20',k:'badge',n:'Título 🌟 Superstar',p:90,v:'🌟'}];
+const FONTS={Normal:'system-ui',Elegante:'Georgia,serif',Código:'monospace',Cursiva:'cursive,system-ui',Forte:'Impact,system-ui'};
+const BGS=['#ffffff','#ffe4ec','#dff5ff','#e6ffe9','#fff3d6','#2a2150','#0f2a2a','#3a1d2b'];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const bad=t=>BADRX.some(r=>r.test(norm(t)));
+const today=()=>new Date().toISOString().slice(0,10);
+let db=null,uid='anon',isAdmin=false,adminId=null,tab='videos',me={coins:0},P={},D={videos:[],games:[],news:[],scores:[],gifts:[],polls:[]},chan='geral',unsubMsgs=null,msgs=[],convBg={};
+const store=(()=>{try{localStorage.setItem('t','1');return localStorage}catch(e){return{getItem(){return null},setItem(){}}}})();
+let localId=store.getItem('cb-id');if(!localId){localId='g'+Math.random().toString(36).slice(2,9);store.setItem('cb-id',localId)}
+uid=localId;
+
+function toast(t){document.querySelectorAll('#toast').forEach(x=>x.remove());const e=document.createElement('div');e.id='toast';e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),Math.max(3500,String(t).length*70))}window.alert=m=>toast(String(m));
+function banned(){return (me.bannedUntil||0)>Date.now()}
+function guard(txt,kind){
+  if(banned()){alert('Você está banido até '+new Date(me.bannedUntil).toLocaleDateString('pt-BR')+'.');return false}
+  if(bad(txt)){
+    if(kind==='video'){banUser(uid);alert('Conteúdo ofensivo no vídeo: ban de 7 dias aplicado.')}
+    else alert('Palavrões e ofensas não são permitidos.');
+    return false}
+  return true}
+function banUser(id){if(db)db.doc('profiles/'+id).set({...(P[id]||{}),bannedUntil:Date.now()+7*864e5})}
+function saveMe(patch){me={...me,...patch};P[uid]=me;if(db)db.doc('profiles/'+uid).set(me).catch(()=>{});head()}
+const nm=id=>(P[id]&&P[id].name)||'Visitante';
+function av(id){const p=P[id]||{};return `<span class="av" style="${p.frame?'box-shadow:0 0 0 3px '+esc(p.frame):''}">${p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(nm(id)[0].toUpperCase())}</span>`}
+function head(){$('#coins').textContent='🪙 '+(isAdmin?'∞':(me.coins||0))+' Complete Coins'+(isAdmin?' 👑':'')}
+function nav(){$('#nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('')}
+function go(k){tab=k;Q='';nav();render()}
+function when(t){return t?new Date(t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):''}
+function canDel(x){return isAdmin||x.by===uid}
+function ytEmbed(u){
+  let s=String(u).trim(),m=s.match(/src=["']([^"']+)/);if(m)s=m[1];
+  m=s.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);if(m)return 'https://www.youtube.com/embed/'+m[1];
+  m=s.match(/vimeo\.com\/(?:video\/)?(\d+)/);if(m)return 'https://player.vimeo.com/video/'+m[1];
+  return ''}
+function postForm(kind){
+  const v=kind==='videos',g=kind==='games',n=kind==='news';
+  return `<div class="card"><p class="rules">${v?'Sem conteúdo abusivo ou ofensivo. Vídeo ruim = 7 dias de ban. Notícias do GE, G1 e jornais são bem-vindas.':g?'Só jogos com ideias próprias. Plágio de outro jogo não é permitido. O jogo precisa ser um único arquivo HTML, sem links externos. Para entrar nos rankings, seu jogo deve enviar os pontos com <code>parent.postMessage({score:PONTOS},&quot;*&quot;)</code>.':'Só notícias boas do dia a dia, com as mesmas regras dos vídeos. GE, G1 e jornais podem.'}</p>
+  <input id="f-t" placeholder="Título" maxlength="80">
+  ${v?'<input id="f-c" placeholder="Link ou código do vídeo (YouTube/Vimeo)">':g?'<textarea id="f-c" placeholder="Cole aqui o código HTML do seu jogo"></textarea><label class="rules">Capa do jogo: <input type="file" id="f-cv" accept="image/*"></label><label class="rules"><input type="checkbox" id="f-o" style="width:auto"> Este jogo é ideia minha, não é plágio</label>':'<textarea id="f-c" placeholder="Escreva a notícia"></textarea><input id="f-l" placeholder="Link da fonte (opcional: G1, GE, jornal...)">'}
+  <div class="row"><button class="p" onclick="post('${kind}')">Publicar</button></div></div>`}
+function coverOf(f){return new Promise(r=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=400;c.height=225;const x=c.getContext('2d'),s=Math.max(400/im.width,225/im.height),w=im.width*s,h=im.height*s;x.drawImage(im,(400-w)/2,(225-h)/2,w,h);r(c.toDataURL('image/jpeg',.7))};im.onerror=()=>r('');im.src=URL.createObjectURL(f)})}
+async function post(kind){
+  const t=$('#f-t').value.trim(),c=$('#f-c').value.trim();if(!t||!c){alert('Preencha o título e o conteúdo.');return}if(Date.now()-LP<20000){alert('Espere alguns segundos para publicar de novo.');return}
+  const all=t+' '+c+' '+($('#f-l')?.value||'');
+  if(!guard(all,kind==='games'?'game':'video'))return;
+  const o={t,by:uid,ts:Date.now(),rep:0};
+  if(kind==='videos'){o.e=ytEmbed(c);o.c=o.e?'':c;if(!o.e&&!/^https?:\/\//.test(c)){alert('Use um link ou código do YouTube/Vimeo.');return}}
+  else if(kind==='games'){if(!$('#f-o').checked){alert('Confirme que o jogo é ideia sua.');return}o.c=c;const cf=$('#f-cv').files[0];if(cf)o.cv=await coverOf(cf)}
+  else{o.c=c;const lk=$('#f-l').value.trim();o.l=/^https?:\/\//.test(lk)?lk:''}
+  if(!db){alert('Não foi possível publicar agora.');return}
+  LP=Date.now();await db.collection(kind).add(o);saveMe({coins:(me.coins||0)+10});toast('Publicado! +10 Complete Coins');bump('post','p_'+kind);takeAdmin();
+}
+async function like(k,id){if(!db)return;const x=D[k].find(y=>y.id===id),l=x.likes||[],had=l.includes(uid);await db.doc(k+'/'+id).update({likes:had?l.filter(z=>z!==uid):[...l,uid]});if(!had)bump('like')}
+async function del(kind,id,btn){if(!db)return;if(btn&&btn.dataset.c!=='1'){const old=btn.textContent;btn.dataset.c='1';btn.textContent='⚠️ Toque de novo para confirmar';setTimeout(()=>{btn.dataset.c='';btn.textContent=old},4000);return}try{await db.doc(kind+'/'+id).delete();toast('🗑️ Removido!')}catch(e){toast('Não consegui remover: '+(e.code||e.message||'erro'))}}
+async function report(kind,id,n){await db.doc(kind+'/'+id).update({rep:(n||0)+1});toast('Denúncia enviada')}
+function actions(kind,x){return `<div class="row"><button class="s" onclick="like('${kind}','${x.id}')">${(x.likes||[]).includes(uid)?'❤️':'🤍'} ${(x.likes||[]).length}</button><button class="s" onclick="report('${kind}','${x.id}',${x.rep||0})">Denunciar</button>${canDel(x)?`<button class="s" style="${isAdmin?'color:#ef4444;border-color:#ef4444':''}" onclick="del('${kind}','${x.id}',this)">🗑️ Remover${isAdmin&&x.by!==uid?' (admin)':''}</button>`:''}${isAdmin&&x.by!==uid?`<button class="s" onclick="banUser('${x.by}');toast('Banido por 7 dias')">Banir 7 dias</button>`:''}</div>`}
+function byline(x){return `<div class="row by">${av(x.by)} ${esc((P[x.by]||{}).badge||'')} ${esc(nm(x.by))}${P[x.by]?.sub?' · '+esc(P[x.by].sub):''} · ${when(x.ts)}</div>`}
+function list(kind){
+  if(!db&&LOADED[kind])return LOCK;if(!LOADED[kind])return '<div class="empty">⏳ Carregando...</div>';
+  let a=D[kind].filter(x=>!Q||norm(x.t+' '+(kind!=='games'?x.c||'':'')+' '+nm(x.by)).includes(norm(Q)));
+  if(SO==='l')a=a.slice().sort((p,q)=>(q.likes||[]).length-(p.likes||[]).length);
+  if(!a.length)return `<div class="empty"><div style="font-size:34px">${Q?'🔍':'📭'}</div>${Q?'Nada encontrado.':'Nada por aqui ainda. Seja o primeiro a publicar!'}</div>`;
+  return a.map(x=>{
+    let body='';
+    if(kind==='videos')body=x.e?`<iframe src="${esc(x.e)}" allowfullscreen loading="lazy"></iframe>`:`<a href="${/^https?:\/\//.test(x.c||'')?esc(x.c):'#'}" target="_blank" rel="noopener">${esc(x.c)}</a>`;
+    else if(kind==='games')body=`${x.cv?`<img class="cv" src="${esc(x.cv)}" alt="Capa">`:''}<button class="p" onclick="play(this,'${x.id}')">▶ Jogar</button> <span class="by">${x.plays||0} jogadas</span>`;
+    else body=`<p>${esc(x.c)}</p>${/^https?:\/\//.test(x.l||'')?`<a href="${esc(x.l)}" target="_blank" rel="noopener">Ler na fonte</a>`:''}`;
+    return `<div class="card"><b>${esc(x.t)}</b>${byline(x)}<div style="margin-top:8px">${body}</div>${actions(kind,x)}</div>`}).join('')}
+const FR={};let Q='',SO='r',LP=0,LM=0;const LOADED={};
+const LOCK='<div class="empty"><div style="font-size:34px">🔒</div><b>Você precisa entrar para ver e publicar.</b><br>Entre na sua conta Claude e peça ao dono do Complete Box para te convidar pelo e-mail como <b>Contribuidor</b>.</div>';
+function toolbar(){return `<div class="row" style="margin-top:10px"><input id="sq" placeholder="🔍 Buscar" value="${esc(Q)}" oninput="Q=this.value;relist()" style="flex:1"><select style="width:auto" onchange="SO=this.value;relist()"><option value="r" ${SO==='r'?'selected':''}>Recentes</option><option value="l" ${SO==='l'?'selected':''}>Mais curtidos</option></select></div>`}
+function relist(){const l=$('#lst');if(l)l.innerHTML=list(tab)}
+function refreshSel(){const s=$('#ch');if(!s||document.activeElement===s)return;s.innerHTML='<option value="geral">🌐 Chat geral</option>'+Object.keys(P).filter(i=>i!==uid).map(i=>`<option value="${i}">💬 ${esc(nm(i))}${P[i].sub?' ('+esc(P[i].sub)+')':''}</option>`).join('');s.value=chan}
+window.addEventListener('message',e=>{const id=Object.keys(FR).find(k=>FR[k].contentWindow===e.source);if(!id||!e.data||typeof e.data.score!=='number'||!isFinite(e.data.score))return;saveScore(id,Math.max(0,Math.min(1e9,Math.floor(e.data.score))))});
+function saveScore(g,s){if(!db||banned())return;const old=D.scores.find(x=>x.id===g+'_'+uid);if(old&&old.s>=s)return;db.doc('scores/'+g+'_'+uid).set({g,u:uid,s,ts:Date.now()}).then(()=>{toast('🏆 Novo recorde: '+s+' pontos!');bump('rec')})}
+function play(btn,id){const g=D.games.find(x=>x.id===id);if(db)db.doc('games/'+id).update({plays:(g.plays||0)+1});const f=document.createElement('iframe');f.className='g';FR[id]=f;const pv=btn.previousElementSibling;if(pv&&pv.tagName==='IMG')pv.remove();f.setAttribute('sandbox','allow-scripts allow-modals allow-pointer-lock allow-forms allow-popups');f.srcdoc=wrapGame(g.c);btn.replaceWith(f)}
+function wrapGame(c){const sh='<script>try{localStorage.getItem("a")}catch(e){const m={},s={getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]},clear:()=>{for(const k in m)delete m[k]},key:i=>Object.keys(m)[i]||null};["localStorage","sessionStorage"].forEach(n=>{try{Object.defineProperty(window,n,{value:s,configurable:true})}catch(e){}})}<\/script>';return /<head[^>]*>/i.test(c)?c.replace(/<head[^>]*>/i,m=>m+sh):sh+c}
+function cid(){return chan==='geral'?'geral':[uid,chan].sort().join('_')}
+function chatSub(){
+  if(unsubMsgs)unsubMsgs.forEach(f=>f());msgs=[];convBg={};if(!db)return;
+  const c=cid();
+  const u1=db.collection('chats/'+c+'/msgs').orderBy('ts','asc').limit(100).onSnapshot(s=>{msgs=s.docs.map(d=>({id:d.id,...d.data()}));if(tab==='chat')drawMsgs()});
+  const u2=db.doc('chats/'+c).onSnapshot(s=>{convBg=s.exists?(s.data()||{}):{};if(tab==='chat')drawMsgs()});unsubMsgs=[u1,u2]}
+function drawMsgs(){
+  const box=$('#msgs');if(!box)return;box.style.background=convBg.bg||'var(--bg)';
+  box.innerHTML=msgs.length?msgs.map(m=>{const p=P[m.by]||{};return `<div class="m" style="${m.by===uid?'flex-direction:row-reverse':''}">${av(m.by)}<div class="bub" style="font-family:${FONTS[p.font]||'inherit'}"><b style="color:${esc(p.nameColor||'inherit')};font-family:${esc(p.nameFont||'inherit')}">${esc(p.badge||'')} ${esc(nm(m.by))}${p.sub?' · '+esc(p.sub):''}</b>${esc(m.t)}<br><i>${when(m.ts)}</i></div></div>`}).join(''):'<div class="empty">Comece a conversa!</div>';
+  box.scrollTop=box.scrollHeight}
+async function send(){
+  const i=$('#mi'),t=i.value.trim();if(!t)return;if(!guard(t,'chat'))return;
+  if(!db){alert('Entre na sua conta Claude para conversar.');return}
+  if(Date.now()-LM<1500)return;LM=Date.now();i.value='';await db.collection('chats/'+cid()+'/msgs').add({t,by:uid,ts:Date.now()});bump('msg');
+  if(chan!=='geral'){const c=cid(),d={...(me.days||{})},l={...(me.last||{})};
+    if(l[c]!==today()){l[c]=today();d[c]=(d[c]||0)+1;const gain=Math.min(5+d[c]*2,50);saveMe({days:d,last:l,coins:(me.coins||0)+gain});toast('+'+gain+' Complete Coins! Dia '+d[c]+' de conversa')}}}
+async function setBg(c){if(db)await db.doc('chats/'+cid()).set({...convBg,bg:c})}
+function chatView(){
+  const others=Object.keys(P).filter(i=>i!==uid);
+  return `<div class="card"><p class="rules">Sem palavrões. Quanto mais dias você conversa com alguém, mais Complete Coins ganha (conversas privadas).</p>
+  <select id="ch" onchange="chan=this.value;chatSub();drawMsgs()"><option value="geral">🌐 Chat geral</option>${others.map(i=>`<option value="${i}" ${chan===i?'selected':''}>💬 ${esc(nm(i))}${P[i].sub?' ('+esc(P[i].sub)+')':''}</option>`).join('')}</select>
+  <div style="margin:6px 0">Fundo da conversa: ${BGS.concat(SHOP.filter(i=>i.k==='bg'&&(isAdmin||(me.own||[]).includes(i.id))).map(i=>i.v)).map(c=>`<span class="sw" style="background:${c}" onclick="setBg('${c}')"></span>`).join('')}</div></div>
+  <div id="msgs"></div><div class="row" style="margin-top:8px"><input id="mi" placeholder="Mensagem" maxlength="300" style="flex:1" onkeydown="if(event.key==='Enter')send()"><button class="p" onclick="send()">Enviar</button></div>`}
+function shopView(){const own=me.own||[];return giftCard()+`<div class="card rules">Gaste suas Complete Coins aqui. Você tem <b>${isAdmin?'∞':me.coins||0}</b>. Ganhe mais conversando com amigos em dias diferentes e publicando (+10 por post).</div>`+SHOP.map(i=>{const has=isAdmin||own.includes(i.id),on=(i.k==='frame'&&me.frame===i.v)||(i.k==='name'&&me.nameColor===i.v)||(i.k==='badge'&&me.badge===i.v)||(i.k==='nfont'&&me.nameFont===i.v);return `<div class="card row"><span style="width:34px;height:34px;flex:none;border-radius:${i.k==='frame'?'50%':'8px'};background:${i.k==='bg'?i.v:'var(--bg)'};border:3px solid ${i.k==='frame'?i.v:'var(--bd)'};color:${i.v};font-weight:800;text-align:center;line-height:28px;font-family:${i.k==='nfont'?i.v:'inherit'}">${i.k==='name'||i.k==='nfont'?'Aa':i.k==='badge'?i.v:''}</span><b style="flex:1">${i.n}</b>${has?(i.k==='bg'?'<span class="by">Na paleta do chat</span>':`<button class="s" onclick="equip('${i.id}')">${on?'Equipado ✓':'Usar'}</button>`):`<button class="p" onclick="buy('${i.id}')">🪙 ${i.p}</button>`}</div>`}).join('')}
+const MIS=[
+{id:'d1',d:1,t:'Resgatar a recompensa diária',k:'daily',n:1,r:10},
+{id:'d2',d:1,t:'Mandar 3 mensagens no chat',k:'msg',n:3,r:15},
+{id:'d3',d:1,t:'Curtir 3 posts',k:'like',n:3,r:10},
+{id:'d4',d:1,t:'Jogar 2 partidas no Arcade',k:'arc',n:2,r:20},
+{id:'d5',d:1,t:'Acertar 3 no quiz de idiomas',k:'quiz',n:3,r:15},
+{id:'d6',d:1,t:'Votar em 1 enquete',k:'vote',n:1,r:10},
+{id:'d7',d:1,t:'Publicar qualquer coisa',k:'post',n:1,r:25},
+{id:'m1',t:'Publicar seu primeiro vídeo',k:'p_videos',n:1,r:40},
+{id:'m2',t:'Publicar seu primeiro jogo',k:'p_games',n:1,r:60},
+{id:'m3',t:'Publicar sua primeira notícia',k:'p_news',n:1,r:40},
+{id:'m4',t:'Criar uma enquete',k:'p_polls',n:1,r:30},
+{id:'m5',t:'Mandar 50 mensagens',k:'msg',n:50,r:100},
+{id:'m6',t:'Curtir 25 posts',k:'like',n:25,r:80},
+{id:'m7',t:'Jogar 20 partidas no Arcade',k:'arc',n:20,r:120},
+{id:'m8',t:'Bater 3 recordes',k:'rec',n:3,r:100},
+{id:'m9',t:'Comprar 3 itens na loja',k:'buy',n:3,r:60},
+{id:'m10',t:'Enviar um presente',k:'gift',n:1,r:40},
+{id:'m11',t:'Acertar 30 no quiz de idiomas',k:'quiz',n:30,r:150},
+{id:'m12',t:'Resgatar a diária 7 vezes',k:'daily',n:7,r:150},
+{id:'m13',t:'Votar em 10 enquetes',k:'vote',n:10,r:80}];
+function bump(...ks){const t=today(),st={...(me.st||{})},ds=(me.ds&&me.ds.d===t)?{...me.ds}:{d:t};ks.forEach(k=>{st[k]=(st[k]||0)+1;ds[k]=(ds[k]||0)+1});saveMe({st,ds})}
+const misProg=m=>m.d?((me.ds&&me.ds.d===today()?me.ds[m.k]:0)||0):((me.st||{})[m.k]||0);
+const misDone=m=>m.d?((me.dc&&me.dc.d===today()?me.dc.l:[])).includes(m.id):(me.mc||[]).includes(m.id);
+function claimMis(id){const m=MIS.find(x=>x.id===id);if(!m||misDone(m)||misProg(m)<m.n)return;if(m.d){const t=today(),l=(me.dc&&me.dc.d===t)?[...me.dc.l]:[];l.push(id);saveMe({dc:{d:t,l},coins:(me.coins||0)+m.r})}else saveMe({mc:[...(me.mc||[]),id],coins:(me.coins||0)+m.r});toast('🎯 Missão cumprida! +'+m.r+' Complete Coins');render()}
+function missionsView(){
+ const row=m=>{const p=Math.min(misProg(m),m.n),ok=misProg(m)>=m.n,dn=misDone(m);return `<div class="card"><div class="row"><b style="flex:1">${esc(m.t)}</b><span class="by">🪙 ${m.r}</span></div><div style="height:8px;border-radius:6px;background:var(--bg);border:1px solid var(--bd);margin:8px 0;overflow:hidden"><div style="height:100%;width:${p*100/m.n}%;background:linear-gradient(90deg,var(--ac),var(--ac2))"></div></div><div class="row"><span class="by" style="flex:1">${p}/${m.n}</span>${dn?'<span class="by">✓ Concluída</span>':ok?`<button class="p" onclick="claimMis('${m.id}')">Resgatar</button>`:''}</div></div>`};
+ return '<h2 style="margin:14px 0 0">🎯 Missões</h2>'+(isAdmin?'<div class="card">👑 <b>Você é o ADMIN</b>: moedas infinitas, e pode apagar posts e banir.</div>':!adminId?'<div class="card rules">👑 O primeiro a publicar qualquer coisa vira o <b>ADMIN</b> e ganha moedas infinitas. Publique agora!</div>':'')+'<div class="card rules">Cumpra missões e ganhe Complete Coins. As missões do dia reiniciam todo dia.</div><h3 style="margin:14px 0 0">☀️ Missões do dia</h3>'+MIS.filter(m=>m.d).map(row).join('')+'<h3 style="margin:14px 0 0">🏅 Conquistas</h3>'+MIS.filter(m=>!m.d).map(row).join('')}
+async function takeAdmin(){if(!db||adminId)return;try{const s=await db.doc('meta/admin').get();if(s.exists){adminId=(s.data()||{}).id;isAdmin=adminId===uid;head();return}await db.doc('meta/admin').set({id:uid,ts:Date.now()});adminId=uid;isAdmin=true;head();toast('👑 Você foi o primeiro a publicar: agora é o ADMIN com moedas infinitas!');render()}catch(e){}}
+const DAILY=[10,15,20,25,30,40,100];
+const ymd=d=>d.toISOString().slice(0,10);
+function dailyView(){const t=today(),y=ymd(new Date(Date.now()-864e5)),done=me.dLast===t;let st=me.streak||0;if(!done&&me.dLast!==y)st=0;const idx=done?(st-1)%7:st%7;
+  return `<div class="card"><b>🎁 Recompensa diária</b><p class="rules">Entre todo dia e resgate suas Complete Coins. Não pule nenhum dia: a sequência aumenta o prêmio, e o dia 7 vale 100 moedas!</p><div class="by">Sequência atual: <b>${st} ${st===1?'dia':'dias'}</b></div></div>
+  <div class="row" style="gap:6px">${DAILY.map((v,i)=>{const got=done?i<=idx:i<idx;return `<div class="card" style="text-align:center;flex:1;min-width:68px;margin:6px 0;${i===idx&&!done?'border-color:var(--ac);border-width:2px':''}${got?';opacity:.55':''}">Dia ${i+1}<br>🪙 ${v}<br>${got?'✓':'&nbsp;'}</div>`}).join('')}</div>
+  <div class="row" style="justify-content:center;margin-top:10px">${done?'<button class="s" disabled>Resgatado! Volte amanhã</button>':`<button class="p" onclick="claim()">Resgatar 🪙 ${DAILY[idx]}</button>`}</div>`}
+function claim(){const t=today(),y=ymd(new Date(Date.now()-864e5));if(me.dLast===t)return;const st=me.dLast===y?(me.streak||0)+1:1,v=DAILY[(st-1)%7];saveMe({dLast:t,streak:st,coins:(me.coins||0)+v});bump('daily');toast('🎁 +'+v+' Complete Coins! Sequência: '+st);render()}
+function giftCard(){
+ const fr=Object.keys(P).filter(i=>i!==uid);
+ const opts=[10,25,50,100].map(n=>`<option value="c${n}">🪙 ${n} moedas</option>`).join('')+SHOP.map(i=>`<option value="i${i.id}">🎁 ${esc(i.n)} (🪙 ${i.p})</option>`).join('');
+ const inc=D.gifts.filter(g=>g.to===uid&&!g.done);
+ return `<div class="card"><b>🎁 Enviar presente</b><p class="rules">Mande moedas ou itens da loja para um amigo.${isAdmin?' Como admin, você envia de graça.':''}</p><select id="g-to"><option value="">Escolha um amigo</option>${fr.map(i=>`<option value="${i}">${esc(nm(i))}${P[i].sub?' ('+esc(P[i].sub)+')':''}</option>`).join('')}</select><select id="g-w">${opts}</select><input id="g-m" placeholder="Mensagem (opcional)" maxlength="80"><div class="row"><button class="p" onclick="sendGift()">Enviar</button></div></div>`+(inc.length?`<div class="card"><b>📬 Presentes recebidos</b>${inc.map(g=>`<div class="row" style="margin-top:8px"><span style="flex:1">${esc(nm(g.from))} te enviou ${g.coins?'🪙 '+g.coins+' moedas':esc((SHOP.find(i=>i.id===g.item)||{}).n||'um item')}${g.msg?'<div class="by">\u201c'+esc(g.msg)+'\u201d</div>':''}</span><button class="p" onclick="openGift('${g.id}')">Abrir</button></div>`).join('')}</div>`:'')}
+async function sendGift(){
+ const to=$('#g-to').value,w=$('#g-w').value,m=$('#g-m').value.trim();
+ if(!to){alert('Escolha um amigo.');return}
+ if(!db||banned()){alert('Não foi possível enviar agora.');return}
+ if(m&&bad(m)){alert('Sem palavrões na mensagem.');return}
+ const o={from:uid,to,msg:m,ts:Date.now(),done:false};let cost=0;
+ if(w[0]==='c'){o.coins=+w.slice(1);cost=o.coins}else{o.item=w.slice(1);cost=SHOP.find(i=>i.id===o.item).p}
+ if(!isAdmin){if((me.coins||0)<cost){alert('Faltam '+(cost-(me.coins||0))+' Complete Coins.');return}saveMe({coins:me.coins-cost})}
+ await db.collection('gifts').add(o);bump('gift');toast('🎁 Presente enviado para '+nm(to)+'!');render()}
+async function openGift(id){
+ const g=D.gifts.find(x=>x.id===id);if(!g||g.to!==uid||g.done)return;
+ await db.doc('gifts/'+id).update({done:true});
+ if(g.coins)saveMe({coins:(me.coins||0)+g.coins});else{const own=me.own||[];if(!own.includes(g.item))saveMe({own:[...own,g.item]})}
+ toast('🎁 Presente aberto!');render()}
+function dailyCard(){const t=today(),ok=me.daily!==t,y=new Date(Date.now()-864e5).toISOString().slice(0,10),st=me.daily===t||me.daily===y?(me.streak||0):0,nx=Math.min(10+(st+(ok?1:0))*5,60);return `<div class="card row"><span style="font-size:28px">🎁</span><div style="flex:1"><b>Recompensa diária</b><div class="by">Sequência: ${st} dia(s). ${ok?'Hoje: +'+nx+' moedas':'Volte amanhã para mais!'}</div></div>${ok?`<button class="p" onclick="claimDaily()">Resgatar</button>`:'<span class="by">✓ Resgatada</span>'}</div>`}
+function claimDaily(){const t=today(),y=new Date(Date.now()-864e5).toISOString().slice(0,10);if(me.daily===t)return;const st=(me.daily===y?(me.streak||0):0)+1,g=Math.min(10+st*5,60);saveMe({daily:t,streak:st,coins:(me.coins||0)+g});toast('🎁 +'+g+' Complete Coins! Sequência de '+st+' dia(s)');render()}
+function buy(id){const i=SHOP.find(x=>x.id===id);if(!isAdmin&&(me.coins||0)<i.p){alert('Faltam '+(i.p-(me.coins||0))+' Complete Coins.');return}saveMe({coins:isAdmin?(me.coins||0):me.coins-i.p,own:[...(me.own||[]),id]});bump('buy');toast('Comprado: '+i.n);render()}
+function equip(id){const i=SHOP.find(x=>x.id===id);saveMe(i.k==='frame'?{frame:me.frame===i.v?'':i.v}:i.k==='badge'?{badge:me.badge===i.v?'':i.v}:i.k==='nfont'?{nameFont:me.nameFont===i.v?'':i.v}:{nameColor:me.nameColor===i.v?'':i.v});render()}
+function meView(){
+  return `<div class="card"><div class="row">${av(uid)}<div><b>${esc(me.badge||'')} ${esc(nm(uid))}</b><div class="by">${esc(me.sub||'sem subtítulo')}</div></div></div></div>
+  <div class="card"><b>Personalizar perfil</b>
+  <input id="p-n" placeholder="Seu nome" maxlength="24" value="${esc(me.name||'')}">
+  <input id="p-s" placeholder="Subtítulo (apelido)" maxlength="30" value="${esc(me.sub||'')}">
+  <input id="p-e" placeholder="Sua entrada (ex.: chegou chegando!)" maxlength="50" value="${esc(me.entry||'')}">
+  <select id="p-f">${Object.keys(FONTS).map(f=>`<option ${me.font===f?'selected':''}>${f}</option>`).join('')}</select>
+  <label class="rules">Foto: <input type="file" id="p-p" accept="image/*"></label>
+  <div class="row"><button class="p" onclick="saveProfile()">Salvar</button></div></div>
+  <div class="card rules"><b>🔑 Acesso:</b> quem abre o link compartilhado como Contribuidor publica e conversa com todo mundo. Sem acesso de escrita, os dados ficam só neste aparelho.<br><br><b>📜 Regras:</b> sem palavrões, sem conteúdo ofensivo (vídeo ruim = 7 dias de ban), só jogos com ideias próprias e só notícias boas.<br>Você ganha Complete Coins conversando com amigos em dias diferentes. ${banned()?'<b>Você está banido até '+new Date(me.bannedUntil).toLocaleDateString('pt-BR')+'.</b>':''}</div>`}
+function saveProfile(){
+  const name=$('#p-n').value.trim(),sub=$('#p-s').value.trim(),entry=$('#p-e').value.trim();
+  if(bad(name+' '+sub+' '+entry)){alert('Sem palavrões no perfil.');return}
+  const patch={name,sub,entry,font:$('#p-f').value},f=$('#p-p').files[0];
+  const done=()=>{saveMe(patch);toast('Perfil salvo');render()};
+  if(!f)return done();
+  const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d'),s=Math.min(im.width,im.height);x.drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,96,96);patch.photo=c.toDataURL('image/jpeg',.7);done()};im.src=URL.createObjectURL(f)}
+const PT=['Olá','Bom dia','Boa noite','Tchau','Por favor','Obrigado(a)','Desculpa','Sim / Não','Meu nome é...','Como você está?','Eu não entendo','Quanto custa?','Onde fica o banheiro?'];
+const l=(n,c,s)=>({n,c,p:s.split(';').map(x=>x.split('|'))});
+const LG=[
+l('🇺🇸 Inglês','en-US','Hello;Good morning;Good night;Goodbye;Please;Thank you;Sorry;Yes / No;My name is...;How are you?;I don\'t understand;How much is it?;Where is the bathroom?'),
+l('🇪🇸 Espanhol','es-ES','Hola;Buenos días;Buenas noches;Adiós;Por favor;Gracias;Lo siento;Sí / No;Me llamo...;¿Cómo estás?;No entiendo;¿Cuánto cuesta?;¿Dónde está el baño?'),
+l('🇫🇷 Francês','fr-FR','Bonjour;Bonjour (de manhã);Bonne nuit;Au revoir;S\'il vous plaît;Merci;Désolé;Oui / Non;Je m\'appelle...;Comment ça va ?;Je ne comprends pas;Combien ça coûte ?;Où sont les toilettes ?'),
+l('🇮🇹 Italiano','it-IT','Ciao;Buongiorno;Buonanotte;Arrivederci;Per favore;Grazie;Mi dispiace;Sì / No;Mi chiamo...;Come stai?;Non capisco;Quanto costa?;Dov\'è il bagno?'),
+l('🇩🇪 Alemão','de-DE','Hallo;Guten Morgen;Gute Nacht;Auf Wiedersehen;Bitte;Danke;Entschuldigung;Ja / Nein;Ich heiße...;Wie geht\'s?;Ich verstehe nicht;Wie viel kostet das?;Wo ist die Toilette?'),
+l('🇯🇵 Japonês','ja-JP','こんにちは|Konnichiwa;おはようございます|Ohayō gozaimasu;おやすみなさい|Oyasuminasai;さようなら|Sayōnara;お願いします|Onegai shimasu;ありがとう|Arigatō;ごめんなさい|Gomen nasai;はい / いいえ|Hai / Iie;私の名前は…です|Watashi no namae wa … desu;お元気ですか？|Ogenki desu ka?;わかりません|Wakarimasen;いくらですか？|Ikura desu ka?;トイレはどこですか？|Toire wa doko desu ka?'),
+l('🇰🇷 Coreano','ko-KR','안녕하세요|Annyeonghaseyo;좋은 아침이에요|Joeun achimieyo;안녕히 주무세요|Annyeonghi jumuseyo;안녕히 가세요|Annyeonghi gaseyo;부탁합니다|Butakhamnida;감사합니다|Gamsahamnida;죄송합니다|Joesonghamnida;네 / 아니요|Ne / Aniyo;제 이름은 …입니다|Je ireumeun … imnida;어떻게 지내세요?|Eotteoke jinaeseyo?;이해 못 해요|Ihae mot haeyo;얼마예요?|Eolmayeyo?;화장실이 어디예요?|Hwajangsiri eodiyeyo?'),
+l('🇨🇳 Mandarim','zh-CN','你好|Nǐ hǎo;早上好|Zǎoshang hǎo;晚安|Wǎn\'ān;再见|Zàijiàn;请|Qǐng;谢谢|Xièxie;对不起|Duìbuqǐ;是 / 不是|Shì / Búshì;我叫…|Wǒ jiào …;你好吗？|Nǐ hǎo ma?;我不明白|Wǒ bù míngbai;多少钱？|Duōshao qián?;洗手间在哪里？|Xǐshǒujiān zài nǎlǐ?'),
+l('🇷🇺 Russo','ru-RU','Привет|Privet;Доброе утро|Dobroye utro;Спокойной ночи|Spokoynoy nochi;До свидания|Do svidaniya;Пожалуйста|Pozhaluysta;Спасибо|Spasibo;Извините|Izvinite;Да / Нет|Da / Net;Меня зовут…|Menya zovut …;Как дела?|Kak dela?;Я не понимаю|Ya ne ponimayu;Сколько стоит?|Skolko stoit?;Где туалет?|Gde tualet?')];
+let sp={l:0,m:'f',qz:null},spMsgs=[],spBusy=false;
+const SP_SYS='Você é o tutor de idiomas do Complete Speak, no site Complete Box. A pessoa fala português do Brasil e quer aprender o básico de qualquer idioma. Responda em português, com explicações curtas. Para cada frase mostre a frase na língua alvo, a pronúncia aproximada em letras do português e a tradução; em idiomas com outro alfabeto inclua a transliteração. Faça lições curtas (5 a 10 itens) e termine com um mini desafio para a pessoa responder. Corrija os erros dela com carinho. Nunca use palavrões nem conteúdo ofensivo.';
+const EXTRA=['Árabe','Hindi','Turco','Holandês','Polonês','Sueco','Norueguês','Dinamarquês','Finlandês','Grego','Hebraico','Latim','Vietnamita','Tailandês','Indonésio','Malaio','Filipino','Bengali','Urdu','Persa','Suaili','Ucraniano','Tcheco','Húngaro','Romeno','Búlgaro','Sérvio','Croata','Catalão','Galego','Basco','Islandês','Irlandês','Esperanto','Cantonês','Tâmil','Telugo','Punjabi','Nepalês','Afrikaans','Zulu','Iorubá','Amárico','Havaiano','Guarani','Quéchua','Maori','Mongol','Lituano','Letão','Estoniano','Eslovaco','Esloveno','Albanês','Georgiano','Armênio','Cazaque','Samoano','Tupi'];
+let spGen=false;
+try{JSON.parse(store.getItem('cb-lg')||'[]').forEach(g=>{if(g&&g.n&&Array.isArray(g.p))LG.push(g)})}catch(e){}
+function saveLangs(){try{store.setItem('cb-lg',JSON.stringify(LG.filter(g=>g.ai)))}catch(e){}}
+async function genLang(){
+ const inp=$('#sp-new'),name=inp.value.trim();if(!name||spGen)return;
+ if(!guard(name,'chat'))return;
+ const ex=LG.findIndex(g=>norm(g.n).includes(norm(name)));if(ex>=0){sp.l=ex;sp.qz=null;sp.m='f';render();return}
+ let s=null;try{s=await CU('sample')}catch(e){}
+ if(!s){alert('O gerador de idiomas não está disponível aqui.');return}
+ spGen=true;toast('⏳ Criando a lição de '+name+'...');
+ try{
+  const pr='Crie uma lição básica do idioma "'+name+'" para falantes de português do Brasil. Responda SOMENTE com JSON válido, sem texto extra e sem crases, neste formato: {"c":"código BCP-47 para voz, ex: ar-SA","p":[["frase no idioma","pronúncia ou transliteração em letras latinas (vazio se o idioma já usa letras latinas)"]]} com exatamente 13 itens em p, nesta ordem, traduzindo: '+PT.join(' | ')+'.';
+  const r=await s([{role:'user',content:pr}],{cache:false,modelTier:'complex'});
+  const m=String(r.text).match(/\{[\s\S]*\}/),j=JSON.parse(m[0]);
+  if(!Array.isArray(j.p)||j.p.length!==13)throw new Error('formato');
+  LG.push({n:'🌍 '+name,c:String(j.c||'en-US'),p:j.p.map(x=>[String(x[0]),String(x[1]||'')]),ai:1});
+  saveLangs();sp.l=LG.length-1;sp.qz=null;sp.m='f';toast('✅ Lição de '+name+' pronta!')
+ }catch(e){toast('Não consegui criar essa lição. Tente de novo.')}
+ spGen=false;if(tab==='speak')render()}
+function say(i){try{const u=new SpeechSynthesisUtterance(LG[sp.l].p[i][0]);u.lang=LG[sp.l].c;u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){toast('Seu navegador não toca áudio aqui.')}}
+function newQ(){const L=LG[sp.l],n=L.p.length,i=Math.floor(Math.random()*n),o=[i];while(o.length<4){const j=Math.floor(Math.random()*n);if(!o.includes(j)&&L.p[j][0]!==L.p[i][0])o.push(j)}o.sort(()=>Math.random()-.5);sp.qz={i,o,done:false}}
+function ansQ(j){const q=sp.qz;if(q.done)return;q.done=true;if(j===q.i){bump('quiz');const t=today(),n=me.spd===t?(me.spn||0):0;if(n<10){saveMe({spd:t,spn:n+1,coins:(me.coins||0)+2});toast('✅ Acertou! +2 Complete Coins')}else toast('✅ Acertou! (limite de moedas de hoje atingido)')}else toast('❌ Era: '+LG[sp.l].p[q.i][0]);setTimeout(()=>{newQ();if(tab==='speak'&&sp.m==='q')render()},1200);render()}
+function speakView(){
+ const L=LG[sp.l],nome=L.n.replace(/^\S+ /,'');
+ const tabs=[['f','📖 Frases'],['q','🧩 Quiz'],['t','🤖 Tutor IA']].map(([k,t])=>`<button class="s" style="${sp.m===k?'background:var(--ac);color:#fff;border-color:var(--ac)':''}" onclick="sp.m='${k}';if(sp.m==='q')newQ();render()">${t}</button>`).join(' ');
+ let body='';
+ if(sp.m==='f')body=L.p.map((x,i)=>`<div class="card row"><div style="flex:1"><div class="by">${esc(PT[i])}</div><b style="font-size:18px">${esc(x[0])}</b>${x[1]?`<div class="by">${esc(x[1])}</div>`:''}</div><button class="s" onclick="say(${i})">🔊</button></div>`).join('');
+ else if(sp.m==='q'){if(!sp.qz)newQ();const q=sp.qz;body=`<div class="card"><div class="by">Como se diz em ${esc(nome)}?</div><b style="font-size:20px">${esc(PT[q.i])}</b>${q.o.map(j=>`<button class="s" style="display:block;width:100%;margin:8px 0;padding:12px;font-size:17px;${q.done&&j===q.i?'background:#22c55e;color:#fff':''}" onclick="ansQ(${j})">${esc(L.p[j][0])}</button>`).join('')}</div>`}
+ else body=`<div class="row" style="margin:8px 0">${['Me ensine o básico de '+nome,'Me ensine 10 palavras de outra língua','Corrija minha frase'].map(t=>`<button class="s" onclick="document.getElementById('sp-i').value='${t}';askSpeak()">${t}</button>`).join('')}</div><div id="spb"></div><div class="row" style="margin-top:8px"><input id="sp-i" placeholder="Qualquer idioma: pergunte ou peça uma lição" style="flex:1" onkeydown="if(event.key==='Enter')askSpeak()"><button class="p" onclick="askSpeak()">Enviar</button></div>`;
+ return `<h2 style="margin:14px 0 0">🗣️ Complete Speak</h2><div class="card"><p class="rules">Aprenda o básico de qualquer idioma: 9 já vêm prontos e você cria a lição de qualquer outro (há mais de 50 sugestões). Acertos no quiz rendem Complete Coins (até 10 por dia). O Tutor IA ensina qualquer outra língua.</p><select onchange="sp.l=+this.value;sp.qz=null;if(sp.m==='q')newQ();render()">${LG.map((g,i)=>`<option value="${i}" ${i===sp.l?'selected':''}>${esc(g.n)}</option>`).join('')}</select><div class="row" style="margin-top:8px"><input id="sp-new" list="sp-dl" placeholder="🌍 Outro idioma (digite qualquer um)" maxlength="30" style="flex:1"><datalist id="sp-dl">${EXTRA.map(x=>`<option value="${x}">`).join('')}</datalist><button class="p" onclick="genLang()">Criar lição</button></div><div class="row" style="margin-top:8px">${tabs}</div></div>`+body}
+function drawSp(){const b=$('#spb');if(!b)return;b.innerHTML=spMsgs.length?spMsgs.map(m=>`<div class="m" style="${m.r==='user'?'flex-direction:row-reverse':''}"><div class="bub" style="max-width:92%;${m.r==='user'?'background:var(--ac);color:#fff':''}">${fmt(m.t)}</div></div>`).join(''):'<div class="empty"><div style="font-size:34px">🗣️</div>Peça uma lição de qualquer idioma!</div>'}
+async function askSpeak(){
+ const i=$('#sp-i'),q=i.value.trim();if(!q||spBusy)return;if(!guard(q,'chat'))return;
+ let s=null;try{s=await CU('sample')}catch(e){}
+ if(!s){alert('O Tutor IA não está disponível aqui.');return}
+ i.value='';spMsgs.push({r:'user',t:q});const a={r:'assistant',t:'...'};spMsgs.push(a);spBusy=true;drawSp();
+ const hist=spMsgs.slice(0,-1).slice(-9).map(m=>({role:m.r,content:m.t}));
+ hist[0]={role:'user',content:'[Instruções]\n'+SP_SYS+'\n\n[Conversa]\n'+hist[0].content};
+ try{const r=await s(hist,{cache:false,modelTier:'complex',onText:({text})=>{a.t=text;drawSp()}});a.t=r.text||a.t}
+ catch(e){a.t=e.code==='not_granted'?'Você precisa permitir o acesso do Tutor IA. Tente de novo e aceite.':e.code==='rate_limited'?'Muitas perguntas seguidas. Espere um pouco.':'Não consegui responder agora. Tente de novo.'}
+ spBusy=false;drawSp()}
+function arcView(){return `<h2 style="margin:14px 0 0">🕹️ Arcade</h2><div class="card"><p class="rules">Jogos prontos do Complete Box. Seus recordes entram nos Rankings e rendem Complete Coins (até 30 por dia).</p><div class="row"><button class="p" onclick="arcGo('memoria')">🧠 Memória</button><button class="p" onclick="arcGo('reflexo')">⚡ Reflexo</button><button class="p" onclick="arcGo('alvo')">🎯 Alvo</button></div></div><div id="arc"></div>`}
+function arcGo(g){({memoria:arcMem,reflexo:arcRef,alvo:arcAlvo})[g]()}
+function arcCoins(n){const t=today(),k=me.ad===t?(me.an||0):0,g=Math.min(n,30-k);if(g>0){saveMe({ad:t,an:k+g,coins:(me.coins||0)+g});toast('🪙 +'+g+' Complete Coins')}}
+function arcEnd(gid,sc){bump('arc');saveScore(gid,sc);arcCoins(Math.min(10,Math.ceil(sc/60)));const b=$('#arc');if(b)b.innerHTML=`<div class="card" style="text-align:center"><div style="font-size:40px">🏁</div><b style="font-size:22px">${sc} pontos</b><div class="row" style="justify-content:center;margin-top:10px"><button class="p" onclick="arcGo('${gid}')">Jogar de novo</button></div></div>`}
+function arcMem(){const em=['🍎','🚗','⚽','🐶','🌟','🎮','🍕','🚀'],c=[...em,...em].sort(()=>Math.random()-.5);let op=[],mv=0,ok=0,lock=false;const t0=Date.now(),box=$('#arc');box.innerHTML='<div class="by">Jogadas: <b id="mv">0</b></div><div id="mg" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px"></div>';const g=$('#mg');c.forEach(e=>{const b=document.createElement('button');b.className='s';b.style.cssText='height:64px;font-size:28px';b.textContent='❓';b.onclick=()=>{if(lock||b.dataset.o||b.dataset.d)return;b.textContent=e;b.dataset.o=1;op.push([b,e]);if(op.length===2){mv++;$('#mv').textContent=mv;lock=true;const[[a,x],[d,y]]=op;op=[];setTimeout(()=>{if(x===y){a.dataset.d=d.dataset.d=1;a.style.background=d.style.background='#bbf7d0';ok++;if(ok===8)arcEnd('memoria',Math.max(10,600-mv*20-Math.floor((Date.now()-t0)/1000)*3))}else{a.textContent=d.textContent='❓';delete a.dataset.o;delete d.dataset.o}lock=false},600)}};g.append(b)})}
+function arcRef(){let r=0,tot=0,st=0,ph=0,tm;const box=$('#arc');box.innerHTML='<div id="rb" style="height:180px;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:20px;color:#fff;background:#6b7280;cursor:pointer;user-select:none">Rodada 1/5: toque para começar</div>';const b=$('#rb');b.onclick=()=>{if(ph===0){ph=1;b.style.background='#ef4444';b.textContent='Espere o verde...';tm=setTimeout(()=>{ph=2;st=Date.now();b.style.background='#22c55e';b.textContent='AGORA!'},1000+Math.random()*2500)}else if(ph===1){clearTimeout(tm);ph=0;b.style.background='#6b7280';b.textContent='Cedo demais! Toque para tentar de novo'}else{const ms=Date.now()-st;tot+=ms;r++;if(r===5){arcEnd('reflexo',Math.max(0,Math.round(1000-tot/5)));return}ph=0;b.style.background='#6b7280';b.textContent=ms+' ms! Rodada '+(r+1)+'/5: toque para continuar'}}}
+function arcAlvo(){let h=0,left=15;const box=$('#arc');box.innerHTML='<div class="row by"><span>⏱️ <b id="at">15</b>s</span><span>🎯 <b id="ah">0</b></span></div><div id="ar" style="position:relative;height:300px;border-radius:16px;background:var(--bg);border:1px solid var(--bd);overflow:hidden;margin-top:6px"></div>';const ar=$('#ar'),t=document.createElement('button');t.textContent='🎯';t.style.cssText='position:absolute;font-size:34px;background:none;border:0;cursor:pointer;padding:4px';ar.append(t);const mv=()=>{t.style.left=Math.random()*(ar.clientWidth-52)+'px';t.style.top=Math.random()*(ar.clientHeight-52)+'px'};mv();t.onclick=()=>{h++;$('#ah').textContent=h;mv()};const iv=setInterval(()=>{if(!$('#at')){clearInterval(iv);return}left--;$('#at').textContent=left;if(left%2===0)mv();if(left<=0){clearInterval(iv);arcEnd('alvo',h*10)}},1000)}
+function pollView(){
+ const f=`<h2 style="margin:14px 0 0">📊 Enquetes</h2><div class="card"><p class="rules">Crie uma pergunta e veja os amigos votarem. Sem palavrões nem ofensas.</p><input id="pq" placeholder="Pergunta" maxlength="100"><input class="po" placeholder="Opção 1" maxlength="40"><input class="po" placeholder="Opção 2" maxlength="40"><input class="po" placeholder="Opção 3 (opcional)" maxlength="40"><input class="po" placeholder="Opção 4 (opcional)" maxlength="40"><div class="row"><button class="p" onclick="newPoll()">Criar enquete</button></div></div>`;
+ if(!db&&LOADED.polls)return f+LOCK;if(!LOADED.polls)return f+'<div class="empty">⏳ Carregando...</div>';
+ return f+(D.polls.length?D.polls.map(x=>{const v=x.v||{},tot=Object.keys(v).length;return `<div class="card"><b>${esc(x.t)}</b>${byline(x)}${(x.o||[]).map((op,i)=>{const n=Object.values(v).filter(z=>z===i).length,pc=tot?Math.round(n*100/tot):0;return `<button class="s" style="display:block;width:100%;text-align:left;margin:6px 0;padding:10px;position:relative;overflow:hidden;${v[uid]===i?'border-color:var(--ac)':''}" onclick="vote('${x.id}',${i})"><span style="position:absolute;left:0;top:0;bottom:0;width:${pc}%;background:var(--ac);opacity:.18"></span><span style="position:relative">${esc(op)} · ${pc}% (${n})</span></button>`}).join('')}<div class="by">${tot} voto(s)</div>${actions('polls',x)}</div>`}).join(''):'<div class="empty"><div style="font-size:34px">📊</div>Nenhuma enquete ainda. Crie a primeira!</div>')}
+async function newPoll(){const t=$('#pq').value.trim(),o=[...document.querySelectorAll('.po')].map(i=>i.value.trim()).filter(Boolean);if(!t||o.length<2){alert('Escreva a pergunta e pelo menos 2 opções.');return}if(!guard(t+' '+o.join(' '),'chat'))return;if(!db){alert('Entre na sua conta Claude para criar enquetes.');return}if(Date.now()-LP<20000){alert('Espere alguns segundos para criar outra.');return}LP=Date.now();await db.collection('polls').add({t,o,v:{},by:uid,ts:Date.now(),rep:0});toast('📊 Enquete criada!');bump('post','p_polls');takeAdmin()}
+async function vote(id,i){if(!db||banned())return;const x=D.polls.find(p=>p.id===id),first=!(x.v||{})[uid];await db.doc('polls/'+id).update({v:{...(x.v||{}),[uid]:i}});if(first)bump('vote')}
+let gmCode='',gmT='';
+async function makeGame(){
+ const idea=$('#gm-i').value.trim();if(!idea||aiBusy)return;if(!guard(idea,'chat'))return;
+ let s=null;try{s=await CU('sample')}catch(e){}
+ if(!s){alert('O criador de jogos não está disponível aqui.');return}
+ aiBusy=true;const o=$('#gm-o');o.innerHTML='<div class="empty">⏳ A IA está criando seu jogo... pode levar cerca de um minuto.</div>';
+ try{const r=await s([{role:'user',content:'Crie um jogo original e divertido em UM ÚNICO arquivo HTML (HTML, CSS e JS inline, sem links externos, sem localStorage; deve funcionar no celular com toque e no computador com teclado) com esta ideia: "'+idea+'". Interface em português do Brasil, com instruções na tela e botão de reiniciar. Sempre que o jogador marcar pontos, chame parent.postMessage({score:PONTOS},"*"). Responda SOMENTE com o código HTML completo, sem explicações e sem crases.'}],{cache:false,modelTier:'complex'});
+  let c=String(r.text).replace(/^```html\s*|```\s*$/g,'').trim();const k=c.search(/<!doctype|<html/i);if(k>0)c=c.slice(k);
+  if(!/<html|<body|<script/i.test(c))throw new Error('x');gmCode=c;gmT=idea.slice(0,60);
+  o.innerHTML='<iframe class="g" id="gm-f" sandbox="allow-scripts allow-modals allow-pointer-lock"></iframe><div class="row" style="margin-top:8px"><button class="p" onclick="pubGame()">Publicar em Jogos</button><button class="s" onclick="makeGame()">Refazer</button></div>';$('#gm-f').srcdoc=wrapGame(c)
+ }catch(e){o.innerHTML='<div class="empty">Não consegui criar o jogo agora. Tente descrever de outro jeito.</div>'}
+ aiBusy=false}
+async function pubGame(){if(!db||banned()||!gmCode)return;if(Date.now()-LP<20000){alert('Espere alguns segundos para publicar de novo.');return}LP=Date.now();try{await db.collection('games').add({t:gmT,c:gmCode,by:uid,ts:Date.now(),rep:0});saveMe({coins:(me.coins||0)+10});toast('🎮 Jogo publicado! +10 Complete Coins');bump('post','p_games');takeAdmin();go('games')}catch(e){toast('Não consegui publicar (jogo grande demais?).')}}
+function rankView(){
+ const G=D.games,gn=id=>({memoria:'🧠 Memória',reflexo:'⚡ Reflexo',alvo:'🎯 Alvo'})[id]||(G.find(x=>x.id===id)||{}).t||'Jogo removido',top=a=>a.slice(0,5);
+ const sec=(t,rows)=>`<div class="card"><b>${t}</b>${rows.length?rows.map((r,i)=>`<div class="row" style="margin-top:6px"><span>${['🥇','🥈','🥉'][i]||(i+1)+'º'}</span><span style="flex:1">${r[0]}</span><b>${r[1]}</b></div>`).join(''):'<div class="by">Ainda sem dados.</div>'}</div>`;
+ const played=top(G.filter(x=>x.plays).sort((a,b)=>b.plays-a.plays)).map(x=>[esc(x.t),x.plays+' jogadas']);
+ const liked=top(G.filter(x=>(x.likes||[]).length).sort((a,b)=>b.likes.length-a.likes.length)).map(x=>[esc(x.t),'❤️ '+x.likes.length]);
+ const hs=top(D.scores.slice().sort((a,b)=>b.s-a.s)).map(x=>[esc(nm(x.u))+' em '+esc(gn(x.g)),x.s+' pts']);
+ const tot={};D.scores.forEach(x=>tot[x.u]=(tot[x.u]||0)+x.s);
+ const pl=top(Object.entries(tot).sort((a,b)=>b[1]-a[1])).map(([u,s])=>[esc(nm(u)),s+' pts']);
+ const vid=top(D.videos.filter(x=>(x.likes||[]).length).sort((a,b)=>b.likes.length-a.likes.length)).map(x=>[esc(x.t),'❤️ '+x.likes.length]);
+ return '<h2 style="margin:14px 0 0">🏆 Rankings</h2>'+sec('🎮 Jogos mais jogados',played)+sec('❤️ Jogos mais curtidos',liked)+sec('🏅 Maiores pontuações',hs)+sec('👑 Jogadores com mais pontos',pl)+sec('🎬 Vídeos mais curtidos',vid)}
+let aiMsgs=[],aiBusy=false;
+const AI_SYS='Você é a Complete AI, a assistente do site Complete Box. Responda em português do Brasil, de forma amigável, clara, completa e muito útil. Você ajuda com perguntas em geral, estudos, ideias e principalmente a criar jogos (código HTML/JS completo em um único arquivo que o usuário cola na aba Jogos; para entrar nos rankings o jogo deve chamar parent.postMessage({score:PONTOS},"*")), além de ideias de vídeos e notícias boas. Nunca use palavrões nem conteúdo ofensivo ou abusivo. Não copie jogos existentes: sugira ideias originais. Sobre o site: ganha-se Complete Coins conversando com amigos em dias diferentes, publicando (+10 por post) e na recompensa diária da Loja, que vende molduras, cores de nome e fundos de chat; há abas de Vídeos, Jogos, Chat, Complete News, Rankings e Perfil.';
+function aiView(){return `<div class="card"><b>🤖 Complete AI</b><p class="rules">Pergunte qualquer coisa ou peça ajuda para criar seu jogo, ideias de vídeo e mais. Na primeira vez, será pedida sua permissão.</p></div><div class="card"><b>🎮 Criar jogo com IA</b><p class="rules">Descreva a ideia e a IA cria um jogo original para você testar e publicar na aba Jogos.</p><input id="gm-i" placeholder="Ex.: pular obstáculos no espaço" maxlength="120"><div class="row"><button class="p" onclick="makeGame()">Criar jogo</button></div><div id="gm-o"></div></div><div class="row" style="margin-bottom:8px">${['Crie um jogo original para mim','Ideia de vídeo legal','Como ganho Complete Coins?'].map(t=>`<button class="s" onclick="document.getElementById('ai-i').value='${t}';askAI()">${t}</button>`).join('')}</div><div id="aib"></div><div class="row" style="margin-top:8px"><input id="ai-i" placeholder="Pergunte à Complete AI" style="flex:1" onkeydown="if(event.key==='Enter')askAI()"><button class="p" onclick="askAI()">Enviar</button></div>`}
+function fmt(t){return esc(t).split('```').map((s,i)=>i%2?'<pre>'+s.replace(/^[a-z]*\n/,'')+'</pre>':s.replace(/\n/g,'<br>')).join('')}
+function drawAI(){const b=$('#aib');if(!b)return;b.innerHTML=aiMsgs.length?aiMsgs.map(m=>`<div class="m" style="${m.r==='user'?'flex-direction:row-reverse':''}"><div class="bub" style="max-width:92%;${m.r==='user'?'background:var(--ac);color:#fff':''}">${fmt(m.t)}</div></div>`).join(''):'<div class="empty">Diga oi para a Complete AI 👋</div>'}
+async function askAI(){
+ const i=$('#ai-i'),q=i.value.trim();if(!q||aiBusy)return;if(!guard(q,'chat'))return;
+ let s=null;try{s=await CU('sample')}catch(e){}
+ if(!s){alert('A Complete AI não está disponível aqui.');return}
+ i.value='';aiMsgs.push({r:'user',t:q});const a={r:'assistant',t:'...'};aiMsgs.push(a);aiBusy=true;drawAI();
+ const hist=aiMsgs.slice(0,-1).slice(-9).map(m=>({role:m.r,content:m.t}));
+ hist[0]={role:'user',content:'[Instruções]\n'+AI_SYS+'\n\n[Conversa]\n'+hist[0].content};
+ try{const r=await s(hist,{cache:false,modelTier:'complex',onText:({text})=>{a.t=text;drawAI()}});a.t=r.text||a.t}
+ catch(e){a.t=e.code==='not_granted'?'Você precisa permitir o acesso da Complete AI. Tente de novo e aceite.':e.code==='rate_limited'?'Muitas perguntas seguidas. Espere um pouco e tente de novo.':'Não consegui responder agora. Tente de novo.'}
+ aiBusy=false;drawAI()}
+function render(){
+  const a=$('#app');
+  if(tab==='chat'){a.innerHTML=(!db&&LOADED.videos)?LOCK:chatView();drawMsgs();return}
+  if(tab==='me'){a.innerHTML=meView();return}
+  if(tab==='shop'){a.innerHTML=shopView();return}
+  if(tab==='rank'){a.innerHTML=rankView();return}
+  if(tab==='speak'){a.innerHTML=speakView();if(sp.m==='t')drawSp();return}
+  if(tab==='arcade'){a.innerHTML=arcView();return}
+  if(tab==='polls'){a.innerHTML=pollView();return}
+  if(tab==='ai'){a.innerHTML=aiView();drawAI();return}
+  if(tab==='daily'){a.innerHTML=dailyView();return}
+  if(tab==='missions'){a.innerHTML=missionsView();return}
+  const kind=tab;a.innerHTML=(kind==='news'?'<h2 style="margin:14px 0 0">📰 Complete News</h2>':'')+postForm(kind)+toolbar()+'<div id="lst">'+list(kind)+'</div>'}
+function keep(){if(tab==='games'&&document.querySelector('iframe.g'))return;const a=document.activeElement;if(a&&a.id==='sq'){relist();return}if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;if(tab==='videos'||tab==='games'||tab==='news'||tab==='rank'||tab==='shop'||tab==='polls')render()}
+nav();render();head();
+(async()=>{
+  try{
+    const user=await CU('user');const d=await CU('db');
+    if(user){try{uid=await user.id()}catch(e){}}head();
+    if(!d){$('#nav').insertAdjacentHTML('afterend','<div class="card" style="margin:0 14px">🔒 <b>Entre na sua conta Claude</b> para ver e publicar no Complete Box. Sem login funcionam só o Arcade e o Complete Speak (frases e quiz).</div>');['videos','games','news','polls','scores','gifts'].forEach(k=>LOADED[k]=1);render();return}db=d;db.doc('meta/admin').onSnapshot(s=>{adminId=s.exists?(s.data()||{}).id:null;isAdmin=!!adminId&&adminId===uid;head();keep()});
+    db.collection('profiles').onSnapshot(s=>{s.docs.forEach(x=>P[x.id]=x.data());if(P[uid])me=P[uid];else{me=P[uid]={coins:0,name:'Jogador'+uid.slice(-4)};db.doc('profiles/'+uid).set(me).catch(()=>{})}head();if(tab==='chat'){drawMsgs();refreshSel()}else keep()});
+    ['videos','games','news','scores','gifts','polls'].forEach(k=>db.collection(k).orderBy('ts','desc').limit(k==='scores'||k==='gifts'?400:60).onSnapshot(s=>{D[k]=s.docs.map(x=>({id:x.id,...x.data()})).filter(x=>(x.rep||0)<5);LOADED[k]=1;if(tab===k||tab==='rank'||(tab==='shop'&&k==='gifts'))keep()}));
+    chatSub();
+    setTimeout(()=>{if(me.dLast!==today())toast('🎁 Recompensa diária disponível!')},5200);setTimeout(()=>{if(me.entry)toast('✨ '+nm(uid)+' '+me.entry)},1500);
+  }catch(e){console.error(e)}
+})();
+</script></body></html>
