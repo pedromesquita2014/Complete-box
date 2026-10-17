@@ -44,7 +44,7 @@ pre{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:8
 @keyframes pop{from{transform:translate(-50%,-20px) scale(.6);opacity:0}}
 </style></head><body>
 <header><span class="logo">📦 Complete Box</span><span class="coins" id="coins">🪙 0</span></header>
-<div class="hero">Vídeos, jogos, notícias e chat com seus amigos. Ganhe Complete Coins! Entre pelo link compartilhado e publique para todo mundo ver. ✨</div>
+<div class="hero">Vídeos, jogos, notícias e chat com seus amigos. Ganhe Complete Coins! Versão livre: tudo fica salvo só neste aparelho. ✨</div>
 <nav id="nav"></nav>
 <main id="app"></main>
 <script>
@@ -54,7 +54,7 @@ const S=(()=>{try{localStorage.setItem('_t','1');return localStorage}catch(e){co
 let data={};try{data=JSON.parse(S.getItem('cbfree')||'{}')}catch(e){}
 const save=()=>{try{S.setItem('cbfree',JSON.stringify(data))}catch(e){}};
 const subs=[],seg=p=>p.split('/'),cp=o=>JSON.parse(JSON.stringify(o));
-const notify=()=>subs.slice().forEach(f=>f());
+const notify=()=>setTimeout(()=>subs.slice().forEach(f=>f()),0);
 const listen=run=>{subs.push(run);setTimeout(run,0);return()=>{const i=subs.indexOf(run);if(i>=0)subs.splice(i,1)}};
 const snap=(p,ord,lim)=>{const n=seg(p).length+1;let a=Object.keys(data).filter(k=>k.startsWith(p+'/')&&seg(k).length===n).map(k=>({id:seg(k).pop(),d:data[k]}));
  if(ord)a.sort((x,y)=>{const u=x.d[ord.f],v=y.d[ord.f];return(u>v?1:u<v?-1:0)*(ord.dir==='desc'?-1:1)});
@@ -66,12 +66,11 @@ const db={collection:p=>Object.assign(query(p),{add:async o=>{const id=Math.rand
   onSnapshot:cb=>listen(()=>cb({exists:p in data,id:seg(p).pop(),data:()=>data[p]?cp(data[p]):undefined}))})};
 let lid=S.getItem('cb-id');if(!lid){lid='u'+Math.random().toString(36).slice(2,9);S.setItem('cb-id',lid)}
 const user={id:async()=>lid,canEdit:()=>location.hash==='#admin'};
-window.localCB={db,user};
+window.claude={use:async n=>n==='db'?db:n==='user'?user:null};
 })();
 </script>
 <script>
-const CU=async n=>{let r=null;try{r=window.claude&&await window.claude.use(n)}catch(e){}if(r)return r;if(n==='db')return window.localCB.db;if(n==='user')return window.localCB.user;return null};
-const TABS=[['videos','🎬 Vídeos'],['games','🎮 Jogos'],['chat','💬 Chat'],['daily','🎁 Diárias'],['missions','🎯 Missões'],['shop','🛍️ Loja'],['news','📰 Complete News'],['rank','🏆 Rankings'],['ai','🤖 Complete AI'],['speak','🗣️ Complete Speak'],['arcade','🕹️ Arcade'],['polls','📊 Enquetes'],['me','👤 Perfil']];
+const TABS=[['videos','🎬 Vídeos'],['games','🎮 Jogos'],['chat','💬 Chat'],['daily','🎁 Diárias'],['shop','🛍️ Loja'],['news','📰 Complete News'],['rank','🏆 Rankings'],['ai','🤖 Complete AI'],['speak','🗣️ Complete Speak'],['arcade','🕹️ Arcade'],['polls','📊 Enquetes'],['me','👤 Perfil']];
 const BADRX=[/porra/,/caralh/,/merda/,/\bputa\b/,/\bputo\b/,/foder|\bfoda/,/\bfdp\b/,/buceta/,/\bcu\b/,/viado/,/bosta/,/cacete/,/arrombad/,/desgraca/,/vagabund/,/\bnazi/,/estupr/,/racis/,/filho da p/];
 const SHOP=[{id:'t1',k:'badge',n:'Título ⭐ Craque',p:50,v:'⭐'},{id:'t2',k:'badge',n:'Título 🔥 Imparável',p:70,v:'🔥'},{id:'t3',k:'badge',n:'Título 👑 Rei do Box',p:120,v:'👑'},{id:'f4',k:'frame',n:'Moldura roxa',p:80,v:'#a855f7'},{id:'f1',k:'frame',n:'Moldura dourada',p:30,v:'#ffc83d'},{id:'f2',k:'frame',n:'Moldura neon',p:30,v:'#00e5ff'},{id:'f3',k:'frame',n:'Moldura de fogo',p:50,v:'#ff5a36'},{id:'n1',k:'name',n:'Nome dourado',p:40,v:'#d99a00'},{id:'n2',k:'name',n:'Nome rosa',p:40,v:'#ff4fa3'},{id:'b1',k:'bg',n:'Fundo pôr do sol',p:60,v:'linear-gradient(135deg,#ff9a8b,#ff6a88)'},{id:'b2',k:'bg',n:'Fundo galáxia',p:60,v:'linear-gradient(135deg,#1a1040,#5b2a86)'},{id:'b3',k:'bg',n:'Fundo menta',p:60,v:'linear-gradient(135deg,#a8ff78,#78ffd6)'},{id:'n3',k:'name',n:'Nome azul',p:40,v:'#2f7bff'},{id:'b4',k:'bg',n:'Fundo noite',p:80,v:'linear-gradient(135deg,#0f2027,#2c5364)'},{id:'f5',k:'frame',n:'Moldura rosa',p:40,v:'#ff4fa3'},{id:'f6',k:'frame',n:'Moldura verde',p:40,v:'#22c55e'},{id:'f7',k:'frame',n:'Moldura diamante',p:120,v:'#7dd3fc'},{id:'n4',k:'name',n:'Nome verde',p:40,v:'#16a34a'},{id:'n5',k:'name',n:'Nome vermelho',p:40,v:'#ef4444'},{id:'n6',k:'name',n:'Nome roxo',p:50,v:'#a855f7'},{id:'b5',k:'bg',n:'Fundo aurora',p:80,v:'linear-gradient(135deg,#43e97b,#38f9d7)'},{id:'b6',k:'bg',n:'Fundo oceano',p:80,v:'linear-gradient(135deg,#2193b0,#6dd5ed)'},{id:'b7',k:'bg',n:'Fundo fogo',p:100,v:'linear-gradient(135deg,#f12711,#f5af19)'},{id:'t4',k:'badge',n:'Título 💎 Lenda',p:150,v:'💎'},{id:'t5',k:'badge',n:'Título 🚀 Turbo',p:60,v:'🚀'},{id:'f8',k:'frame',n:'Moldura laranja',p:40,v:'#fb923c'},{id:'f9',k:'frame',n:'Moldura amarela',p:30,v:'#facc15'},{id:'f10',k:'frame',n:'Moldura azul',p:40,v:'#3b82f6'},{id:'f11',k:'frame',n:'Moldura vermelha',p:40,v:'#ef4444'},{id:'f12',k:'frame',n:'Moldura branca',p:30,v:'#ffffff'},{id:'f13',k:'frame',n:'Moldura preta',p:30,v:'#111827'},{id:'f14',k:'frame',n:'Moldura turquesa',p:50,v:'#14b8a6'},{id:'f15',k:'frame',n:'Moldura lilás',p:50,v:'#c084fc'},{id:'f16',k:'frame',n:'Moldura bronze',p:60,v:'#b45309'},{id:'f17',k:'frame',n:'Moldura prata',p:70,v:'#cbd5e1'},{id:'f18',k:'frame',n:'Moldura esmeralda',p:90,v:'#10b981'},{id:'f19',k:'frame',n:'Moldura rubi',p:100,v:'#e11d48'},{id:'f20',k:'frame',n:'Moldura safira',p:100,v:'#2563eb'},{id:'n7',k:'name',n:'Nome laranja',p:40,v:'#f97316'},{id:'n8',k:'name',n:'Nome amarelo',p:40,v:'#eab308'},{id:'n9',k:'name',n:'Nome ciano',p:40,v:'#06b6d4'},{id:'n10',k:'name',n:'Nome lima',p:40,v:'#84cc16'},{id:'n11',k:'name',n:'Nome magenta',p:50,v:'#d946ef'},{id:'n12',k:'name',n:'Nome coral',p:50,v:'#fb7185'},{id:'n13',k:'name',n:'Nome cinza',p:30,v:'#6b7280'},{id:'n14',k:'name',n:'Nome marinho',p:60,v:'#1e3a8a'},{id:'n15',k:'name',n:'Nome ouro real',p:80,v:'#b8860b'},{id:'n16',k:'name',n:'Nome verde neon',p:90,v:'#39ff14'},{id:'a1',k:'nfont',n:'Letra elegante',p:60,v:'Georgia,serif'},{id:'a2',k:'nfont',n:'Letra código',p:60,v:'monospace'},{id:'a3',k:'nfont',n:'Letra cursiva',p:80,v:'cursive'},{id:'a4',k:'nfont',n:'Letra forte',p:80,v:'Impact,system-ui'},{id:'a5',k:'nfont',n:'Letra máquina',p:70,v:'Courier,monospace'},{id:'a6',k:'nfont',n:'Letra clássica',p:70,v:'Palatino,serif'},{id:'b8',k:'bg',n:'Fundo amanhecer',p:60,v:'linear-gradient(135deg,#f6d365,#fda085)'},{id:'b9',k:'bg',n:'Fundo lavanda',p:60,v:'linear-gradient(135deg,#a18cd1,#fbc2eb)'},{id:'b10',k:'bg',n:'Fundo céu',p:60,v:'linear-gradient(135deg,#89f7fe,#66a6ff)'},{id:'b11',k:'bg',n:'Fundo floresta',p:80,v:'linear-gradient(135deg,#134e5e,#71b280)'},{id:'b12',k:'bg',n:'Fundo chiclete',p:60,v:'linear-gradient(135deg,#ff9a9e,#fecfef)'},{id:'b13',k:'bg',n:'Fundo vulcão',p:80,v:'linear-gradient(135deg,#42275a,#734b6d)'},{id:'b14',k:'bg',n:'Fundo neon',p:100,v:'linear-gradient(135deg,#0f0c29,#302b63,#24243e)'},{id:'b15',k:'bg',n:'Fundo praia',p:80,v:'linear-gradient(135deg,#2af598,#009efd)'},{id:'b16',k:'bg',n:'Fundo doce',p:60,v:'linear-gradient(135deg,#ffecd2,#fcb69f)'},{id:'b17',k:'bg',n:'Fundo meia-noite',p:80,v:'linear-gradient(135deg,#232526,#414345)'},{id:'b18',k:'bg',n:'Fundo ouro',p:120,v:'linear-gradient(135deg,#f7971e,#ffd200)'},{id:'b19',k:'bg',n:'Fundo arco-íris',p:150,v:'linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#4facfe,#a18cd1)'},{id:'t6',k:'badge',n:'Título 🏆 Campeão',p:120,v:'🏆'},{id:'t7',k:'badge',n:'Título ⚡ Veloz',p:70,v:'⚡'},{id:'t8',k:'badge',n:'Título 🎮 Gamer',p:60,v:'🎮'},{id:'t9',k:'badge',n:'Título 🐉 Dragão',p:130,v:'🐉'},{id:'t10',k:'badge',n:'Título 🦄 Unicórnio',p:110,v:'🦄'},{id:'t11',k:'badge',n:'Título 🎯 Mira',p:70,v:'🎯'},{id:'t12',k:'badge',n:'Título 🍀 Sortudo',p:60,v:'🍀'},{id:'t13',k:'badge',n:'Título 🧠 Gênio',p:90,v:'🧠'},{id:'t14',k:'badge',n:'Título 🎬 Diretor',p:80,v:'🎬'},{id:'t15',k:'badge',n:'Título 📰 Repórter',p:80,v:'📰'},{id:'t16',k:'badge',n:'Título 🚗 Piloto',p:70,v:'🚗'},{id:'t17',k:'badge',n:'Título ⚽ Craque de bola',p:70,v:'⚽'},{id:'t18',k:'badge',n:'Título 🥷 Ninja',p:100,v:'🥷'},{id:'t19',k:'badge',n:'Título 🔮 Mago',p:100,v:'🔮'},{id:'t20',k:'badge',n:'Título 🌟 Superstar',p:90,v:'🌟'}];
 const FONTS={Normal:'system-ui',Elegante:'Georgia,serif',Código:'monospace',Cursiva:'cursive,system-ui',Forte:'Impact,system-ui'};
@@ -81,7 +80,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const norm=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const bad=t=>BADRX.some(r=>r.test(norm(t)));
 const today=()=>new Date().toISOString().slice(0,10);
-let db=null,uid='anon',isAdmin=false,adminId=null,tab='videos',me={coins:0},P={},D={videos:[],games:[],news:[],scores:[],gifts:[],polls:[]},chan='geral',unsubMsgs=null,msgs=[],convBg={};
+let db=null,uid='anon',isAdmin=false,tab='videos',me={coins:0},P={},D={videos:[],games:[],news:[],scores:[],gifts:[],polls:[]},chan='geral',unsubMsgs=null,msgs=[],convBg={};
 const store=(()=>{try{localStorage.setItem('t','1');return localStorage}catch(e){return{getItem(){return null},setItem(){}}}})();
 let localId=store.getItem('cb-id');if(!localId){localId='g'+Math.random().toString(36).slice(2,9);store.setItem('cb-id',localId)}
 uid=localId;
@@ -99,14 +98,14 @@ function banUser(id){if(db)db.doc('profiles/'+id).set({...(P[id]||{}),bannedUnti
 function saveMe(patch){me={...me,...patch};P[uid]=me;if(db)db.doc('profiles/'+uid).set(me).catch(()=>{});head()}
 const nm=id=>(P[id]&&P[id].name)||'Visitante';
 function av(id){const p=P[id]||{};return `<span class="av" style="${p.frame?'box-shadow:0 0 0 3px '+esc(p.frame):''}">${p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(nm(id)[0].toUpperCase())}</span>`}
-function head(){$('#coins').textContent='🪙 '+(isAdmin?'∞':(me.coins||0))+' Complete Coins'+(isAdmin?' 👑':'')}
+function head(){$('#coins').textContent='🪙 '+(isAdmin?'999.999.999':(me.coins||0))+' Complete Coins'+(isAdmin?' 👑':'')}
 function nav(){$('#nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('')}
 function go(k){tab=k;Q='';nav();render()}
 function when(t){return t?new Date(t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):''}
 function canDel(x){return isAdmin||x.by===uid}
 function ytEmbed(u){
   let s=String(u).trim(),m=s.match(/src=["']([^"']+)/);if(m)s=m[1];
-  m=s.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);if(m)return 'https://www.youtube.com/embed/'+m[1];
+  m=s.match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/);if(m)return 'https://www.youtube.com/embed/'+m[1];
   m=s.match(/vimeo\.com\/(?:video\/)?(\d+)/);if(m)return 'https://player.vimeo.com/video/'+m[1];
   return ''}
 function postForm(kind){
@@ -124,10 +123,10 @@ async function post(kind){
   if(kind==='videos'){o.e=ytEmbed(c);o.c=o.e?'':c;if(!o.e&&!/^https?:\/\//.test(c)){alert('Use um link ou código do YouTube/Vimeo.');return}}
   else if(kind==='games'){if(!$('#f-o').checked){alert('Confirme que o jogo é ideia sua.');return}o.c=c;const cf=$('#f-cv').files[0];if(cf)o.cv=await coverOf(cf)}
   else{o.c=c;const lk=$('#f-l').value.trim();o.l=/^https?:\/\//.test(lk)?lk:''}
-  if(!db){alert('Não foi possível publicar agora.');return}
-  LP=Date.now();await db.collection(kind).add(o);saveMe({coins:(me.coins||0)+10});toast('Publicado! +10 Complete Coins');bump('post','p_'+kind);takeAdmin();
+  if(!db){alert('Entre na sua conta Claude para publicar.');return}
+  LP=Date.now();await db.collection(kind).add(o);saveMe({coins:(me.coins||0)+10});toast('Publicado! +10 Complete Coins');
 }
-async function like(k,id){if(!db)return;const x=D[k].find(y=>y.id===id),l=x.likes||[],had=l.includes(uid);await db.doc(k+'/'+id).update({likes:had?l.filter(z=>z!==uid):[...l,uid]});if(!had)bump('like')}
+async function like(k,id){if(!db)return;const x=D[k].find(y=>y.id===id),l=x.likes||[];await db.doc(k+'/'+id).update({likes:l.includes(uid)?l.filter(z=>z!==uid):[...l,uid]})}
 async function del(kind,id,btn){if(!db)return;if(btn&&btn.dataset.c!=='1'){const old=btn.textContent;btn.dataset.c='1';btn.textContent='⚠️ Toque de novo para confirmar';setTimeout(()=>{btn.dataset.c='';btn.textContent=old},4000);return}try{await db.doc(kind+'/'+id).delete();toast('🗑️ Removido!')}catch(e){toast('Não consegui remover: '+(e.code||e.message||'erro'))}}
 async function report(kind,id,n){await db.doc(kind+'/'+id).update({rep:(n||0)+1});toast('Denúncia enviada')}
 function actions(kind,x){return `<div class="row"><button class="s" onclick="like('${kind}','${x.id}')">${(x.likes||[]).includes(uid)?'❤️':'🤍'} ${(x.likes||[]).length}</button><button class="s" onclick="report('${kind}','${x.id}',${x.rep||0})">Denunciar</button>${canDel(x)?`<button class="s" style="${isAdmin?'color:#ef4444;border-color:#ef4444':''}" onclick="del('${kind}','${x.id}',this)">🗑️ Remover${isAdmin&&x.by!==uid?' (admin)':''}</button>`:''}${isAdmin&&x.by!==uid?`<button class="s" onclick="banUser('${x.by}');toast('Banido por 7 dias')">Banir 7 dias</button>`:''}</div>`}
@@ -139,9 +138,9 @@ function list(kind){
   if(!a.length)return `<div class="empty"><div style="font-size:34px">${Q?'🔍':'📭'}</div>${Q?'Nada encontrado.':'Nada por aqui ainda. Seja o primeiro a publicar!'}</div>`;
   return a.map(x=>{
     let body='';
-    if(kind==='videos')body=x.e?`<iframe src="${esc(x.e)}" allowfullscreen loading="lazy"></iframe>`:`<a href="${/^https?:\/\//.test(x.c||'')?esc(x.c):'#'}" target="_blank" rel="noopener">${esc(x.c)}</a>`;
+    if(kind==='videos')body=x.e?`<iframe src="${esc(x.e)}" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe><div class="by"><a href="${esc(x.e.replace('www.youtube.com/embed/','www.youtube.com/watch?v=').replace('player.vimeo.com/video/','vimeo.com/'))}" target="_blank" rel="noopener">Abrir o vídeo em outra aba ↗</a></div>`:/^https?:\/\/\S+\.(mp4|webm|mov)(\?\S*)?$/i.test(x.c||'')?`<video controls playsinline preload="metadata" src="${esc(x.c)}" style="width:100%;border-radius:10px"></video>`:`<a href="${/^https?:\/\//.test(x.c||'')?esc(x.c):'#'}" target="_blank" rel="noopener">${esc(x.c)}</a>`;
     else if(kind==='games')body=`${x.cv?`<img class="cv" src="${esc(x.cv)}" alt="Capa">`:''}<button class="p" onclick="play(this,'${x.id}')">▶ Jogar</button> <span class="by">${x.plays||0} jogadas</span>`;
-    else body=`<p>${esc(x.c)}</p>${/^https?:\/\//.test(x.l||'')?`<a href="${esc(x.l)}" target="_blank" rel="noopener">Ler na fonte</a>`:''}`;
+    else body=`<p>${esc(x.c).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>')}</p>${/^https?:\/\//.test(x.l||'')?`<a href="${esc(x.l)}" target="_blank" rel="noopener">Ler na fonte</a>`:''}`;
     return `<div class="card"><b>${esc(x.t)}</b>${byline(x)}<div style="margin-top:8px">${body}</div>${actions(kind,x)}</div>`}).join('')}
 const FR={};let Q='',SO='r',LP=0,LM=0;const LOADED={};
 const LOCK='<div class="empty"><div style="font-size:34px">🔒</div><b>Você precisa entrar para ver e publicar.</b><br>Entre na sua conta Claude e peça ao dono do Complete Box para te convidar pelo e-mail como <b>Contribuidor</b>.</div>';
@@ -149,9 +148,9 @@ function toolbar(){return `<div class="row" style="margin-top:10px"><input id="s
 function relist(){const l=$('#lst');if(l)l.innerHTML=list(tab)}
 function refreshSel(){const s=$('#ch');if(!s||document.activeElement===s)return;s.innerHTML='<option value="geral">🌐 Chat geral</option>'+Object.keys(P).filter(i=>i!==uid).map(i=>`<option value="${i}">💬 ${esc(nm(i))}${P[i].sub?' ('+esc(P[i].sub)+')':''}</option>`).join('');s.value=chan}
 window.addEventListener('message',e=>{const id=Object.keys(FR).find(k=>FR[k].contentWindow===e.source);if(!id||!e.data||typeof e.data.score!=='number'||!isFinite(e.data.score))return;saveScore(id,Math.max(0,Math.min(1e9,Math.floor(e.data.score))))});
-function saveScore(g,s){if(!db||banned())return;const old=D.scores.find(x=>x.id===g+'_'+uid);if(old&&old.s>=s)return;db.doc('scores/'+g+'_'+uid).set({g,u:uid,s,ts:Date.now()}).then(()=>{toast('🏆 Novo recorde: '+s+' pontos!');bump('rec')})}
-function play(btn,id){const g=D.games.find(x=>x.id===id);if(db)db.doc('games/'+id).update({plays:(g.plays||0)+1});const f=document.createElement('iframe');f.className='g';FR[id]=f;const pv=btn.previousElementSibling;if(pv&&pv.tagName==='IMG')pv.remove();f.setAttribute('sandbox','allow-scripts allow-modals allow-pointer-lock allow-forms allow-popups');f.srcdoc=wrapGame(g.c);btn.replaceWith(f)}
-function wrapGame(c){const sh='<script>try{localStorage.getItem("a")}catch(e){const m={},s={getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]},clear:()=>{for(const k in m)delete m[k]},key:i=>Object.keys(m)[i]||null};["localStorage","sessionStorage"].forEach(n=>{try{Object.defineProperty(window,n,{value:s,configurable:true})}catch(e){}})}<\/script>';return /<head[^>]*>/i.test(c)?c.replace(/<head[^>]*>/i,m=>m+sh):sh+c}
+function saveScore(g,s){if(!db||banned())return;const old=D.scores.find(x=>x.id===g+'_'+uid);if(old&&old.s>=s)return;db.doc('scores/'+g+'_'+uid).set({g,u:uid,s,ts:Date.now()}).then(()=>toast('🏆 Novo recorde: '+s+' pontos!'))}
+function play(btn,id){const g=D.games.find(x=>x.id===id);const f=document.createElement('iframe');f.className='g';FR[id]=f;const pv=btn.previousElementSibling;if(pv&&pv.tagName==='IMG')pv.remove();f.setAttribute('sandbox','allow-scripts allow-modals allow-pointer-lock allow-forms allow-popups');f.srcdoc=wrapGame(g.c);btn.replaceWith(f);if(db)setTimeout(()=>{try{Promise.resolve(db.doc('games/'+id).update({plays:(g.plays||0)+1})).catch(()=>{})}catch(e){}},400)}
+function wrapGame(c){c=String(c).replace(/^\s*```[a-z]*\s*/i,'').replace(/```\s*$/,'');const sh='<script>try{localStorage.getItem("a")}catch(e){const m={},s={getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]},clear:()=>{for(const k in m)delete m[k]},key:i=>Object.keys(m)[i]||null};["localStorage","sessionStorage"].forEach(n=>{try{Object.defineProperty(window,n,{value:s,configurable:true})}catch(e){}})}<\/script>';return /<head[^>]*>/i.test(c)?c.replace(/<head[^>]*>/i,m=>m+sh):sh+c}
 function cid(){return chan==='geral'?'geral':[uid,chan].sort().join('_')}
 function chatSub(){
   if(unsubMsgs)unsubMsgs.forEach(f=>f());msgs=[];convBg={};if(!db)return;
@@ -165,7 +164,7 @@ function drawMsgs(){
 async function send(){
   const i=$('#mi'),t=i.value.trim();if(!t)return;if(!guard(t,'chat'))return;
   if(!db){alert('Entre na sua conta Claude para conversar.');return}
-  if(Date.now()-LM<1500)return;LM=Date.now();i.value='';await db.collection('chats/'+cid()+'/msgs').add({t,by:uid,ts:Date.now()});bump('msg');
+  if(Date.now()-LM<1500)return;LM=Date.now();i.value='';await db.collection('chats/'+cid()+'/msgs').add({t,by:uid,ts:Date.now()});
   if(chan!=='geral'){const c=cid(),d={...(me.days||{})},l={...(me.last||{})};
     if(l[c]!==today()){l[c]=today();d[c]=(d[c]||0)+1;const gain=Math.min(5+d[c]*2,50);saveMe({days:d,last:l,coins:(me.coins||0)+gain});toast('+'+gain+' Complete Coins! Dia '+d[c]+' de conversa')}}}
 async function setBg(c){if(db)await db.doc('chats/'+cid()).set({...convBg,bg:c})}
@@ -175,43 +174,14 @@ function chatView(){
   <select id="ch" onchange="chan=this.value;chatSub();drawMsgs()"><option value="geral">🌐 Chat geral</option>${others.map(i=>`<option value="${i}" ${chan===i?'selected':''}>💬 ${esc(nm(i))}${P[i].sub?' ('+esc(P[i].sub)+')':''}</option>`).join('')}</select>
   <div style="margin:6px 0">Fundo da conversa: ${BGS.concat(SHOP.filter(i=>i.k==='bg'&&(isAdmin||(me.own||[]).includes(i.id))).map(i=>i.v)).map(c=>`<span class="sw" style="background:${c}" onclick="setBg('${c}')"></span>`).join('')}</div></div>
   <div id="msgs"></div><div class="row" style="margin-top:8px"><input id="mi" placeholder="Mensagem" maxlength="300" style="flex:1" onkeydown="if(event.key==='Enter')send()"><button class="p" onclick="send()">Enviar</button></div>`}
-function shopView(){const own=me.own||[];return giftCard()+`<div class="card rules">Gaste suas Complete Coins aqui. Você tem <b>${isAdmin?'∞':me.coins||0}</b>. Ganhe mais conversando com amigos em dias diferentes e publicando (+10 por post).</div>`+SHOP.map(i=>{const has=isAdmin||own.includes(i.id),on=(i.k==='frame'&&me.frame===i.v)||(i.k==='name'&&me.nameColor===i.v)||(i.k==='badge'&&me.badge===i.v)||(i.k==='nfont'&&me.nameFont===i.v);return `<div class="card row"><span style="width:34px;height:34px;flex:none;border-radius:${i.k==='frame'?'50%':'8px'};background:${i.k==='bg'?i.v:'var(--bg)'};border:3px solid ${i.k==='frame'?i.v:'var(--bd)'};color:${i.v};font-weight:800;text-align:center;line-height:28px;font-family:${i.k==='nfont'?i.v:'inherit'}">${i.k==='name'||i.k==='nfont'?'Aa':i.k==='badge'?i.v:''}</span><b style="flex:1">${i.n}</b>${has?(i.k==='bg'?'<span class="by">Na paleta do chat</span>':`<button class="s" onclick="equip('${i.id}')">${on?'Equipado ✓':'Usar'}</button>`):`<button class="p" onclick="buy('${i.id}')">🪙 ${i.p}</button>`}</div>`}).join('')}
-const MIS=[
-{id:'d1',d:1,t:'Resgatar a recompensa diária',k:'daily',n:1,r:10},
-{id:'d2',d:1,t:'Mandar 3 mensagens no chat',k:'msg',n:3,r:15},
-{id:'d3',d:1,t:'Curtir 3 posts',k:'like',n:3,r:10},
-{id:'d4',d:1,t:'Jogar 2 partidas no Arcade',k:'arc',n:2,r:20},
-{id:'d5',d:1,t:'Acertar 3 no quiz de idiomas',k:'quiz',n:3,r:15},
-{id:'d6',d:1,t:'Votar em 1 enquete',k:'vote',n:1,r:10},
-{id:'d7',d:1,t:'Publicar qualquer coisa',k:'post',n:1,r:25},
-{id:'m1',t:'Publicar seu primeiro vídeo',k:'p_videos',n:1,r:40},
-{id:'m2',t:'Publicar seu primeiro jogo',k:'p_games',n:1,r:60},
-{id:'m3',t:'Publicar sua primeira notícia',k:'p_news',n:1,r:40},
-{id:'m4',t:'Criar uma enquete',k:'p_polls',n:1,r:30},
-{id:'m5',t:'Mandar 50 mensagens',k:'msg',n:50,r:100},
-{id:'m6',t:'Curtir 25 posts',k:'like',n:25,r:80},
-{id:'m7',t:'Jogar 20 partidas no Arcade',k:'arc',n:20,r:120},
-{id:'m8',t:'Bater 3 recordes',k:'rec',n:3,r:100},
-{id:'m9',t:'Comprar 3 itens na loja',k:'buy',n:3,r:60},
-{id:'m10',t:'Enviar um presente',k:'gift',n:1,r:40},
-{id:'m11',t:'Acertar 30 no quiz de idiomas',k:'quiz',n:30,r:150},
-{id:'m12',t:'Resgatar a diária 7 vezes',k:'daily',n:7,r:150},
-{id:'m13',t:'Votar em 10 enquetes',k:'vote',n:10,r:80}];
-function bump(...ks){const t=today(),st={...(me.st||{})},ds=(me.ds&&me.ds.d===t)?{...me.ds}:{d:t};ks.forEach(k=>{st[k]=(st[k]||0)+1;ds[k]=(ds[k]||0)+1});saveMe({st,ds})}
-const misProg=m=>m.d?((me.ds&&me.ds.d===today()?me.ds[m.k]:0)||0):((me.st||{})[m.k]||0);
-const misDone=m=>m.d?((me.dc&&me.dc.d===today()?me.dc.l:[])).includes(m.id):(me.mc||[]).includes(m.id);
-function claimMis(id){const m=MIS.find(x=>x.id===id);if(!m||misDone(m)||misProg(m)<m.n)return;if(m.d){const t=today(),l=(me.dc&&me.dc.d===t)?[...me.dc.l]:[];l.push(id);saveMe({dc:{d:t,l},coins:(me.coins||0)+m.r})}else saveMe({mc:[...(me.mc||[]),id],coins:(me.coins||0)+m.r});toast('🎯 Missão cumprida! +'+m.r+' Complete Coins');render()}
-function missionsView(){
- const row=m=>{const p=Math.min(misProg(m),m.n),ok=misProg(m)>=m.n,dn=misDone(m);return `<div class="card"><div class="row"><b style="flex:1">${esc(m.t)}</b><span class="by">🪙 ${m.r}</span></div><div style="height:8px;border-radius:6px;background:var(--bg);border:1px solid var(--bd);margin:8px 0;overflow:hidden"><div style="height:100%;width:${p*100/m.n}%;background:linear-gradient(90deg,var(--ac),var(--ac2))"></div></div><div class="row"><span class="by" style="flex:1">${p}/${m.n}</span>${dn?'<span class="by">✓ Concluída</span>':ok?`<button class="p" onclick="claimMis('${m.id}')">Resgatar</button>`:''}</div></div>`};
- return '<h2 style="margin:14px 0 0">🎯 Missões</h2>'+(isAdmin?'<div class="card">👑 <b>Você é o ADMIN</b>: moedas infinitas, e pode apagar posts e banir.</div>':!adminId?'<div class="card rules">👑 O primeiro a publicar qualquer coisa vira o <b>ADMIN</b> e ganha moedas infinitas. Publique agora!</div>':'')+'<div class="card rules">Cumpra missões e ganhe Complete Coins. As missões do dia reiniciam todo dia.</div><h3 style="margin:14px 0 0">☀️ Missões do dia</h3>'+MIS.filter(m=>m.d).map(row).join('')+'<h3 style="margin:14px 0 0">🏅 Conquistas</h3>'+MIS.filter(m=>!m.d).map(row).join('')}
-async function takeAdmin(){if(!db||adminId)return;try{const s=await db.doc('meta/admin').get();if(s.exists){adminId=(s.data()||{}).id;isAdmin=adminId===uid;head();return}await db.doc('meta/admin').set({id:uid,ts:Date.now()});adminId=uid;isAdmin=true;head();toast('👑 Você foi o primeiro a publicar: agora é o ADMIN com moedas infinitas!');render()}catch(e){}}
+function shopView(){const own=me.own||[];return giftCard()+`<div class="card rules">Gaste suas Complete Coins aqui. Você tem <b>${isAdmin?'999.999.999':me.coins||0}</b>. Ganhe mais conversando com amigos em dias diferentes e publicando (+10 por post).</div>`+SHOP.map(i=>{const has=isAdmin||own.includes(i.id),on=(i.k==='frame'&&me.frame===i.v)||(i.k==='name'&&me.nameColor===i.v)||(i.k==='badge'&&me.badge===i.v)||(i.k==='nfont'&&me.nameFont===i.v);return `<div class="card row"><span style="width:34px;height:34px;flex:none;border-radius:${i.k==='frame'?'50%':'8px'};background:${i.k==='bg'?i.v:'var(--bg)'};border:3px solid ${i.k==='frame'?i.v:'var(--bd)'};color:${i.v};font-weight:800;text-align:center;line-height:28px;font-family:${i.k==='nfont'?i.v:'inherit'}">${i.k==='name'||i.k==='nfont'?'Aa':i.k==='badge'?i.v:''}</span><b style="flex:1">${i.n}</b>${has?(i.k==='bg'?'<span class="by">Na paleta do chat</span>':`<button class="s" onclick="equip('${i.id}')">${on?'Equipado ✓':'Usar'}</button>`):`<button class="p" onclick="buy('${i.id}')">🪙 ${i.p}</button>`}</div>`}).join('')}
 const DAILY=[10,15,20,25,30,40,100];
 const ymd=d=>d.toISOString().slice(0,10);
 function dailyView(){const t=today(),y=ymd(new Date(Date.now()-864e5)),done=me.dLast===t;let st=me.streak||0;if(!done&&me.dLast!==y)st=0;const idx=done?(st-1)%7:st%7;
   return `<div class="card"><b>🎁 Recompensa diária</b><p class="rules">Entre todo dia e resgate suas Complete Coins. Não pule nenhum dia: a sequência aumenta o prêmio, e o dia 7 vale 100 moedas!</p><div class="by">Sequência atual: <b>${st} ${st===1?'dia':'dias'}</b></div></div>
   <div class="row" style="gap:6px">${DAILY.map((v,i)=>{const got=done?i<=idx:i<idx;return `<div class="card" style="text-align:center;flex:1;min-width:68px;margin:6px 0;${i===idx&&!done?'border-color:var(--ac);border-width:2px':''}${got?';opacity:.55':''}">Dia ${i+1}<br>🪙 ${v}<br>${got?'✓':'&nbsp;'}</div>`}).join('')}</div>
   <div class="row" style="justify-content:center;margin-top:10px">${done?'<button class="s" disabled>Resgatado! Volte amanhã</button>':`<button class="p" onclick="claim()">Resgatar 🪙 ${DAILY[idx]}</button>`}</div>`}
-function claim(){const t=today(),y=ymd(new Date(Date.now()-864e5));if(me.dLast===t)return;const st=me.dLast===y?(me.streak||0)+1:1,v=DAILY[(st-1)%7];saveMe({dLast:t,streak:st,coins:(me.coins||0)+v});bump('daily');toast('🎁 +'+v+' Complete Coins! Sequência: '+st);render()}
+function claim(){const t=today(),y=ymd(new Date(Date.now()-864e5));if(me.dLast===t)return;const st=me.dLast===y?(me.streak||0)+1:1,v=DAILY[(st-1)%7];saveMe({dLast:t,streak:st,coins:(me.coins||0)+v});toast('🎁 +'+v+' Complete Coins! Sequência: '+st);render()}
 function giftCard(){
  const fr=Object.keys(P).filter(i=>i!==uid);
  const opts=[10,25,50,100].map(n=>`<option value="c${n}">🪙 ${n} moedas</option>`).join('')+SHOP.map(i=>`<option value="i${i.id}">🎁 ${esc(i.n)} (🪙 ${i.p})</option>`).join('');
@@ -225,7 +195,7 @@ async function sendGift(){
  const o={from:uid,to,msg:m,ts:Date.now(),done:false};let cost=0;
  if(w[0]==='c'){o.coins=+w.slice(1);cost=o.coins}else{o.item=w.slice(1);cost=SHOP.find(i=>i.id===o.item).p}
  if(!isAdmin){if((me.coins||0)<cost){alert('Faltam '+(cost-(me.coins||0))+' Complete Coins.');return}saveMe({coins:me.coins-cost})}
- await db.collection('gifts').add(o);bump('gift');toast('🎁 Presente enviado para '+nm(to)+'!');render()}
+ await db.collection('gifts').add(o);toast('🎁 Presente enviado para '+nm(to)+'!');render()}
 async function openGift(id){
  const g=D.gifts.find(x=>x.id===id);if(!g||g.to!==uid||g.done)return;
  await db.doc('gifts/'+id).update({done:true});
@@ -233,7 +203,7 @@ async function openGift(id){
  toast('🎁 Presente aberto!');render()}
 function dailyCard(){const t=today(),ok=me.daily!==t,y=new Date(Date.now()-864e5).toISOString().slice(0,10),st=me.daily===t||me.daily===y?(me.streak||0):0,nx=Math.min(10+(st+(ok?1:0))*5,60);return `<div class="card row"><span style="font-size:28px">🎁</span><div style="flex:1"><b>Recompensa diária</b><div class="by">Sequência: ${st} dia(s). ${ok?'Hoje: +'+nx+' moedas':'Volte amanhã para mais!'}</div></div>${ok?`<button class="p" onclick="claimDaily()">Resgatar</button>`:'<span class="by">✓ Resgatada</span>'}</div>`}
 function claimDaily(){const t=today(),y=new Date(Date.now()-864e5).toISOString().slice(0,10);if(me.daily===t)return;const st=(me.daily===y?(me.streak||0):0)+1,g=Math.min(10+st*5,60);saveMe({daily:t,streak:st,coins:(me.coins||0)+g});toast('🎁 +'+g+' Complete Coins! Sequência de '+st+' dia(s)');render()}
-function buy(id){const i=SHOP.find(x=>x.id===id);if(!isAdmin&&(me.coins||0)<i.p){alert('Faltam '+(i.p-(me.coins||0))+' Complete Coins.');return}saveMe({coins:isAdmin?(me.coins||0):me.coins-i.p,own:[...(me.own||[]),id]});bump('buy');toast('Comprado: '+i.n);render()}
+function buy(id){const i=SHOP.find(x=>x.id===id);if((me.coins||0)<i.p){alert('Faltam '+(i.p-(me.coins||0))+' Complete Coins.');return}saveMe({coins:me.coins-i.p,own:[...(me.own||[]),id]});toast('Comprado: '+i.n);render()}
 function equip(id){const i=SHOP.find(x=>x.id===id);saveMe(i.k==='frame'?{frame:me.frame===i.v?'':i.v}:i.k==='badge'?{badge:me.badge===i.v?'':i.v}:i.k==='nfont'?{nameFont:me.nameFont===i.v?'':i.v}:{nameColor:me.nameColor===i.v?'':i.v});render()}
 function meView(){
   return `<div class="card"><div class="row">${av(uid)}<div><b>${esc(me.badge||'')} ${esc(nm(uid))}</b><div class="by">${esc(me.sub||'sem subtítulo')}</div></div></div></div>
@@ -244,7 +214,7 @@ function meView(){
   <select id="p-f">${Object.keys(FONTS).map(f=>`<option ${me.font===f?'selected':''}>${f}</option>`).join('')}</select>
   <label class="rules">Foto: <input type="file" id="p-p" accept="image/*"></label>
   <div class="row"><button class="p" onclick="saveProfile()">Salvar</button></div></div>
-  <div class="card rules"><b>🔑 Acesso:</b> quem abre o link compartilhado como Contribuidor publica e conversa com todo mundo. Sem acesso de escrita, os dados ficam só neste aparelho.<br><br><b>📜 Regras:</b> sem palavrões, sem conteúdo ofensivo (vídeo ruim = 7 dias de ban), só jogos com ideias próprias e só notícias boas.<br>Você ganha Complete Coins conversando com amigos em dias diferentes. ${banned()?'<b>Você está banido até '+new Date(me.bannedUntil).toLocaleDateString('pt-BR')+'.</b>':''}</div>`}
+  <div class="card rules"><b>🔑 Versão livre:</b> funciona em qualquer navegador, sem conta. Os dados (posts, chat, moedas) ficam salvos só neste aparelho. Para ver os botões de admin, abra o link com #admin no final.<br><br><b>📜 Regras:</b> sem palavrões, sem conteúdo ofensivo (vídeo ruim = 7 dias de ban), só jogos com ideias próprias e só notícias boas.<br>Você ganha Complete Coins conversando com amigos em dias diferentes. ${banned()?'<b>Você está banido até '+new Date(me.bannedUntil).toLocaleDateString('pt-BR')+'.</b>':''}</div>`}
 function saveProfile(){
   const name=$('#p-n').value.trim(),sub=$('#p-s').value.trim(),entry=$('#p-e').value.trim();
   if(bad(name+' '+sub+' '+entry)){alert('Sem palavrões no perfil.');return}
@@ -274,7 +244,7 @@ async function genLang(){
  const inp=$('#sp-new'),name=inp.value.trim();if(!name||spGen)return;
  if(!guard(name,'chat'))return;
  const ex=LG.findIndex(g=>norm(g.n).includes(norm(name)));if(ex>=0){sp.l=ex;sp.qz=null;sp.m='f';render();return}
- let s=null;try{s=await CU('sample')}catch(e){}
+ let s=null;try{s=await claude.use('sample')}catch(e){}
  if(!s){alert('O gerador de idiomas não está disponível aqui.');return}
  spGen=true;toast('⏳ Criando a lição de '+name+'...');
  try{
@@ -288,7 +258,7 @@ async function genLang(){
  spGen=false;if(tab==='speak')render()}
 function say(i){try{const u=new SpeechSynthesisUtterance(LG[sp.l].p[i][0]);u.lang=LG[sp.l].c;u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){toast('Seu navegador não toca áudio aqui.')}}
 function newQ(){const L=LG[sp.l],n=L.p.length,i=Math.floor(Math.random()*n),o=[i];while(o.length<4){const j=Math.floor(Math.random()*n);if(!o.includes(j)&&L.p[j][0]!==L.p[i][0])o.push(j)}o.sort(()=>Math.random()-.5);sp.qz={i,o,done:false}}
-function ansQ(j){const q=sp.qz;if(q.done)return;q.done=true;if(j===q.i){bump('quiz');const t=today(),n=me.spd===t?(me.spn||0):0;if(n<10){saveMe({spd:t,spn:n+1,coins:(me.coins||0)+2});toast('✅ Acertou! +2 Complete Coins')}else toast('✅ Acertou! (limite de moedas de hoje atingido)')}else toast('❌ Era: '+LG[sp.l].p[q.i][0]);setTimeout(()=>{newQ();if(tab==='speak'&&sp.m==='q')render()},1200);render()}
+function ansQ(j){const q=sp.qz;if(q.done)return;q.done=true;if(j===q.i){const t=today(),n=me.spd===t?(me.spn||0):0;if(n<10){saveMe({spd:t,spn:n+1,coins:(me.coins||0)+2});toast('✅ Acertou! +2 Complete Coins')}else toast('✅ Acertou! (limite de moedas de hoje atingido)')}else toast('❌ Era: '+LG[sp.l].p[q.i][0]);setTimeout(()=>{newQ();if(tab==='speak'&&sp.m==='q')render()},1200);render()}
 function speakView(){
  const L=LG[sp.l],nome=L.n.replace(/^\S+ /,'');
  const tabs=[['f','📖 Frases'],['q','🧩 Quiz'],['t','🤖 Tutor IA']].map(([k,t])=>`<button class="s" style="${sp.m===k?'background:var(--ac);color:#fff;border-color:var(--ac)':''}" onclick="sp.m='${k}';if(sp.m==='q')newQ();render()">${t}</button>`).join(' ');
@@ -300,7 +270,7 @@ function speakView(){
 function drawSp(){const b=$('#spb');if(!b)return;b.innerHTML=spMsgs.length?spMsgs.map(m=>`<div class="m" style="${m.r==='user'?'flex-direction:row-reverse':''}"><div class="bub" style="max-width:92%;${m.r==='user'?'background:var(--ac);color:#fff':''}">${fmt(m.t)}</div></div>`).join(''):'<div class="empty"><div style="font-size:34px">🗣️</div>Peça uma lição de qualquer idioma!</div>'}
 async function askSpeak(){
  const i=$('#sp-i'),q=i.value.trim();if(!q||spBusy)return;if(!guard(q,'chat'))return;
- let s=null;try{s=await CU('sample')}catch(e){}
+ let s=null;try{s=await claude.use('sample')}catch(e){}
  if(!s){alert('O Tutor IA não está disponível aqui.');return}
  i.value='';spMsgs.push({r:'user',t:q});const a={r:'assistant',t:'...'};spMsgs.push(a);spBusy=true;drawSp();
  const hist=spMsgs.slice(0,-1).slice(-9).map(m=>({role:m.r,content:m.t}));
@@ -311,7 +281,7 @@ async function askSpeak(){
 function arcView(){return `<h2 style="margin:14px 0 0">🕹️ Arcade</h2><div class="card"><p class="rules">Jogos prontos do Complete Box. Seus recordes entram nos Rankings e rendem Complete Coins (até 30 por dia).</p><div class="row"><button class="p" onclick="arcGo('memoria')">🧠 Memória</button><button class="p" onclick="arcGo('reflexo')">⚡ Reflexo</button><button class="p" onclick="arcGo('alvo')">🎯 Alvo</button></div></div><div id="arc"></div>`}
 function arcGo(g){({memoria:arcMem,reflexo:arcRef,alvo:arcAlvo})[g]()}
 function arcCoins(n){const t=today(),k=me.ad===t?(me.an||0):0,g=Math.min(n,30-k);if(g>0){saveMe({ad:t,an:k+g,coins:(me.coins||0)+g});toast('🪙 +'+g+' Complete Coins')}}
-function arcEnd(gid,sc){bump('arc');saveScore(gid,sc);arcCoins(Math.min(10,Math.ceil(sc/60)));const b=$('#arc');if(b)b.innerHTML=`<div class="card" style="text-align:center"><div style="font-size:40px">🏁</div><b style="font-size:22px">${sc} pontos</b><div class="row" style="justify-content:center;margin-top:10px"><button class="p" onclick="arcGo('${gid}')">Jogar de novo</button></div></div>`}
+function arcEnd(gid,sc){saveScore(gid,sc);arcCoins(Math.min(10,Math.ceil(sc/60)));const b=$('#arc');if(b)b.innerHTML=`<div class="card" style="text-align:center"><div style="font-size:40px">🏁</div><b style="font-size:22px">${sc} pontos</b><div class="row" style="justify-content:center;margin-top:10px"><button class="p" onclick="arcGo('${gid}')">Jogar de novo</button></div></div>`}
 function arcMem(){const em=['🍎','🚗','⚽','🐶','🌟','🎮','🍕','🚀'],c=[...em,...em].sort(()=>Math.random()-.5);let op=[],mv=0,ok=0,lock=false;const t0=Date.now(),box=$('#arc');box.innerHTML='<div class="by">Jogadas: <b id="mv">0</b></div><div id="mg" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px"></div>';const g=$('#mg');c.forEach(e=>{const b=document.createElement('button');b.className='s';b.style.cssText='height:64px;font-size:28px';b.textContent='❓';b.onclick=()=>{if(lock||b.dataset.o||b.dataset.d)return;b.textContent=e;b.dataset.o=1;op.push([b,e]);if(op.length===2){mv++;$('#mv').textContent=mv;lock=true;const[[a,x],[d,y]]=op;op=[];setTimeout(()=>{if(x===y){a.dataset.d=d.dataset.d=1;a.style.background=d.style.background='#bbf7d0';ok++;if(ok===8)arcEnd('memoria',Math.max(10,600-mv*20-Math.floor((Date.now()-t0)/1000)*3))}else{a.textContent=d.textContent='❓';delete a.dataset.o;delete d.dataset.o}lock=false},600)}};g.append(b)})}
 function arcRef(){let r=0,tot=0,st=0,ph=0,tm;const box=$('#arc');box.innerHTML='<div id="rb" style="height:180px;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:20px;color:#fff;background:#6b7280;cursor:pointer;user-select:none">Rodada 1/5: toque para começar</div>';const b=$('#rb');b.onclick=()=>{if(ph===0){ph=1;b.style.background='#ef4444';b.textContent='Espere o verde...';tm=setTimeout(()=>{ph=2;st=Date.now();b.style.background='#22c55e';b.textContent='AGORA!'},1000+Math.random()*2500)}else if(ph===1){clearTimeout(tm);ph=0;b.style.background='#6b7280';b.textContent='Cedo demais! Toque para tentar de novo'}else{const ms=Date.now()-st;tot+=ms;r++;if(r===5){arcEnd('reflexo',Math.max(0,Math.round(1000-tot/5)));return}ph=0;b.style.background='#6b7280';b.textContent=ms+' ms! Rodada '+(r+1)+'/5: toque para continuar'}}}
 function arcAlvo(){let h=0,left=15;const box=$('#arc');box.innerHTML='<div class="row by"><span>⏱️ <b id="at">15</b>s</span><span>🎯 <b id="ah">0</b></span></div><div id="ar" style="position:relative;height:300px;border-radius:16px;background:var(--bg);border:1px solid var(--bd);overflow:hidden;margin-top:6px"></div>';const ar=$('#ar'),t=document.createElement('button');t.textContent='🎯';t.style.cssText='position:absolute;font-size:34px;background:none;border:0;cursor:pointer;padding:4px';ar.append(t);const mv=()=>{t.style.left=Math.random()*(ar.clientWidth-52)+'px';t.style.top=Math.random()*(ar.clientHeight-52)+'px'};mv();t.onclick=()=>{h++;$('#ah').textContent=h;mv()};const iv=setInterval(()=>{if(!$('#at')){clearInterval(iv);return}left--;$('#at').textContent=left;if(left%2===0)mv();if(left<=0){clearInterval(iv);arcEnd('alvo',h*10)}},1000)}
@@ -319,12 +289,12 @@ function pollView(){
  const f=`<h2 style="margin:14px 0 0">📊 Enquetes</h2><div class="card"><p class="rules">Crie uma pergunta e veja os amigos votarem. Sem palavrões nem ofensas.</p><input id="pq" placeholder="Pergunta" maxlength="100"><input class="po" placeholder="Opção 1" maxlength="40"><input class="po" placeholder="Opção 2" maxlength="40"><input class="po" placeholder="Opção 3 (opcional)" maxlength="40"><input class="po" placeholder="Opção 4 (opcional)" maxlength="40"><div class="row"><button class="p" onclick="newPoll()">Criar enquete</button></div></div>`;
  if(!db&&LOADED.polls)return f+LOCK;if(!LOADED.polls)return f+'<div class="empty">⏳ Carregando...</div>';
  return f+(D.polls.length?D.polls.map(x=>{const v=x.v||{},tot=Object.keys(v).length;return `<div class="card"><b>${esc(x.t)}</b>${byline(x)}${(x.o||[]).map((op,i)=>{const n=Object.values(v).filter(z=>z===i).length,pc=tot?Math.round(n*100/tot):0;return `<button class="s" style="display:block;width:100%;text-align:left;margin:6px 0;padding:10px;position:relative;overflow:hidden;${v[uid]===i?'border-color:var(--ac)':''}" onclick="vote('${x.id}',${i})"><span style="position:absolute;left:0;top:0;bottom:0;width:${pc}%;background:var(--ac);opacity:.18"></span><span style="position:relative">${esc(op)} · ${pc}% (${n})</span></button>`}).join('')}<div class="by">${tot} voto(s)</div>${actions('polls',x)}</div>`}).join(''):'<div class="empty"><div style="font-size:34px">📊</div>Nenhuma enquete ainda. Crie a primeira!</div>')}
-async function newPoll(){const t=$('#pq').value.trim(),o=[...document.querySelectorAll('.po')].map(i=>i.value.trim()).filter(Boolean);if(!t||o.length<2){alert('Escreva a pergunta e pelo menos 2 opções.');return}if(!guard(t+' '+o.join(' '),'chat'))return;if(!db){alert('Entre na sua conta Claude para criar enquetes.');return}if(Date.now()-LP<20000){alert('Espere alguns segundos para criar outra.');return}LP=Date.now();await db.collection('polls').add({t,o,v:{},by:uid,ts:Date.now(),rep:0});toast('📊 Enquete criada!');bump('post','p_polls');takeAdmin()}
-async function vote(id,i){if(!db||banned())return;const x=D.polls.find(p=>p.id===id),first=!(x.v||{})[uid];await db.doc('polls/'+id).update({v:{...(x.v||{}),[uid]:i}});if(first)bump('vote')}
+async function newPoll(){const t=$('#pq').value.trim(),o=[...document.querySelectorAll('.po')].map(i=>i.value.trim()).filter(Boolean);if(!t||o.length<2){alert('Escreva a pergunta e pelo menos 2 opções.');return}if(!guard(t+' '+o.join(' '),'chat'))return;if(!db){alert('Entre na sua conta Claude para criar enquetes.');return}if(Date.now()-LP<20000){alert('Espere alguns segundos para criar outra.');return}LP=Date.now();await db.collection('polls').add({t,o,v:{},by:uid,ts:Date.now(),rep:0});toast('📊 Enquete criada!')}
+async function vote(id,i){if(!db||banned())return;const x=D.polls.find(p=>p.id===id);await db.doc('polls/'+id).update({v:{...(x.v||{}),[uid]:i}})}
 let gmCode='',gmT='';
 async function makeGame(){
  const idea=$('#gm-i').value.trim();if(!idea||aiBusy)return;if(!guard(idea,'chat'))return;
- let s=null;try{s=await CU('sample')}catch(e){}
+ let s=null;try{s=await claude.use('sample')}catch(e){}
  if(!s){alert('O criador de jogos não está disponível aqui.');return}
  aiBusy=true;const o=$('#gm-o');o.innerHTML='<div class="empty">⏳ A IA está criando seu jogo... pode levar cerca de um minuto.</div>';
  try{const r=await s([{role:'user',content:'Crie um jogo original e divertido em UM ÚNICO arquivo HTML (HTML, CSS e JS inline, sem links externos, sem localStorage; deve funcionar no celular com toque e no computador com teclado) com esta ideia: "'+idea+'". Interface em português do Brasil, com instruções na tela e botão de reiniciar. Sempre que o jogador marcar pontos, chame parent.postMessage({score:PONTOS},"*"). Responda SOMENTE com o código HTML completo, sem explicações e sem crases.'}],{cache:false,modelTier:'complex'});
@@ -333,7 +303,7 @@ async function makeGame(){
   o.innerHTML='<iframe class="g" id="gm-f" sandbox="allow-scripts allow-modals allow-pointer-lock"></iframe><div class="row" style="margin-top:8px"><button class="p" onclick="pubGame()">Publicar em Jogos</button><button class="s" onclick="makeGame()">Refazer</button></div>';$('#gm-f').srcdoc=wrapGame(c)
  }catch(e){o.innerHTML='<div class="empty">Não consegui criar o jogo agora. Tente descrever de outro jeito.</div>'}
  aiBusy=false}
-async function pubGame(){if(!db||banned()||!gmCode)return;if(Date.now()-LP<20000){alert('Espere alguns segundos para publicar de novo.');return}LP=Date.now();try{await db.collection('games').add({t:gmT,c:gmCode,by:uid,ts:Date.now(),rep:0});saveMe({coins:(me.coins||0)+10});toast('🎮 Jogo publicado! +10 Complete Coins');bump('post','p_games');takeAdmin();go('games')}catch(e){toast('Não consegui publicar (jogo grande demais?).')}}
+async function pubGame(){if(!db||banned()||!gmCode)return;if(Date.now()-LP<20000){alert('Espere alguns segundos para publicar de novo.');return}LP=Date.now();try{await db.collection('games').add({t:gmT,c:gmCode,by:uid,ts:Date.now(),rep:0});saveMe({coins:(me.coins||0)+10});toast('🎮 Jogo publicado! +10 Complete Coins');go('games')}catch(e){toast('Não consegui publicar (jogo grande demais?).')}}
 function rankView(){
  const G=D.games,gn=id=>({memoria:'🧠 Memória',reflexo:'⚡ Reflexo',alvo:'🎯 Alvo'})[id]||(G.find(x=>x.id===id)||{}).t||'Jogo removido',top=a=>a.slice(0,5);
  const sec=(t,rows)=>`<div class="card"><b>${t}</b>${rows.length?rows.map((r,i)=>`<div class="row" style="margin-top:6px"><span>${['🥇','🥈','🥉'][i]||(i+1)+'º'}</span><span style="flex:1">${r[0]}</span><b>${r[1]}</b></div>`).join(''):'<div class="by">Ainda sem dados.</div>'}</div>`;
@@ -351,7 +321,7 @@ function fmt(t){return esc(t).split('```').map((s,i)=>i%2?'<pre>'+s.replace(/^[a
 function drawAI(){const b=$('#aib');if(!b)return;b.innerHTML=aiMsgs.length?aiMsgs.map(m=>`<div class="m" style="${m.r==='user'?'flex-direction:row-reverse':''}"><div class="bub" style="max-width:92%;${m.r==='user'?'background:var(--ac);color:#fff':''}">${fmt(m.t)}</div></div>`).join(''):'<div class="empty">Diga oi para a Complete AI 👋</div>'}
 async function askAI(){
  const i=$('#ai-i'),q=i.value.trim();if(!q||aiBusy)return;if(!guard(q,'chat'))return;
- let s=null;try{s=await CU('sample')}catch(e){}
+ let s=null;try{s=await claude.use('sample')}catch(e){}
  if(!s){alert('A Complete AI não está disponível aqui.');return}
  i.value='';aiMsgs.push({r:'user',t:q});const a={r:'assistant',t:'...'};aiMsgs.push(a);aiBusy=true;drawAI();
  const hist=aiMsgs.slice(0,-1).slice(-9).map(m=>({role:m.r,content:m.t}));
@@ -370,15 +340,14 @@ function render(){
   if(tab==='polls'){a.innerHTML=pollView();return}
   if(tab==='ai'){a.innerHTML=aiView();drawAI();return}
   if(tab==='daily'){a.innerHTML=dailyView();return}
-  if(tab==='missions'){a.innerHTML=missionsView();return}
   const kind=tab;a.innerHTML=(kind==='news'?'<h2 style="margin:14px 0 0">📰 Complete News</h2>':'')+postForm(kind)+toolbar()+'<div id="lst">'+list(kind)+'</div>'}
-function keep(){if(tab==='games'&&document.querySelector('iframe.g'))return;const a=document.activeElement;if(a&&a.id==='sq'){relist();return}if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;if(tab==='videos'||tab==='games'||tab==='news'||tab==='rank'||tab==='shop'||tab==='polls')render()}
+function keep(){if(tab==='games'&&document.querySelector('iframe.g'))return;const a=document.activeElement;if(a&&a.tagName==='IFRAME')return;if(a&&a.id==='sq'){relist();return}if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;if(tab==='videos'||tab==='games'||tab==='news'||tab==='rank'||tab==='shop'||tab==='polls')render()}
 nav();render();head();
 (async()=>{
   try{
-    const user=await CU('user');const d=await CU('db');
-    if(user){try{uid=await user.id()}catch(e){}}head();
-    if(!d){$('#nav').insertAdjacentHTML('afterend','<div class="card" style="margin:0 14px">🔒 <b>Entre na sua conta Claude</b> para ver e publicar no Complete Box. Sem login funcionam só o Arcade e o Complete Speak (frases e quiz).</div>');['videos','games','news','polls','scores','gifts'].forEach(k=>LOADED[k]=1);render();return}db=d;db.doc('meta/admin').onSnapshot(s=>{adminId=s.exists?(s.data()||{}).id:null;isAdmin=!!adminId&&adminId===uid;head();keep()});
+    const user=await claude.use('user');const d=await claude.use('db');
+    if(user){try{uid=await user.id();isAdmin=user.canEdit()}catch(e){}}head();
+    if(!d){$('#nav').insertAdjacentHTML('afterend','<div class="card" style="margin:0 14px">🔒 <b>Entre na sua conta Claude</b> para ver e publicar no Complete Box. Sem login funcionam só o Arcade e o Complete Speak (frases e quiz).</div>');['videos','games','news','polls','scores','gifts'].forEach(k=>LOADED[k]=1);render();return}db=d;
     db.collection('profiles').onSnapshot(s=>{s.docs.forEach(x=>P[x.id]=x.data());if(P[uid])me=P[uid];else{me=P[uid]={coins:0,name:'Jogador'+uid.slice(-4)};db.doc('profiles/'+uid).set(me).catch(()=>{})}head();if(tab==='chat'){drawMsgs();refreshSel()}else keep()});
     ['videos','games','news','scores','gifts','polls'].forEach(k=>db.collection(k).orderBy('ts','desc').limit(k==='scores'||k==='gifts'?400:60).onSnapshot(s=>{D[k]=s.docs.map(x=>({id:x.id,...x.data()})).filter(x=>(x.rep||0)<5);LOADED[k]=1;if(tab===k||tab==='rank'||(tab==='shop'&&k==='gifts'))keep()}));
     chatSub();
