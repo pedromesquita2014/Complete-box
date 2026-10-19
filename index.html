@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -226,7 +226,6 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 @keyframes pop { from { transform: translate(-50%, -20px) scale(0.7); opacity: 0; } }
 .online-users-list { display: flex; gap: 6px; overflow-x: auto; padding: 6px 0; }
 .online-user-tag { background: var(--bg); border: 1px solid var(--bd); border-radius: 16px; padding: 4px 10px; font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-.gift-card { background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(124,83,255,0.15)); border: 1px solid var(--ac); border-radius: 12px; padding: 12px; margin: 8px 0; }
 </style>
 </head>
 <body>
@@ -240,7 +239,7 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 <div class="hero">
   <div>
     🌐 <b>Rede Global Conectada!</b>
-    <div style="font-size: 12px; opacity: 0.9; font-weight: normal;">Publique vídeos, jogos, envie presentes e converse em tempo real.</div>
+    <div style="font-size: 12px; opacity: 0.9; font-weight: normal;">Publique vídeos, jogos, aprenda idiomas e converse em tempo real.</div>
   </div>
 </div>
 
@@ -312,7 +311,7 @@ function toast(msg) {
 
 let tab = 'videos';
 let profiles = {};
-let dataList = { videos: [], games: [], news: [], polls: [], chat: [], aiMsgs: [], gifts: [] };
+let dataList = { videos: [], games: [], news: [], polls: [], chat: [], aiMsgs: [] };
 let onlineUsers = [];
 let searchQuery = '';
 
@@ -320,7 +319,6 @@ const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
   ['chat', '💬 Chat Global'],
-  ['gifts', '🎁 Presentes'],
   ['speak', '🗣️ Complete Speak'],
   ['ai', '🤖 IA Assistant'],
   ['polls', '📊 Enquetes'],
@@ -359,7 +357,6 @@ function setupGlobalSync() {
       if (d.ts && (Date.now() - d.ts < 300000)) onlineUsers.push({ id: doc.id, name: d.name || 'Usuário', badge: d.badge || '👤' });
     });
     if (tab === 'chat') renderChatUsers();
-    if (tab === 'gifts') renderGiftsView();
   });
 
   ['videos', 'games', 'news', 'polls'].forEach(kind => {
@@ -373,11 +370,6 @@ function setupGlobalSync() {
     dataList.chat = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     if (tab === 'chat') drawMessages();
   });
-
-  db.collection('gifts').orderBy('ts', 'desc').limit(50).onSnapshot(snap => {
-    dataList.gifts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    if (tab === 'gifts') renderGiftsView();
-  });
 }
 
 setInterval(() => {
@@ -389,7 +381,6 @@ function render() {
   const app = $('#app');
 
   if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); renderChatUsers(); return; }
-  if (tab === 'gifts') { renderGiftsView(); return; }
   if (tab === 'speak') { app.innerHTML = speakView(); return; }
   if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
   if (tab === 'me') { app.innerHTML = profileView(); return; }
@@ -405,81 +396,7 @@ function render() {
   renderContentList(tab);
 }
 
-// --- SISTEMA DE PRESENTES ---
-
-function renderGiftsView() {
-  const app = $('#app');
-  const otherUsers = Object.keys(profiles).filter(id => id !== uid);
-
-  const receivedGifts = (dataList.gifts || []).filter(g => g.to === uid);
-
-  app.innerHTML = `
-    <div class="card">
-      <b style="font-size: 18px;">🎁 Enviar Presente para Amigos</b>
-      <p class="rules">Envie Complete Coins para qualquer amigo registrado na rede!</p>
-      
-      <label class="rules">Escolha o Amigo:</label>
-      <select id="gift-to">
-        ${otherUsers.length ? otherUsers.map(id => `<option value="${id}">${esc(profiles[id].badge \vert{}\vert{} '👤')} ${esc(profiles[id].name || 'Usuário')}</option>`).join('') : '<option value="">Sem amigos online no momento</option>'}
-      </select>
-
-      <label class="rules">Quantidade de Complete Coins:</label>
-      <input id="gift-amount" type="number" min="10" value="50" placeholder="Ex: 50">
-
-      <label class="rules">Mensagem Especial (Opcional):</label>
-      <input id="gift-msg" placeholder="Ex: Parabéns pelo post! Tamo junto!">
-
-      <button class="p" style="margin-top: 8px; width:100%;" onclick="sendGift()">🎁 Enviar Presente Agora</button>
-    </div>
-
-    <div class="card">
-      <b style="font-size: 16px;">📬 Seus Presentes Recebidos:</b>
-      <div id="received-gifts-list">
-        ${receivedGifts.length ? receivedGifts.map(g => `
-          <div class="gift-card">
-            <b>🎁 Presente de ${esc(g.fromName)}</b>
-            <div style="font-size:16px; color:#ffe66d; margin:4px 0;">🪙 ${g.amount} Complete Coins</div>${g.msg ? `<div style="font-style:italic; font-size:13px; color:var(--mu);">"${esc(g.msg)}"</div>` : ''}
-            <div class="by">${timeAgo(g.ts)}</div>
-          </div>
-        `).join('') : '<div class="empty">Você ainda não recebeu nenhum presente.</div>'}
-      </div>
-    </div>
-  `;
-}
-
-async function sendGift() {
-  const toId = $('#gift-to').value;
-  const amount = parseInt($('#gift-amount').value);
-  const msg = $('#gift-msg').value.trim();
-
-  if (!toId) return toast('Escolha um amigo!');
-  if (!amount || amount <= 0) return toast('Digite uma quantidade válida!');
-  if (!isOwner && myProfile.coins < amount) return toast('Você não tem Complete Coins suficientes!');
-
-  if (!isOwner) {
-    myProfile.coins -= amount;
-    localStorage.setItem('cb_coins', myProfile.coins);
-    renderHeader();
-  }
-
-  const giftObj = {
-    from: uid,
-    fromName: myProfile.name,
-    to: toId,
-    amount,
-    msg,
-    ts: Date.now()
-  };
-
-  if (db) {
-    await db.collection('gifts').add(giftObj);
-  }
-
-  toast(`🎁 Presente de 🪙 ${amount} enviado com sucesso!`);
-  $('#gift-msg').value = '';
-}
-
-// --- COMPLETE SPEAK ---
+// --- COMPLETE SPEAK (IDIOMAS & QUIZ) ---
 
 const SPEAK_PHRASES = [
   { pt: 'Olá', en: 'Hello', es: 'Hola', fr: 'Bonjour' },
@@ -489,6 +406,7 @@ const SPEAK_PHRASES = [
   { pt: 'Como vai?', en: 'How are you?', es: '¿Cómo estás?', fr: 'Comment ça va?' }
 ];
 
+let speakScore = 0;
 let currentQuizIndex = 0;
 
 function speakView() {
@@ -496,7 +414,7 @@ function speakView() {
   return `
     <div class="card">
       <b style="font-size: 18px;">🗣️ Complete Speak (Aprenda Idiomas)</b>
-      <p class="rules">Aprenda frases básicas e ganhe Complete Coins nos Quizzes!</p>
+      <p class="rules">Aprenda frases básicas em Inglês, Espanhol e Francês e ganhe Complete Coins nos Quizzes!</p>
     </div>
 
     <div class="card">
