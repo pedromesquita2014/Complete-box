@@ -1,6 +1,9 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box</title>
+<title>Complete Box - Edição Suprema com Roleta</title>
 <style>
 :root {
   --bg: #120e24;
@@ -229,14 +232,14 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 
 <header>
   <span class="logo">📦 Complete Box</span>
-  <span class="online-badge"><span class="online-dot"></span> Rede Ativa</span>
+  <span class="online-badge"><span class="online-dot"></span> Rede Ativa & Segura</span>
   <span class="coins" id="coins">🪙 0</span>
 </header>
 
 <div class="hero">
   <div>
     🌐 <b>Rede Global Conectada!</b>
-    <div style="font-size: 12px; opacity: 0.9; font-weight: normal;">Publique vídeos, jogos, aprenda idiomas e converse em tempo real.</div>
+    <div style="font-size: 12px; opacity: 0.9; font-weight: normal;">Publique, jogue, teste a Roleta da Sorte e use a Poupança Complete.</div>
   </div>
 </div>
 
@@ -249,6 +252,11 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
+function sanitize(input) {
+  if (typeof input !== 'string') return input;
+  return input.replace(/[<>]/g, '').slice(0, 1000);
+}
+
 const firebaseConfig = {
   apiKey: "AIzaSyAgRafNnzncOP631NU9oJTfyBNf6bIy1pQ",
   authDomain: "complete-box-2.firebaseapp.com",
@@ -278,21 +286,30 @@ if (location.hash === '#pedromesquita2026' || localStorage.getItem(OWNER_KEY) ==
 
 let isOwner = localStorage.getItem(OWNER_KEY) === 'true';
 
+let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 50);
+let mySavings = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_savings')) || 0);
+
 let myProfile = {
   name: isOwner ? 'Pedro Mesquita (Dono)' : (localStorage.getItem('cb_name') || 'Visitante_' + uid.slice(-4)),
   badge: isOwner ? '👑' : '👤',
-  coins: isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 0)
+  coins: myCoins,
+  savings: mySavings
 };
 
 function saveProfileToGlobal() {
-  if (!isOwner) localStorage.setItem('cb_name', myProfile.name);
+  if (!isOwner) {
+    localStorage.setItem('cb_name', sanitize(myProfile.name));
+    localStorage.setItem('cb_coins', myProfile.coins);
+    localStorage.setItem('cb_savings', myProfile.savings);
+  }
   if (db) {
     db.collection('profiles').doc(uid).set({
-      name: myProfile.name,
+      name: sanitize(myProfile.name),
       badge: myProfile.badge,
       isOwner: isOwner,
+      coins: isOwner ? 999999999 : myProfile.coins,
       ts: Date.now()
-    }, { merge: true });
+    }, { merge: true }).catch(() => {});
   }
 }
 saveProfileToGlobal();
@@ -301,7 +318,7 @@ function toast(msg) {
   document.querySelectorAll('#toast').forEach(x => x.remove());
   const e = document.createElement('div');
   e.id = 'toast';
-  e.textContent = msg;
+  e.textContent = sanitize(msg);
   document.body.append(e);
   setTimeout(() => e.remove(), 3500);
 }
@@ -315,11 +332,13 @@ let searchQuery = '';
 const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
-  ['chat', '💬 Chat Global'],
-  ['speak', '🗣️ Complete Speak'],
-  ['ai', '🤖 IA Assistant'],
+  ['chat', '💬 Chat'],
+  ['speak', '🗣️ Speak'],
+  ['spin', '🎡 Roleta'],
+  ['ai', '🤖 IA'],
   ['polls', '📊 Enquetes'],
-  ['news', '📰 News'],
+  ['news', '📰 Notícias'],
+  ['bank', '🏦 Poupança'],
   ['shop', '🛍️ Loja'],
   ['me', '👤 Perfil']
 ];
@@ -341,7 +360,8 @@ function nav() {
 function go(k) { tab = k; searchQuery = ''; nav(); render(); }
 
 function renderHeader() {
-  $('#coins').textContent = isOwner ? '🪙 ∞ Complete Coins (Dono)' : `🪙 ${myProfile.coins} Complete Coins`;
+  const displayCoins = isOwner ? '🪙 ∞ (Dono)' : `🪙 ${myProfile.coins}`;
+  $('#coins').textContent = displayCoins;
 }
 
 function setupGlobalSync() {
@@ -351,17 +371,19 @@ function setupGlobalSync() {
     profiles = {}; onlineUsers = [];
     snap.docs.forEach(doc => {
       const d = doc.data(); profiles[doc.id] = d;
-      if (d.ts && (Date.now() - d.ts < 300000)) onlineUsers.push({ id: doc.id, name: d.name || 'Usuário', badge: d.badge || '👤' });
+      if (d.ts && (Date.now() - d.ts < 300000)) onlineUsers.push({ id: doc.id, name: d.name || 'Usuário', badge: d.badge || '👤', coins: d.coins || 0 });
     });
-    if (tab === 'chat') renderChatUsers();
+    if (tab === 'chat' || tab === 'bank') renderChatUsers();
   });
 
-  ['videos', 'games', 'news', 'polls'].forEach(kind => {
+  ['videos', 'games', 'polls'].forEach(kind => {
     db.collection(kind).orderBy('ts', 'desc').limit(50).onSnapshot(snap => {
       dataList[kind] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       if (tab === kind) renderContentList(kind);
     });
   });
+
+  loadAutomatedNews();
 
   db.collection('global_chat').orderBy('ts', 'asc').limit(100).onSnapshot(snap => {
     dataList.chat = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -369,8 +391,38 @@ function setupGlobalSync() {
   });
 }
 
+async function loadAutomatedNews() {
+  try {
+    const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/tecnologia/');
+    const data = await res.json();
+    if (data && data.items) {
+      dataList.news = data.items.slice(0, 10).map((item, idx) => ({
+        id: 'news_' + idx,
+        title: item.title,
+        content: item.description.replace(/<[^>]*>?/gm, ''),
+        authorName: 'G1 Tecnologia (Automático)',
+        authorBadge: '📰',
+        ts: new Date(item.pubDate).getTime(),
+        likes: []
+      }));
+    } else {
+      fallbackNews();
+    }
+  } catch(e) {
+    fallbackNews();
+  }
+  if (tab === 'news') renderContentList('news');
+}
+
+function fallbackNews() {
+  dataList.news = [
+    { id: 'n1', title: 'Inteligência Artificial avança em novas ferramentas web', content: 'Desenvolvedores do mundo todo adotam arquiteturas integradas em nuvem em 2026.', authorName: 'Tech Global News', authorBadge: '📰', ts: Date.now(), likes: [] },
+    { id: 'n2', title: 'Segurança digital e protocolos criptografados em alta', content: 'Novas diretrizes protegem dados de usuários contra ataques cibernéticos em redes globais.', authorName: 'Cyber Watch', authorBadge: '📰', ts: Date.now() - 3600000, likes: [] }
+  ];
+}
+
 setInterval(() => {
-  if (db) db.collection('profiles').doc(uid).set({ ts: Date.now() }, { merge: true });
+  if (db) db.collection('profiles').doc(uid).set({ ts: Date.now() }, { merge: true }).catch(()=>{});
 }, 30000);
 
 function render() {
@@ -379,84 +431,274 @@ function render() {
 
   if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); renderChatUsers(); return; }
   if (tab === 'speak') { app.innerHTML = speakView(); return; }
+  if (tab === 'spin') { app.innerHTML = spinView(); return; }
   if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
-  if (tab === 'me') { app.innerHTML = profileView(); return; }
+  if (tab === 'bank') { app.innerHTML = bankView(); renderChatUsers(); return; }
   if (tab === 'shop') { app.innerHTML = shopView(); return; }
+  if (tab === 'me') { app.innerHTML = profileView(); return; }
 
   app.innerHTML = `
     ${postBoxView(tab)}
     <div class="row" style="margin: 12px 0;">
-      <input id="sq" placeholder="🔍 Buscar publicações..." value="${esc(searchQuery)}" oninput="searchQuery=this.value; renderContentList('${tab}')">
+      <input id="sq" placeholder="🔍 Buscar publicações..." value="${esc(searchQuery)}" oninput="searchQuery=sanitize(this.value); renderContentList('${tab}')">
     </div>
     <div id="content-list"></div>
   `;
   renderContentList(tab);
 }
 
-// --- COMPLETE SPEAK (IDIOMAS & QUIZ) ---
-
-const SPEAK_PHRASES = [
-  { pt: 'Olá', en: 'Hello', es: 'Hola', fr: 'Bonjour' },
-  { pt: 'Obrigado', en: 'Thank you', es: 'Gracias', fr: 'Merci' },
-  { pt: 'Bom dia', en: 'Good morning', es: 'Buenos días', fr: 'Bonjour' },
-  { pt: 'Por favor', en: 'Please', es: 'Por favor', fr: "S'il vous plaît" },
-  { pt: 'Como vai?', en: 'How are you?', es: '¿Cómo estás?', fr: 'Comment ça va?' }
-];
-
-let speakScore = 0;
-let currentQuizIndex = 0;
-
-function speakView() {
-  const current = SPEAK_PHRASES[currentQuizIndex % SPEAK_PHRASES.length];
+// --- COMPLETE LUCKY SPIN (ROLETA DA SORTE) ---
+function spinView() {
   return `
-    <div class="card">
-      <b style="font-size: 18px;">🗣️ Complete Speak (Aprenda Idiomas)</b>
-      <p class="rules">Aprenda frases básicas em Inglês, Espanhol e Francês e ganhe Complete Coins nos Quizzes!</p>
-    </div>
+    <div class="card" style="text-align:center;">
+      <b style="font-size: 20px;">🎡 Complete Lucky Spin</b>
+      <p class="rules">Gire a roleta uma vez por dia e teste sua sorte para ganhar moedas grátis!</p>
+      
+      <div id="spin-wheel-box" style="margin: 20px auto; padding: 30px; background: var(--bg); border: 2px dashed var(--ac); border-radius: 50% / 20%; max-width: 320px;">
+        <span id="spin-result-text" style="font-size: 24px; font-weight: 900; color: var(--gold);">🎁 PRÓXIMO GIRO PRONTO</span>
+      </div>
 
-    <div class="card">
-      <b>📖 Frases Úteis:</b>
-      ${SPEAK_PHRASES.map(p => `
-        <div style="margin: 8px 0; padding: 8px; background: var(--bg); border-radius: 8px; border: 1px solid var(--bd);">
-          <b>🇧🇷 ${p.pt}</b> <br>
-          <span style="color:var(--ac);">🇺🇸 ${p.en}</span> | 
-          <span style="color:var(--ac2);">🇪🇸 ${p.es}</span> | 
-          <span style="color:var(--gold);">🇫🇷 ${p.fr}</span>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="card">
-      <b>🧩 Mini Quiz de Idiomas:</b>
-      <p style="margin: 8px 0;">Como se diz <b>"${current.pt}"</b> em Inglês?</p>
-      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('${current.en}', '${current.en}')">A) ${current.en}</button>
-      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('Hello World', '${current.en}')">B) Hello World</button>
-      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('Goodbye', '${current.en}')">C) Goodbye</button>
+      <button class="p" style="padding: 12px 24px; font-size: 16px;" onclick="doSpinWheel()">Girar Roleta Agora! 🎰</button>
     </div>
   `;
 }
 
-function checkSpeakQuiz(selected, correct) {
-  if (selected === correct) {
-    toast('✅ Correto! +5 Complete Coins!');
-    if (!isOwner) { myProfile.coins += 5; localStorage.setItem('cb_coins', myProfile.coins); renderHeader(); }
-  } else {
-    toast('❌ Incorreto! Tente a próxima.');
+function doSpinWheel() {
+  const lastSpin = localStorage.getItem('cb_last_spin');
+  const today = new Date().toDateString();
+  if (lastSpin === today) {
+    return toast('⏰ Você já girou a roleta hoje! Volte amanhã.');
   }
-  currentQuizIndex++;
+  localStorage.setItem('cb_last_spin', today);
+
+  const prizes = [20, 50, 100, 200, 500];
+  const won = prizes[Math.floor(Math.random() * prizes.length)];
+
+  $('#spin-result-text').textContent = `🎉 +${won} Moedas!`;
+  if (!isOwner) {
+    myProfile.coins += won;
+    saveProfileToGlobal();
+  }
+  renderHeader();
+  toast(`🎉 Parabéns! Você ganhou ${won} Complete Coins na Roleta!`);
+}
+
+// --- RECOMPENSA DIÁRIA ---
+function claimDailyReward() {
+  const lastClaim = localStorage.getItem('cb_last_claim');
+  const today = new Date().toDateString();
+  if (lastClaim === today) {
+    return toast('⏰ Você já resgatou sua recompensa hoje! Volte amanhã.');
+  }
+  localStorage.setItem('cb_last_claim', today);
+  const reward = 50;
+  if (!isOwner) {
+    myProfile.coins += reward;
+    saveProfileToGlobal();
+  }
+  renderHeader();
+  render();
+  toast(`🎉 Resgatado com sucesso! +${reward} Complete Coins.`);
+}
+
+function bankView() {
+  return `
+    <div class="card">
+      <b style="font-size: 18px;">🏦 Poupança Complete</b>
+      <p class="rules">Guarde suas moedas com segurança. Ao comprar itens na Loja, o saldo da poupança é transferido automaticamente se faltar na carteira!</p>
+      
+      <div style="background:var(--bg); border:1px solid var(--bd); border-radius:12px; padding:14px; margin: 12px 0;">
+        <div style="font-size:14px; color:var(--mu);">Saldo na Carteira: <b>🪙 ${isOwner ? '∞' : myProfile.coins}</b></div>
+        <div style="font-size:16px; margin-top:4px; color:var(--gold);">Saldo na Poupança: <b>🪙 ${isOwner ? '∞' : myProfile.savings}</b></div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <input id="bank-amount" type="number" placeholder="Quantidade" min="1" style="flex:1;">
+        <button class="p" onclick="depositSavings()">Depositar 📥</button>
+        <button class="s" onclick="withdrawSavings()">Sacar 📤</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <b>🎁 Enviar Presente para Amigos na Rede</b>
+      <p class="rules">Envie moedas diretamente para outros usuários online!</p>
+      <select id="gift-target" style="margin:6px 0;">
+        <option value="">Selecione um amigo online...</option>
+        ${onlineUsers.filter(u => u.id !== uid).map(u => `<option value="${u.id}">${esc(u.badge)}${esc(u.name)}</option>`).join('')}
+      </select>
+      <input id="gift-amount" type="number" placeholder="Quantidade de Moedas" min="1">
+      <button class="p" style="margin-top:6px; width:100%;" onclick="sendGift()">🎁 Enviar Presente</button>
+    </div>
+  `;
+}
+
+function depositSavings() {
+  const amt = parseInt($('#bank-amount').value);
+  if (!amt || amt <= 0) return toast('Insira um valor válido!');
+  if (!isOwner && myProfile.coins < amt) return toast('Moedas insuficientes na carteira!');
+
+  if (!isOwner) {
+    myProfile.coins -= amt;
+    myProfile.savings += amt;
+    saveProfileToGlobal();
+  }
+  toast(`🪙 Depositado ${amt} moedas na Poupança!`);
+  render();
+}
+
+function withdrawSavings() {
+  const amt = parseInt($('#bank-amount').value);
+  if (!amt || amt <= 0) return toast('Insira um valor válido!');
+  if (!isOwner && myProfile.savings < amt) return toast('Saldo insuficiente na Poupança!');
+
+  if (!isOwner) {
+    myProfile.savings -= amt;
+    myProfile.coins += amt;
+    saveProfileToGlobal();
+  }
+  toast(`🪙 Sacado ${amt} moedas para a carteira!`);
+  render();
+}
+
+function sendGift() {
+  const targetId = $('#gift-target').value;
+  const amt = parseInt($('#gift-amount').value);
+  if (!targetId) return toast('Selecione um destinatário!');
+  if (!amt || amt <= 0) return toast('Insira um valor válido!');
+  if (!isOwner && myProfile.coins < amt) return toast('Moedas insuficientes na carteira!');
+
+  if (!isOwner) {
+    myProfile.coins -= amt;
+    saveProfileToGlobal();
+  }
+  toast(`🎁 Presente de ${amt} moedas enviado com sucesso!`);
+  render();
+}
+
+const SHOP_ITEMS = [
+  { id: 's1', name: '👑 Coroa Lendária de Ouro', desc: 'Destaque máximo e coroa dourada no perfil.', price: 500, badge: '👑' },
+  { id: 's2', name: '⚡ Insígnia de Raio VIP', desc: 'Mostre que você é super ativo na rede.', price: 300, badge: '⚡' },
+  { id: 's3', name: '🔥 Chamas Místicas', desc: 'Efeito especial de status para conversas.', price: 750, badge: '🔥' },
+  { id: 's4', name: '💎 Escudo Diamante Admin', desc: 'Proteção e privilégios visuais exclusivos.', price: 1200, badge: '💎' },
+  { id: 's5', name: '🚀 Foguete Espacial VIP', desc: 'Símbolo de pioneirismo no Complete Box.', price: 2000, badge: '🚀' }
+];
+
+function shopView() {
+  return `
+    <div class="card">
+      <b style="font-size: 18px;">🛍️ Loja Oficial do Complete Box</b>
+      <p class="rules">Itens exclusivos atualizados. Se faltar saldo na carteira, o sistema transfere automaticamente da sua <b>Poupança Complete</b>!</p>
+      <div style="font-size:13px; color:var(--gold); margin-bottom:10px;">Saldo Disponível (Carteira + Poupança): 🪙 ${isOwner ? '∞' : (myProfile.coins + myProfile.savings)}</div>
+    </div>
+
+    ${SHOP_ITEMS.map(item => `
+      <div class="card row" style="justify-content:space-between;">
+        <div>
+          <b style="font-size:16px;">${item.badge}${esc(item.name)}</b>
+          <div class="rules" style="margin:4px 0 0;">${esc(item.desc)}</div>
+          <div style="color:var(--gold); font-weight:bold; margin-top:4px;">🪙 ${item.price} Moedas</div>
+        </div>
+        <button class="p" onclick="buyShopItem('${item.id}', ${item.price}, '${item.badge}')">Comprar 🛒</button>
+      </div>
+    `).join('')}
+  `;
+}
+
+function buyShopItem(id, price, badge) {
+  if (isOwner) {
+    myProfile.badge = badge;
+    saveProfileToGlobal();
+    return toast('🎉 Item adquirido instantaneamente (Dono)!');
+  }
+
+  let totalAvailable = myProfile.coins + myProfile.savings;
+  if (totalAvailable < price) {
+    return toast('❌ Saldo insuficiente na Carteira e na Poupança!');
+  }
+
+  if (myProfile.coins < price) {
+    let diff = price - myProfile.coins;
+    myProfile.coins = 0;
+    myProfile.savings -= diff;
+  } else {
+    myProfile.coins -= price;
+  }
+
+  myProfile.badge = badge;
+  saveProfileToGlobal();
+  renderHeader();
+  render();
+  toast('🎉 Compra realizada com sucesso! Saldo transferido e item aplicado.');
+}
+
+const SPEAK_LEVELS = {
+  easy: [
+    { pt: 'Olá', en: 'Hello', es: 'Hola', fr: 'Bonjour' },
+    { pt: 'Obrigado', en: 'Thank you', es: 'Gracias', fr: 'Merci' }
+  ],
+  medium: [
+    { pt: 'Bom dia, como vai?', en: 'Good morning, how are you?', es: 'Buenos días, ¿cómo estás?', fr: 'Bonjour, comment ça va?' },
+    { pt: 'Por favor, onde fica?', en: 'Please, where is it?', es: 'Por favor, ¿dónde está?', fr: "S'il vous plaît, où est-ce?" }
+  ],
+  hard: [
+    { pt: 'Eu gostaria de aprender idiomas estrangeiros fluentemente.', en: 'I would like to learn foreign languages fluently.', es: 'Me gustaría aprender idiomas extranjeros con fluidez.', fr: "J'aimerais apprendre couramment des langues étrangères." }
+  ]
+};
+
+let currentSpeakLevel = 'easy';
+let speakQuizIdx = 0;
+
+function speakView() {
+  const list = SPEAK_LEVELS[currentSpeakLevel];
+  const current = list[speakQuizIdx % list.length];
+  const rewardVal = currentSpeakLevel === 'easy' ? 5 : currentSpeakLevel === 'medium' ? 12 : 25;
+
+  return `
+    <div class="card">
+      <b style="font-size: 18px;">🗣️ Complete Speak (Idiomas)</b>
+      <p class="rules">Escolha a dificuldade, aprenda frases e ganhe moedas por acerto!</p>
+      
+      <div class="row" style="margin: 10px 0;">
+        <button class="s ${currentSpeakLevel==='easy'?'on':''}" onclick="currentSpeakLevel='easy'; speakQuizIdx=0; render();">Fácil (+5)</button>
+        <button class="s ${currentSpeakLevel==='medium'?'on':''}" onclick="currentSpeakLevel='medium'; speakQuizIdx=0; render();">Médio (+12)</button>
+        <button class="s ${currentSpeakLevel==='hard'?'on':''}" onclick="currentSpeakLevel='hard'; speakQuizIdx=0; render();">Difícil (+25)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <b>🧩 Quiz de Tradução (${currentSpeakLevel.toUpperCase()}):</b>
+      <p style="margin: 8px 0;">Como se diz <b>"${current.pt}"</b> em Inglês?</p>
+      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('${current.en}', '${current.en}', ${rewardVal})">A) ${current.en}</button>
+      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('Wrong Option A', '${current.en}', ${rewardVal})">B) Perfect translation option</button>
+      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('Wrong Option B', '${current.en}', ${rewardVal})">C) Learning system default</button>
+    </div>
+  `;
+}
+
+function checkSpeakQuiz(selected, correct, reward) {
+  if (selected === correct) {
+    toast(`✅ Correto! +${reward} Complete Coins!`);
+    if (!isOwner) {
+      myProfile.coins += reward;
+      saveProfileToGlobal();
+      renderHeader();
+    }
+  } else {
+    toast('❌ Incorreto! Tente novamente.');
+  }
+  speakQuizIdx++;
   render();
 }
 
 function postBoxView(kind) {
-  const titles = { videos: '🎬 Publicar Vídeo Global', games: '🎮 Publicar Jogo HTML Global', news: '📰 Publicar Notícia', polls: '📊 Criar Enquete' };
+  const titles = { videos: '🎬 Publicar Vídeo Global', games: '🎮 Publicar Jogo HTML Global', polls: '📊 Criar Enquete' };
   return `
     <div class="card">
       <b style="font-size: 16px;">${titles[kind]}</b>
-      <p class="rules">Sua publicação ficará visível em tempo real para todos os usuários!</p>
+      <p class="rules">Sua publicação ficará visível em tempo real na rede segura!</p>
       <input id="p-title" placeholder="Título da publicação" maxlength="100">
       ${kind === 'videos' ? '<input id="p-content" placeholder="Link do YouTube ou URL do vídeo (mp4)">' : ''}
       ${kind === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML do jogo"></textarea>' : ''}
-      ${kind === 'news' ? '<textarea id="p-content" placeholder="Escreva a notícia..."></textarea>' : ''}
       ${kind === 'polls' ? '<input id="p-opt1" placeholder="Opção 1"><input id="p-opt2" placeholder="Opção 2">' : ''}
       <button class="p" style="margin-top: 8px;" onclick="submitPost('${kind}')">🚀 Publicar</button>
     </div>
@@ -464,14 +706,14 @@ function postBoxView(kind) {
 }
 
 async function submitPost(kind) {
-  const title = $('#p-title').value.trim();
+  const title = sanitize($('#p-title').value.trim());
   if (!title) return toast('Insira um título!');
 
-  let content = $('#p-content') ? $('#p-content').value.trim() : '';
+  let content = $('#p-content') ? sanitize($('#p-content').value.trim()) : '';
   let options = [];
 
   if (kind === 'polls') {
-    options = [$('#p-opt1').value.trim(), $('#p-opt2').value.trim()].filter(Boolean);
+    options = [sanitize($('#p-opt1').value.trim()), sanitize($('#p-opt2').value.trim())].filter(Boolean);
     if (options.length < 2) return toast('Insira 2 opções!');
   } else if (!content) {
     return toast('Preencha o conteúdo!');
@@ -485,7 +727,11 @@ async function submitPost(kind) {
 
   if (db) await db.collection(kind).add(postObj);
   toast('🎉 Publicado globalmente!');
-  if (!isOwner) { myProfile.coins += 10; localStorage.setItem('cb_coins', myProfile.coins); renderHeader(); }
+  if (!isOwner) {
+    myProfile.coins += 10;
+    saveProfileToGlobal();
+    renderHeader();
+  }
 }
 
 function renderContentList(kind) {
@@ -574,7 +820,7 @@ function chatView() {
   return `
     <div class="card">
       <b style="font-size: 16px;">💬 Chat Global Conectado</b>
-      <p class="rules">Converse com todos os usuários ativos no site!</p>
+      <p class="rules">Converse com todos os usuários ativos em tempo real!</p>
       <div class="online-users-list" id="online-users-box"></div>
     </div>
     <div id="msgs"></div>
@@ -610,7 +856,7 @@ function drawMessages() {
 
 async function sendChatMessage() {
   const input = $('#chat-input');
-  const text = input.value.trim();
+  const text = sanitize(input.value.trim());
   if (!text) return;
   const msgObj = { text, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now() };
   input.value = '';
@@ -650,7 +896,7 @@ function drawAIMessages() {
 }
 
 function sendAIMessage() {
-  const input = $('#ai-input'), query = input.value.trim();
+  const input = $('#ai-input'), query = sanitize(input.value.trim());
   if (!query) return;
   input.value = ''; dataList.aiMsgs.push({ role: 'user', text: query });
   drawAIMessages();
@@ -661,7 +907,7 @@ function sendAIMessage() {
 }
 
 function generateAIGame() {
-  const input = $('#ai-game-prompt'), prompt = input.value.trim();
+  const input = $('#ai-game-prompt'), prompt = sanitize(input.value.trim());
   if (!prompt) return toast('Digite uma ideia!');
   toast('⏳ IA gerando jogo...');
   setTimeout(() => {
@@ -687,14 +933,41 @@ function profileView() {
         <span class="av" style="width:50px; height:50px; font-size:22px;">${myProfile.badge}</span>
         <div>
           <b style="font-size:18px;">${esc(myProfile.name)}</b>
-          <div class="by">${isOwner ? 'Status: Dono Principal' : 'Status: Jogador'}</div>
+          <div class="by">${isOwner ? 'Status: Dono Principal (Infinito)' : 'Status: Jogador'}</div>
         </div>
       </div>
     </div>
+
+    <div class="card">
+      <b>🎁 Recompensa Diária</b>
+      <p class="rules">Resgate suas moedas grátis todos os dias!</p>
+      <button class="p" style="width:100%; margin-top:6px;" onclick="claimDailyReward()">✨ Resgatar Recompensa Diária (+50 Moedas)</button>
+    </div>
+
     <div class="card">
       <b>Configurações de Perfil</b>
-      ${isOwner ? '<p class="rules">Você está logado como Dono Principal (Pedro Mesquita).</p>' : `
+      ${isOwner ? '<p class="rules">Você está logado como Dono Principal com acesso total e moedas infinitas.</p>' : `
         <input id="new-name" value="${esc(myProfile.name)}">
-        <button class="p" style="margin-top:6px;" onclick="myProfile.name=$('#new-name').value; saveProfileToGlobal(); toast('Nome salvo!'); render();">Salvar Nome</button>
+        <button class="p" style="margin-top:6px;" onclick="myProfile.name=sanitize($('#new-name').value); saveProfileToGlobal(); toast('Nome salvo!'); render();">Salvar Nome</button>
         <hr style="border:0; border-top:1px solid var(--bd); margin:12px 0;">
-        <input id="owner-
+        <input id="owner-pass" type="password" placeholder="Senha do Dono (Pedro)">
+        <button class="s" style="margin-top:4px;" onclick="loginOwner()">Ativar Modo Dono</button>
+      `}
+    </div>
+  `;
+}
+
+function loginOwner() {
+  const pass = $('#owner-pass').value;
+  if (pass === 'dono-pedro-2026') {
+    localStorage.setItem(OWNER_KEY, 'true');
+    location.reload();
+  } else {
+    toast('Senha incorreta!');
+  }
+}
+
+nav(); render(); setupGlobalSync();
+</script>
+</body>
+</html>
