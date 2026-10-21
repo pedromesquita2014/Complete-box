@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box - Edição Suprema com Roleta</title>
+<title>Complete Box - Edição Suprema com Missões & Chat Offline</title>
 <style>
 :root {
   --bg: #120e24;
@@ -195,7 +195,7 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
   flex: none;
   font-size: 16px;
 }
-#msgs { height: 50vh; overflow-y: auto; border-radius: 14px; padding: 12px; border: 1px solid var(--bd); background: rgba(18,14,36,0.7); }
+#msgs { height: 45vh; overflow-y: auto; border-radius: 14px; padding: 12px; border: 1px solid var(--bd); background: rgba(18,14,36,0.7); }
 .m { display: flex; gap: 10px; margin: 10px 0; align-items: flex-start; }
 .bub {
   background: var(--card);
@@ -225,15 +225,21 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
 @keyframes pop { from { transform: translate(-50%, -20px) scale(0.7); opacity: 0; } }
 .online-users-list { display: flex; gap: 6px; overflow-x: auto; padding: 6px 0; }
-.online-user-tag { background: var(--bg); border: 1px solid var(--bd); border-radius: 16px; padding: 4px 10px; font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.online-user-tag { background: var(--bg); border: 1px solid var(--bd); border-radius: 16px; padding: 4px 10px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
 </style>
-</
+</head>
+<body>
+
+<header>
+  <span class="logo">📦 Complete Box</span>
+  <span class="online-badge"><span class="online-dot"></span> Missões & Chat Offline Ativos</span>
+  <span class="coins" id="coins">🪙 0</span>
 </header>
 
 <div class="hero">
   <div>
-  
-    <div style="font-size: 12px; opacity: 0.9; font-weight: normal;">Publique, jogue, teste a Roleta da Sorte e use a Poupança Complete.</div>
+    🌐 <b>Rede Global Conectada!</b>
+    <div style="font-size: 12px; opacity: 0.9; font-weight: normal;">Cumpra missões diárias, envie mensagens offline e divirta-se.</div>
   </div>
 </div>
 
@@ -326,7 +332,9 @@ let searchQuery = '';
 const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
-  ['chat', '💬 Chat'],
+  ['chat', '💬 Chat Global & Offline'],
+  ['missions', '🎯 Missões'],
+  ['miner', '⛏️ Mineração'],
   ['speak', '🗣️ Speak'],
   ['spin', '🎡 Roleta'],
   ['ai', '🤖 IA'],
@@ -424,6 +432,8 @@ function render() {
   const app = $('#app');
 
   if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); renderChatUsers(); return; }
+  if (tab === 'missions') { app.innerHTML = missionsView(); return; }
+  if (tab === 'miner') { app.innerHTML = minerView(); return; }
   if (tab === 'speak') { app.innerHTML = speakView(); return; }
   if (tab === 'spin') { app.innerHTML = spinView(); return; }
   if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
@@ -441,7 +451,84 @@ function render() {
   renderContentList(tab);
 }
 
-// --- COMPLETE LUCKY SPIN (ROLETA DA SORTE) ---
+// --- SISTEMA DE MISSÕES DIÁRIAS ---
+function getMissionStatus(key) {
+  return localStorage.getItem('cb_mission_' + key) === 'done';
+}
+
+function claimMission(key, reward) {
+  if (getMissionStatus(key)) return toast('Você já concluiu esta missão!');
+  localStorage.setItem('cb_mission_' + key, 'done');
+  if (!isOwner) {
+    myProfile.coins += reward;
+    saveProfileToGlobal();
+  }
+  renderHeader();
+  render();
+  toast(`🎉 Missão concluída! +${reward} Complete Coins.`);
+}
+
+function missionsView() {
+  const missions = [
+    { key: 'post', title: 'Publicar um Conteúdo', desc: 'Publique um vídeo ou jogo na rede global.', reward: 30, action: () => go('videos') },
+    { key: 'spin', title: 'Girar a Roleta da Sorte', desc: 'Teste sua sorte na aba Roleta.', reward: 20, action: () => go('spin') },
+    { key: 'chat', title: 'Conversar no Chat Global', desc: 'Envie pelo menos uma mensagem no chat.', reward: 15, action: () => go('chat') },
+    { key: 'speak', title: 'Praticar no Complete Speak', desc: 'Responda a um quiz de tradução.', reward: 25, action: () => go('speak') }
+  ];
+
+  return `
+    <div class="card">
+      <b style="font-size: 18px;">🎯 Missões Diárias & Recompensas</b>
+      <p class="rules">Cumpra as tarefas abaixo para ganhar Complete Coins extras todos os dias!</p>
+    </div>
+
+    ${missions.map(m => {
+      const done = getMissionStatus(m.key);
+      return `
+        <div class="card row" style="justify-content:space-between;">
+          <div>
+            <b>${esc(m.title)}${done ? '✅' : ''}</b>
+            <div class="rules" style="margin:4px 0 0;">${esc(m.desc)}</div>
+            <div style="color:var(--gold); font-weight:bold; margin-top:4px;">🪙 +${m.reward} Moedas</div>
+          </div>
+          <div>
+            ${done ? '<button class="s" disabled>Concluído</button>' : `<button class="p" onclick="claimMission('${m.key}', ${m.reward})">Resgatar 🎁</button>`}
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+// --- MINI-GAME: MINERAÇÃO DE MOEDAS (CLICKER) ---
+let minerClicks = 0;
+function minerView() {
+  return `
+    <div class="card" style="text-align:center;">
+      <b style="font-size: 20px;">⛏️ Mineração de Complete Coins</b>
+      <p class="rules">Clique freneticamente no bloco para minerar moedas extras para sua carteira!</p>
+      
+      <div style="margin: 30px auto; width: 120px; height: 120px; background: linear-gradient(135deg, var(--ac), var(--ac2)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; cursor: pointer; box-shadow: 0 0 25px rgba(124,83,255,0.6);" onclick="clickMiner()">
+        💎
+      </div>
+      <div style="font-size: 16px; color: var(--gold);">Moedas Mineradas nesta sessão: <b id="miner-count">0</b></div>
+    </div>
+  `;
+}
+
+function clickMiner() {
+  minerClicks++;
+  const el = $('#miner-count');
+  if (el) el.textContent = minerClicks;
+  if (!isOwner && minerClicks % 10 === 0) {
+    myProfile.coins += 5;
+    saveProfileToGlobal();
+    renderHeader();
+    toast('⚡ +5 Moedas mineradas!');
+  }
+}
+
+// --- COMPLETE LUCKY SPIN ---
 function spinView() {
   return `
     <div class="card" style="text-align:center;">
@@ -477,7 +564,6 @@ function doSpinWheel() {
   toast(`🎉 Parabéns! Você ganhou ${won} Complete Coins na Roleta!`);
 }
 
-// --- RECOMPENSA DIÁRIA ---
 function claimDailyReward() {
   const lastClaim = localStorage.getItem('cb_last_claim');
   const today = new Date().toDateString();
@@ -569,26 +655,32 @@ function sendGift() {
   render();
 }
 
-const SHOP_ITEMS = [
-  { id: 's1', name: '👑 Coroa Lendária de Ouro', desc: 'Destaque máximo e coroa dourada no perfil.', price: 500, badge: '👑' },
-  { id: 's2', name: '⚡ Insígnia de Raio VIP', desc: 'Mostre que você é super ativo na rede.', price: 300, badge: '⚡' },
-  { id: 's3', name: '🔥 Chamas Místicas', desc: 'Efeito especial de status para conversas.', price: 750, badge: '🔥' },
-  { id: 's4', name: '💎 Escudo Diamante Admin', desc: 'Proteção e privilégios visuais exclusivos.', price: 1200, badge: '💎' },
-  { id: 's5', name: '🚀 Foguete Espacial VIP', desc: 'Símbolo de pioneirismo no Complete Box.', price: 2000, badge: '🚀' }
-];
+// --- LOJA COM MAIS DE 100 ITENS ---
+const EMOJIS = ['👑','⚡','🔥','💎','🚀','⭐','🌟','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','💎','🎩','🎸','🍕','🍔','⚡','🛸','💡','🪐','🎲','🍉','💎','🍩'];
+const ADJ = ['Lendário','Supremo','Místico','Cósmico','Galáctico','Elite','Imperial','Divino','Solar','Lunar','Titanium','Cyber','Fênix','Soberano','Alpha','Quantum','Vanguard','Stellar','Neon','Prime'];
+const TYPE = ['Coroa','Escudo','Espada','Orbe','Símbolo','Manto','Anel','Cristal','Aura','Emblema'];
+
+let SHOP_ITEMS = [];
+for (let i = 1; i <= 100; i++) {
+  let badge = EMOJIS[(i - 1) % EMOJIS.length];
+  let name = `${badge} ${TYPE[(i - 1) % TYPE.length]} ${ADJ[(i - 1) % ADJ.length]} #${i}`;
+  let desc = `Item exclusivo nível ${i} para customização avançada de perfil.`;
+  let price = 250 + (i * 75);
+  SHOP_ITEMS.push({ id: 'item_' + i, name, desc, price, badge });
+}
 
 function shopView() {
   return `
     <div class="card">
-      <b style="font-size: 18px;">🛍️ Loja Oficial do Complete Box</b>
-      <p class="rules">Itens exclusivos atualizados. Se faltar saldo na carteira, o sistema transfere automaticamente da sua <b>Poupança Complete</b>!</p>
+      <b style="font-size: 18px;">🛍️ Loja Oficial Expandida (100+ Itens)</b>
+      <p class="rules">Escolha entre mais de 100 itens exclusivos. Se faltar saldo na carteira, o sistema transfere automaticamente da sua <b>Poupança Complete</b>!</p>
       <div style="font-size:13px; color:var(--gold); margin-bottom:10px;">Saldo Disponível (Carteira + Poupança): 🪙 ${isOwner ? '∞' : (myProfile.coins + myProfile.savings)}</div>
     </div>
 
     ${SHOP_ITEMS.map(item => `
       <div class="card row" style="justify-content:space-between;">
         <div>
-          <b style="font-size:16px;">${item.badge}${esc(item.name)}</b>
+          <b style="font-size:16px;">${esc(item.name)}</b>
           <div class="rules" style="margin:4px 0 0;">${esc(item.desc)}</div>
           <div style="color:var(--gold); font-weight:bold; margin-top:4px;">🪙 ${item.price} Moedas</div>
         </div>
@@ -623,6 +715,75 @@ function buyShopItem(id, price, badge) {
   renderHeader();
   render();
   toast('🎉 Compra realizada com sucesso! Saldo transferido e item aplicado.');
+}
+
+// --- CHAT COM MENSAGENS OFFLINE / CAIXA POSTAL ---
+function chatView() {
+  return `
+    <div class="card">
+      <b style="font-size: 16px;">💬 Chat Global & Mensagens Offline</b>
+      <p class="rules">Envie mensagens públicas no chat ou envie diretamente para um usuário mesmo se ele estiver offline! Ele receberá quando entrar.</p>
+      <div class="online-users-list" id="online-users-box"></div>
+    </div>
+
+    <div class="card">
+      <b>📬 Enviar Mensagem Direta / Offline para Alguém:</b>
+      <select id="dm-target" style="margin:6px 0;">
+        <option value="">Todos no Chat Global</option>
+        ${Object.keys(profiles).map(id => `<option value="${id}">${esc(profiles[id].badge \vert{}\vert{} '👤')} ${esc(profiles[id].name || 'Usuário')}</option>`).join('')}
+      </select>
+    </div>
+
+    <div id="msgs"></div>
+    <div class="row" style="margin-top:10px;">
+      <input id="chat-input" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendChatMessage()" style="flex:1;">
+      <button class="p" onclick="sendChatMessage()">Enviar 🚀</button>
+    </div>
+  `;
+}
+
+function renderChatUsers() {
+  const box = $('#online-users-box');
+  if (!box) return;
+  box.innerHTML = onlineUsers.map(u => `<div class="online-user-tag"><span class="online-dot"></span> ${esc(u.badge)} ${esc(u.name)}</div>`).join('');
+}
+
+function drawMessages() {
+  const box = $('#msgs');
+  if (!box) return;
+  const msgs = dataList.chat || [];
+  // Filtra mensagens globais ou direcionadas para mim (mesmo que offline antes)
+  const filtered = msgs.filter(m => !m.targetId || m.targetId === uid || m.by === uid);
+
+  box.innerHTML = filtered.map(m => `
+    <div class="m" style="${m.by === uid ? 'flex-direction:row-reverse;' : ''}">
+      <span class="av">${esc((m.authorName || 'U')[0].toUpperCase())}</span>
+      <div class="bub" style="${m.by === uid ? 'background:var(--ac); color:#fff;' : ''}">
+        <b>${esc(m.authorBadge || '👤')} ${esc(m.authorName || 'Usuário')} ${m.targetId ? '🔒 (Mensagem Direta / Offline)' : ''}</b>
+        ${esc(m.text)}
+        <br><i>${timeAgo(m.ts)}</i>
+      </div>
+    </div>
+  `).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendChatMessage() {
+  const input = $('#chat-input');
+  const text = sanitize(input.value.trim());
+  if (!text) return;
+  const targetId = $('#dm-target') ? $('#dm-target').value : '';
+
+  const msgObj = { 
+    text, 
+    by: uid, 
+    targetId: targetId || null, 
+    authorName: myProfile.name, 
+    authorBadge: myProfile.badge, 
+    ts: Date.now() 
+  };
+  input.value = '';
+  if (db) await db.collection('global_chat').add(msgObj);
 }
 
 const SPEAK_LEVELS = {
@@ -810,53 +971,6 @@ async function votePoll(id, optIdx) {
   if (db) await db.collection('polls').doc(id).update({ votes });
 }
 
-function chatView() {
-  return `
-    <div class="card">
-      <b style="font-size: 16px;">💬 Chat Global Conectado</b>
-      <p class="rules">Converse com todos os usuários ativos em tempo real!</p>
-      <div class="online-users-list" id="online-users-box"></div>
-    </div>
-    <div id="msgs"></div>
-    <div class="row" style="margin-top:10px;">
-      <input id="chat-input" placeholder="Mensagem..." onkeydown="if(event.key==='Enter')sendChatMessage()" style="flex:1;">
-      <button class="p" onclick="sendChatMessage()">Enviar 🚀</button>
-    </div>
-  `;
-}
-
-function renderChatUsers() {
-  const box = $('#online-users-box');
-  if (!box) return;
-  box.innerHTML = onlineUsers.map(u => `<div class="online-user-tag"><span class="online-dot"></span> ${esc(u.badge)} ${esc(u.name)}</div>`).join('');
-}
-
-function drawMessages() {
-  const box = $('#msgs');
-  if (!box) return;
-  const msgs = dataList.chat || [];
-  box.innerHTML = msgs.map(m => `
-    <div class="m" style="${m.by === uid ? 'flex-direction:row-reverse;' : ''}">
-      <span class="av">${esc((m.authorName || 'U')[0].toUpperCase())}</span>
-      <div class="bub" style="${m.by === uid ? 'background:var(--ac); color:#fff;' : ''}">
-        <b>${esc(m.authorBadge || '👤')} ${esc(m.authorName || 'Usuário')}</b>
-        ${esc(m.text)}
-        <br><i>${timeAgo(m.ts)}</i>
-      </div>
-    </div>
-  `).join('');
-  box.scrollTop = box.scrollHeight;
-}
-
-async function sendChatMessage() {
-  const input = $('#chat-input');
-  const text = sanitize(input.value.trim());
-  if (!text) return;
-  const msgObj = { text, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now() };
-  input.value = '';
-  if (db) await db.collection('global_chat').add(msgObj);
-}
-
 function aiView() {
   return `
     <div class="card">
@@ -945,7 +1059,16 @@ function profileView() {
         <button class="p" style="margin-top:6px;" onclick="myProfile.name=sanitize($('#new-name').value); saveProfileToGlobal(); toast('Nome salvo!'); render();">Salvar Nome</button>
         <hr style="border:0; border-top:1px solid var(--bd); margin:12px 0;">
         <input id="owner-pass" type="password" placeholder="Senha do Dono (Pedro)">
-        <button class="s" style="margin-top:4px;" 
+        <button class="s" style="margin-top:4px;" onclick="loginOwner()">Ativar Modo Dono</button>
+      `}
+    </div>
+  `;
+}
+
+function loginOwner() {
+  const pass = $('#owner-pass').value;
+  if (pass === 'dono-pedro-2026') {
+    localStorage.setItem(OWNER_KEY, 'true');
     location.reload();
   } else {
     toast('Senha incorreta!');
