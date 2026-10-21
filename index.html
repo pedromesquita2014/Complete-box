@@ -1,7 +1,4 @@
-html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Complete Box</title>
 <style>
@@ -700,24 +697,4 @@ function profileView() {
         <input id="new-name" value="${esc(myProfile.name)}">
         <button class="p" style="margin-top:6px;" onclick="myProfile.name=$('#new-name').value; saveProfileToGlobal(); toast('Nome salvo!'); render();">Salvar Nome</button>
         <hr style="border:0; border-top:1px solid var(--bd); margin:12px 0;">
-        <input id="owner-pass" type="password" placeholder="Senha do Dono (Pedro)">
-        <button class="s" style="margin-top:4px;" onclick="loginOwner()">Ativar Modo Dono</button>
-      `}
-    </div>
-  `;
-}
-
-function loginOwner() {
-  const pass = $('#owner-pass').value;
-  if (pass === 'dono-pedro-2026') {
-    localStorage.setItem(OWNER_KEY, 'true');
-    location.reload();
-  } else {
-    toast('Senha incorreta!');
-  }
-}
-
-function shopView() {
-  return `
-    <div class="card">
-      <b>🛍️ 
+        <input id="owner-
