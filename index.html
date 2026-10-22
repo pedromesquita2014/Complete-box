@@ -345,64 +345,7 @@ const timeAgo = ts => {
   const sec = Math.floor((Date.now() - ts) / 1000);
   if (sec < 60) return 'agora';
   if (sec < 3600) return Math.floor(sec/60) + 'm atrás';
-  return Math.floor(sec/3600) + 'h atrás';
-};
-
-function nav() {
-  $('#nav').innerHTML = TABS.map(([k, l]) => `<button class="${k === tab ? 'on' : ''}" onclick="go('${k}')">${l}</button>`).join('');
-}
-
-function go(k) { tab = k; searchQuery = ''; nav(); render(); }
-
-function renderHeader() {
-  const displayCoins = isOwner ? '🪙 ∞ (Dono)' : `🪙 ${myProfile.coins}`;
-  $('#coins').textContent = displayCoins;
-}
-
-function setupGlobalSync() {
-  if (!db) return;
-
-  db.collection('profiles').onSnapshot(snap => {
-    profiles = {}; onlineUsers = [];
-    snap.docs.forEach(doc => {
-      const d = doc.data(); profiles[doc.id] = d;
-      if (d.ts && (Date.now() - d.ts < 300000)) onlineUsers.push({ id: doc.id, name: d.name || 'Usuário', badge: d.badge || '👤', coins: d.coins || 0 });
-    });
-    if (tab === 'chat' || tab === 'bank') renderChatUsers();
-  });
-
-  ['videos', 'games', 'polls'].forEach(kind => {
-    db.collection(kind).orderBy('ts', 'desc').limit(50).onSnapshot(snap => {
-      dataList[kind] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      if (tab === kind) renderContentList(kind);
-    });
-  });
-
-  loadAutomatedNews();
-
-  db.collection('global_chat').orderBy('ts', 'asc').limit(100).onSnapshot(snap => {
-    dataList.chat = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    if (tab === 'chat') drawMessages();
-  });
-}
-
-async function loadAutomatedNews() {
-  try {
-    const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/tecnologia/');
-    const data = await res.json();
-    if (data && data.items) {
-      dataList.news = data.items.slice(0, 10).map((item, idx) => ({
-        id: 'news_' + idx,
-        title: item.title,
-        content: item.description.replace(/<[^>]*>?/gm, ''),
-        authorName: 'G1 Tecnologia (Automático)',
-        authorBadge: '📰',
-        ts: new Date(item.pubDate).getTime(),
-        likes: []
-      }));
-    } else {
-      fallbackNews();
-    }
+  return Math.floor(sec/3600) + 'h     }
   } catch(e) {
     fallbackNews();
   }
