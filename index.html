@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box - Edição Definitiva</title>
+<title>Complete Box</title>
 <style>
 :root {
   --bg: #120e24;
@@ -148,7 +148,6 @@ input:focus, textarea:focus, select:focus {
   outline: 2px solid var(--ac);
   border-color: transparent;
 }
-textarea { min-height: 90px; resize: vertical; }
 button.p {
   background: linear-gradient(120deg, var(--ac), #a24bff);
   color: #fff;
@@ -174,7 +173,6 @@ button.s {
 .by { font-size: 12px; color: var(--mu); }
 .empty { text-align: center; color: var(--mu); padding: 32px 12px; }
 iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 12px; background: #000; }
-iframe.g { aspect-ratio: 4/3; background: #fff; }
 .av {
   width: 38px;
   height: 38px;
@@ -217,7 +215,7 @@ iframe.g { aspect-ratio: 4/3; background: #fff; }
 <div class="hero">
   <div>
     🌐 <b>Rede Global Conectada!</b>
-    <div style="font-size: 12px; opacity: 0.9;">Jogue HTML, resgate o baú de 1h, use a poupança e aproveite a loja.</div>
+    <div style="font-size: 12px; opacity: 0.9;">Missões, chat offline, roleta, poupança e loja ativos.</div>
   </div>
 </div>
 
@@ -299,7 +297,7 @@ function toast(msg) {
 
 let tab = 'videos';
 let profiles = {};
-let dataList = { videos: [], games: [], polls: [], chat: [] };
+let dataList = { videos: [], games: [], news: [], polls: [], chat: [] };
 let onlineUsers = [];
 let searchQuery = '';
 
@@ -307,7 +305,6 @@ const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
   ['chat', '💬 Chat'],
-  ['chest', '🎁 Baú 1h'],
   ['missions', '🎯 Missões'],
   ['miner', '⛏️ Mineração'],
   ['spin', '🎡 Roleta'],
@@ -368,7 +365,6 @@ function render() {
   if (!app) return;
 
   if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); renderChatUsers(); return; }
-  if (tab === 'chest') { app.innerHTML = chestView(); return; }
   if (tab === 'missions') { app.innerHTML = missionsView(); return; }
   if (tab === 'miner') { app.innerHTML = minerView(); return; }
   if (tab === 'spin') { app.innerHTML = spinView(); return; }
@@ -376,55 +372,18 @@ function render() {
   if (tab === 'shop') { app.innerHTML = shopView(); return; }
   if (tab === 'me') { app.innerHTML = profileView(); return; }
 
-  let titles = { videos: '🎬 Publicar Vídeo', games: '🎮 Publicar Jogo HTML', polls: '📊 Criar Enquete' };
   app.innerHTML = `
     <div class="card">
-      <b>${titles[tab] || 'Publicar'}</b>
+      <b>🎬 Publicar Conteúdo Global</b>
       <input id="p-title" placeholder="Título" maxlength="100">
-      ${tab === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML do jogo aqui..."></textarea>' : '<input id="p-content" placeholder="Link do YouTube / URL">'}
-      <button class="p" style="margin-top:8px;" onclick="submitPost('${tab}')">🚀 Publicar</button>
+      <input id="p-content" placeholder="Link (YouTube / MP4)">
+      <button class="p" style="margin-top:8px;" onclick="submitPost()">🚀 Publicar</button>
     </div>
     <div id="content-list"></div>
   `;
   renderContentList(tab);
 }
 
-// --- SISTEMA DE BAÚ A CADA 1 HORA ---
-function chestView() {
-  const lastChest = parseInt(localStorage.getItem('cb_last_chest') || '0');
-  const now = Date.now();
-  const diff = now - lastChest;
-  const oneHour = 3600000;
-  const canClaim = diff >= oneHour;
-  const timeLeft = canClaim ? 0 : Math.ceil((oneHour - diff) / 60000);
-
-  return `
-    <div class="card" style="text-align:center;">
-      <b style="font-size:20px;">🎁 Baú Misterioso (A cada 1h)</b>
-      <p class="rules">Volte a cada 1 hora para abrir o baú e resgatar moedas grátis!</p>
-      <div style="font-size:50px; margin:20px 0;">📦</div>
-      <div id="chest-status" style="margin-bottom:15px; font-weight:bold; color:var(--gold);">
-        ${canClaim ? '✨ Baú Disponível para Resgate!' : `⏳ Próximo baú em ${timeLeft} minutos.`}
-      </div>
-      <button class="p" ${canClaim ? '' : 'disabled style="opacity:0.5; cursor:not-allowed;"'} onclick="claimChest()">Abrir Baú 🔓</button>
-    </div>
-  `;
-}
-
-function claimChest() {
-  const lastChest = parseInt(localStorage.getItem('cb_last_chest') || '0');
-  const now = Date.now();
-  if (now - lastChest < 3600000) return toast('O baú ainda está em tempo de recarga (1h)!');
-  
-  localStorage.setItem('cb_last_chest', now);
-  const reward = Math.floor(Math.random() * 80) + 40; // entre 40 e 120 moedas
-  if (!isOwner) { myProfile.coins += reward; saveProfileToGlobal(); }
-  renderHeader();
-  render();
-  toast(`🎉 Você abriu o baú e ganhou ${reward} moedas!`);
-}
-
-// Missões
 function claimMission(key, reward) {
   if (localStorage.getItem('cb_m_' + key) === 'done') return toast('Já concluído!');
   localStorage.setItem('cb_m_' + key, 'done');
@@ -445,7 +404,6 @@ function missionsView() {
   `;
 }
 
-// Mineração
 let minerClicks = 0;
 function minerView() {
   return `
@@ -462,7 +420,6 @@ function clickMiner() {
   if(!isOwner && minerClicks % 10 === 0) { myProfile.coins += 5; saveProfileToGlobal(); renderHeader(); toast('+5 moedas!'); }
 }
 
-// Roleta
 function spinView() {
   return `
     <div class="card" style="text-align:center;">
@@ -482,7 +439,6 @@ function doSpin() {
   renderHeader(); toast(`Ganhou ${w} moedas!`);
 }
 
-// Banco
 function bankView() {
   return `
     <div class="card">
@@ -507,32 +463,16 @@ function wit() {
   myProfile.savings -= v; myProfile.coins += v; saveProfileToGlobal(); render(); toast('Sacado!');
 }
 
-// --- LOJA EXPANDIDA COM VÁRIOS ITENS ---
-const SHOP_ITEMS = [
-  { id: 's1', name: '👑 Coroa Lendária de Ouro', desc: 'Destaque máximo e coroa dourada.', price: 500, badge: '👑' },
-  { id: 's2', name: '⚡ Insígnia de Raio VIP', desc: 'Mostre que você é super ativo.', price: 300, badge: '⚡' },
-  { id: 's3', name: '🔥 Chamas Místicas', desc: 'Efeito especial de status.', price: 750, badge: '🔥' },
-  { id: 's4', name: '💎 Escudo Diamante Admin', desc: 'Privilégios visuais exclusivos.', price: 1200, badge: '💎' },
-  { id: 's5', name: '🚀 Foguete Espacial VIP', desc: 'Símbolo de pioneirismo.', price: 2000, badge: '🚀' },
-  { id: 's6', name: '⭐ Estrela Dourada', desc: 'Brilhe em destaque na rede.', price: 400, badge: '⭐' }
-];
-
 function shopView() {
   return `
     <div class="card">
       <b>🛍️ Loja Oficial</b>
       <p class="rules">Itens exclusivos. Transferência automática da poupança se faltar na carteira.</p>
     </div>
-    ${SHOP_ITEMS.map(i => `
-      <div class="card row" style="justify-content:space-between;">
-        <div>
-          <b>${i.badge} ${esc(i.name)}</b>
-          <div class="rules" style="margin:2px 0;">${esc(i.desc)}</div>
-          <div style="color:var(--gold)">🪙 ${i.price} Moedas</div>
-        </div>
-        <button class="p" onclick="buy('${i.id}', ${i.price}, '${i.badge}')">Comprar</button>
-      </div>
-    `).join('')}
+    <div class="card row" style="justify-content:space-between;">
+      <div><b>👑 Coroa Lendária</b><div style="color:var(--gold)">🪙 500</div></div>
+      <button class="p" onclick="buy('s1', 500, '👑')">Comprar</button>
+    </div>
   `;
 }
 function buy(id, price, badge) {
@@ -544,7 +484,6 @@ function buy(id, price, badge) {
   myProfile.badge = badge; saveProfileToGlobal(); renderHeader(); render(); toast('Compra realizada!');
 }
 
-// Perfil
 function profileView() {
   return `
     <div class="card">
@@ -558,43 +497,17 @@ function profileView() {
   `;
 }
 
-// Posts & Jogos
-async function submitPost(kind) {
+async function submitPost() {
   const t = sanitize($('#p-title').value), c = sanitize($('#p-content').value);
   if(!t || !c) return toast('Preencha os campos!');
-  if(db) await db.collection(kind).add({title:t, content:c, by:uid, authorName:myProfile.name, authorBadge:myProfile.badge, ts:Date.now(), likes:[]});
+  if(db) await db.collection(tab).add({title:t, content:c, by:uid, authorName:myProfile.name, authorBadge:myProfile.badge, ts:Date.now(), likes:[]});
   toast('Publicado!');
 }
-
 function renderContentList(k) {
   const box = $('#content-list'); if(!box) return;
   const items = dataList[k] || [];
-  if (!items.length) { box.innerHTML = '<div class="empty">Nenhum conteúdo publicado.</div>'; return; }
-
-  box.innerHTML = items.map(x => {
-    let body = '';
-    if (k === 'videos') {
-      const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
-      body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
-    } else if (k === 'games') {
-      body = `<button class="p" onclick="playGame(this, '${x.id}')">▶ Jogar Jogo</button><div id="game-frame-${x.id}" style="margin-top:10px;"></div>`;
-    }
-    return `<div class="card"><h3>${esc(x.title)}</h3>${body}<div class="by" style="margin-top:8px;">Por ${esc(x.authorName)}</div></div>`;
-  }).join('');
+  box.innerHTML = items.length ? items.map(x=>`<div class="card"><h3>${esc(x.title)}</h3><p>${esc(x.content)}</p></div>`).join('') : '<div class="empty">Nenhum post.</div>';
 }
-
-function playGame(btn, id) {
-  const item = dataList.games.find(g => g.id === id);
-  if (!item) return;
-  const container = document.getElementById(`game-frame-${id}`);
-  if (container) {
-    const iframe = document.createElement('iframe');
-    iframe.className = 'g'; iframe.srcdoc = item.content;
-    container.innerHTML = ''; container.appendChild(iframe); btn.style.display = 'none';
-  }
-}
-
-// Chat
 function chatView() {
   return `
     <div class="card"><b>💬 Chat Global</b><div class="online-users-list" id="ub"></div></div>
