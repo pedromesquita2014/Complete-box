@@ -642,9 +642,7 @@ function sendGift() {
 
   if (!isOwner) {
     myProfile.coins -= amt;
-    saveProfileToGlobal();
-  }
-  toast(`🎁 Presente de ${amt} moedas enviado com sucesso!`);
+    
   render();
 }
 
