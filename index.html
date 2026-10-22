@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box</title>
+<title>Complete Box - Edição Suprema 100+ Itens</title>
 <style>
 :root {
   --bg: #120e24;
@@ -148,6 +148,7 @@ input:focus, textarea:focus, select:focus {
   outline: 2px solid var(--ac);
   border-color: transparent;
 }
+textarea { min-height: 90px; resize: vertical; }
 button.p {
   background: linear-gradient(120deg, var(--ac), #a24bff);
   color: #fff;
@@ -173,6 +174,7 @@ button.s {
 .by { font-size: 12px; color: var(--mu); }
 .empty { text-align: center; color: var(--mu); padding: 32px 12px; }
 iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 12px; background: #000; }
+iframe.g { aspect-ratio: 4/3; background: #fff; }
 .av {
   width: 38px;
   height: 38px;
@@ -215,7 +217,7 @@ iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 12px; backgr
 <div class="hero">
   <div>
     🌐 <b>Rede Global Conectada!</b>
-    <div style="font-size: 12px; opacity: 0.9;">Missões, chat offline, roleta, poupança e loja ativos.</div>
+    <div style="font-size: 12px; opacity: 0.9;">Loja gigante (100+ itens), Chat Offline, Baú de 1h e Jogos HTML.</div>
   </div>
 </div>
 
@@ -297,19 +299,20 @@ function toast(msg) {
 
 let tab = 'videos';
 let profiles = {};
-let dataList = { videos: [], games: [], news: [], polls: [], chat: [] };
+let dataList = { videos: [], games: [], polls: [], chat: [] };
 let onlineUsers = [];
 let searchQuery = '';
 
 const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
-  ['chat', '💬 Chat'],
+  ['chat', '💬 Chat Global & Offline'],
+  ['chest', '🎁 Baú 1h'],
   ['missions', '🎯 Missões'],
   ['miner', '⛏️ Mineração'],
   ['spin', '🎡 Roleta'],
   ['bank', '🏦 Poupança'],
-  ['shop', '🛍️ Loja'],
+  ['shop', '🛍️ Loja (100+ Itens)'],
   ['me', '👤 Perfil']
 ];
 
@@ -365,6 +368,7 @@ function render() {
   if (!app) return;
 
   if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); renderChatUsers(); return; }
+  if (tab === 'chest') { app.innerHTML = chestView(); return; }
   if (tab === 'missions') { app.innerHTML = missionsView(); return; }
   if (tab === 'miner') { app.innerHTML = minerView(); return; }
   if (tab === 'spin') { app.innerHTML = spinView(); return; }
@@ -372,18 +376,53 @@ function render() {
   if (tab === 'shop') { app.innerHTML = shopView(); return; }
   if (tab === 'me') { app.innerHTML = profileView(); return; }
 
+  let titles = { videos: '🎬 Publicar Vídeo', games: '🎮 Publicar Jogo HTML', polls: '📊 Criar Enquete' };
   app.innerHTML = `
     <div class="card">
-      <b>🎬 Publicar Conteúdo Global</b>
+      <b>${titles[tab] || 'Publicar'}</b>
       <input id="p-title" placeholder="Título" maxlength="100">
-      <input id="p-content" placeholder="Link (YouTube / MP4)">
-      <button class="p" style="margin-top:8px;" onclick="submitPost()">🚀 Publicar</button>
+      ${tab === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML do jogo aqui..."></textarea>' : '<input id="p-content" placeholder="Link do YouTube / URL">'}
+      <button class="p" style="margin-top:8px;" onclick="submitPost('${tab}')">🚀 Publicar</button>
     </div>
     <div id="content-list"></div>
   `;
   renderContentList(tab);
 }
 
+// --- BAÚ 1 HORA ---
+function chestView() {
+  const lastChest = parseInt(localStorage.getItem('cb_last_chest') || '0');
+  const now = Date.now();
+  const diff = now - lastChest;
+  const oneHour = 3600000;
+  const canClaim = diff >= oneHour;
+  const timeLeft = canClaim ? 0 : Math.ceil((oneHour - diff) / 60000);
+
+  return `
+    <div class="card" style="text-align:center;">
+      <b style="font-size:20px;">🎁 Baú Misterioso (A cada 1h)</b>
+      <p class="rules">Volte a cada 1 hora para abrir o baú e resgatar moedas grátis!</p>
+      <div style="font-size:50px; margin:20px 0;">📦</div>
+      <div style="margin-bottom:15px; font-weight:bold; color:var(--gold);">
+        ${canClaim ? '✨ Baú Disponível para Resgate!' : `⏳ Próximo baú em ${timeLeft} minutos.`}
+      </div>
+      <button class="p" ${canClaim ? '' : 'disabled style="opacity:0.5; cursor:not-allowed;"'} onclick="claimChest()">Abrir Baú 🔓</button>
+    </div>
+  `;
+}
+
+function claimChest() {
+  const lastChest = parseInt(localStorage.getItem('cb_last_chest') || '0');
+  const now = Date.now();
+  if (now - lastChest < 3600000) return toast('O baú ainda está em tempo de recarga (1h)!');
+  localStorage.setItem('cb_last_chest', now);
+  const reward = Math.floor(Math.random() * 80) + 40;
+  if (!isOwner) { myProfile.coins += reward; saveProfileToGlobal(); }
+  renderHeader(); render();
+  toast(`🎉 Você abriu o baú e ganhou ${reward} moedas!`);
+}
+
+// Missões
 function claimMission(key, reward) {
   if (localStorage.getItem('cb_m_' + key) === 'done') return toast('Já concluído!');
   localStorage.setItem('cb_m_' + key, 'done');
@@ -404,6 +443,7 @@ function missionsView() {
   `;
 }
 
+// Mineração
 let minerClicks = 0;
 function minerView() {
   return `
@@ -420,6 +460,7 @@ function clickMiner() {
   if(!isOwner && minerClicks % 10 === 0) { myProfile.coins += 5; saveProfileToGlobal(); renderHeader(); toast('+5 moedas!'); }
 }
 
+// Roleta
 function spinView() {
   return `
     <div class="card" style="text-align:center;">
@@ -439,6 +480,7 @@ function doSpin() {
   renderHeader(); toast(`Ganhou ${w} moedas!`);
 }
 
+// Banco
 function bankView() {
   return `
     <div class="card">
@@ -463,16 +505,37 @@ function wit() {
   myProfile.savings -= v; myProfile.coins += v; saveProfileToGlobal(); render(); toast('Sacado!');
 }
 
+// --- LOJA GIGANTE COM MAIS DE 100 ITENS ---
+const EMOJIS = ['👑','⚡','🔥','💎','🚀','⭐','🌟','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','💎','🎩','🎸','🍕','🍔','⚡','🛸','💡','🪐','🎲','🍉','💎','🍩'];
+const ADJ = ['Lendário','Supremo','Místico','Cósmico','Galáctico','Elite','Imperial','Divino','Solar','Lunar','Titanium','Cyber','Fênix','Soberano','Alpha','Quantum','Vanguard','Stellar','Neon','Prime'];
+const TYPE = ['Coroa','Escudo','Espada','Orbe','Símbolo','Manto','Anel','Cristal','Aura','Emblema'];
+
+let SHOP_ITEMS = [];
+for (let i = 1; i <= 100; i++) {
+  let badge = EMOJIS[(i - 1) % EMOJIS.length];
+  let name = `${badge} ${TYPE[(i - 1) % TYPE.length]} ${ADJ[(i - 1) % ADJ.length]} #${i}`;
+  let desc = `Item exclusivo nível ${i} para customização avançada.`;
+  let price = 250 + (i * 50);
+  SHOP_ITEMS.push({ id: 'item_' + i, name, desc, price, badge });
+}
+
 function shopView() {
   return `
     <div class="card">
-      <b>🛍️ Loja Oficial</b>
-      <p class="rules">Itens exclusivos. Transferência automática da poupança se faltar na carteira.</p>
+      <b>🛍️ Loja Oficial (100+ Itens Exclusivos)</b>
+      <p class="rules">Se faltar saldo na carteira, o sistema transfere automaticamente da sua <b>Poupança Complete</b>!</p>
+      <div style="font-size:13px; color:var(--gold); margin-bottom:10px;">Saldo Disponível: 🪙 ${isOwner ? '∞' : (myProfile.coins + myProfile.savings)}</div>
     </div>
-    <div class="card row" style="justify-content:space-between;">
-      <div><b>👑 Coroa Lendária</b><div style="color:var(--gold)">🪙 500</div></div>
-      <button class="p" onclick="buy('s1', 500, '👑')">Comprar</button>
-    </div>
+    ${SHOP_ITEMS.map(i => `
+      <div class="card row" style="justify-content:space-between;">
+        <div>
+          <b>${esc(i.name)}</b>
+          <div class="rules" style="margin:2px 0;">${esc(i.desc)}</div>
+          <div style="color:var(--gold)">🪙 ${i.price} Moedas</div>
+        </div>
+        <button class="p" onclick="buy('${i.id}', ${i.price}, '${i.badge}')">Comprar</button>
+      </div>
+    `).join('')}
   `;
 }
 function buy(id, price, badge) {
@@ -484,6 +547,7 @@ function buy(id, price, badge) {
   myProfile.badge = badge; saveProfileToGlobal(); renderHeader(); render(); toast('Compra realizada!');
 }
 
+// Perfil
 function profileView() {
   return `
     <div class="card">
@@ -497,36 +561,86 @@ function profileView() {
   `;
 }
 
-async function submitPost() {
+// Publicações e Jogos
+async function submitPost(kind) {
   const t = sanitize($('#p-title').value), c = sanitize($('#p-content').value);
   if(!t || !c) return toast('Preencha os campos!');
-  if(db) await db.collection(tab).add({title:t, content:c, by:uid, authorName:myProfile.name, authorBadge:myProfile.badge, ts:Date.now(), likes:[]});
-  toast('Publicado!');
+  if(db) await db.collection(kind).add({title:t, content:c, by:uid, authorName:myProfile.name, authorBadge:myProfile.badge, ts:Date.now(), likes:[]});
+  toast('Publicado com sucesso!');
 }
+
 function renderContentList(k) {
   const box = $('#content-list'); if(!box) return;
   const items = dataList[k] || [];
-  box.innerHTML = items.length ? items.map(x=>`<div class="card"><h3>${esc(x.title)}</h3><p>${esc(x.content)}</p></div>`).join('') : '<div class="empty">Nenhum post.</div>';
+  if (!items.length) { box.innerHTML = '<div class="empty">Nenhum conteúdo publicado.</div>'; return; }
+
+  box.innerHTML = items.map(x => {
+    let body = '';
+    if (k === 'videos') {
+      const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+      body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
+    } else if (k === 'games') {
+      body = `<button class="p" onclick="playGame(this, '${x.id}')">▶ Jogar Jogo</button><div id="game-frame-${x.id}" style="margin-top:10px;"></div>`;
+    }
+    return `<div class="card"><h3>${esc(x.title)}</h3>${body}<div class="by" style="margin-top:8px;">Por ${esc(x.authorName)}</div></div>`;
+  }).join('');
 }
+
+function playGame(btn, id) {
+  const item = dataList.games.find(g => g.id === id);
+  if (!item) return;
+  const container = document.getElementById(`game-frame-${id}`);
+  if (container) {
+    const iframe = document.createElement('iframe');
+    iframe.className = 'g'; iframe.srcdoc = item.content;
+    container.innerHTML = ''; container.appendChild(iframe); btn.style.display = 'none';
+  }
+}
+
+// --- CHAT COM MENSAGENS OFFLINE / DIRETAS ---
 function chatView() {
   return `
-    <div class="card"><b>💬 Chat Global</b><div class="online-users-list" id="ub"></div></div>
+    <div class="card">
+      <b>💬 Chat Global & Mensagens Offline</b>
+      <p class="rules">Envie mensagens públicas ou escolha um destinatário (mesmo offline) para enviar uma mensagem direta que ele lerá ao entrar.</p>
+      <select id="dm-target" style="margin:6px 0;">
+        <option value="">Todos no Chat Global</option>
+        ${Object.keys(profiles).map(id => `<option value="${id}">${esc(profiles[id].badge || '👤')} ${esc(profiles[id].name || 'Usuário')}</option>`).join('')}
+      </select>
+    </div>
     <div id="msgs" style="height:40vh; overflow-y:auto; border:1px solid var(--bd); padding:10px; border-radius:10px; background:rgba(0,0,0,0.2);"></div>
-    <div class="row" style="margin-top:10px;"><input id="ci" style="flex:1;" placeholder="Mensagem..."><button class="p" onclick="sendChat()">Enviar</button></div>
+    <div class="row" style="margin-top:10px;"><input id="ci" style="flex:1;" placeholder="Escreva sua mensagem..."><button class="p" onclick="sendChat()">Enviar 🚀</button></div>
   `;
 }
-function renderChatUsers() {
-  const b = $('#ub'); if(b) b.innerHTML = onlineUsers.map(u=>`<div class="online-user-tag"><span class="online-dot"></span>${esc(u.name)}</div>`).join('');
-}
+
 function drawMessages() {
   const m = $('#msgs'); if(!m) return;
-  m.innerHTML = (dataList.chat||[]).map(x=>`<div style="margin:6px 0;"><b>${esc(x.authorName)}:</b> ${esc(x.text)}</div>`).join('');
+  const msgs = dataList.chat || [];
+  // Exibe chat global ou mensagens direcionadas a mim
+  const filtered = msgs.filter(x => !x.targetId || x.targetId === uid || x.by === uid);
+  
+  m.innerHTML = filtered.map(x => `
+    <div style="margin:8px 0; padding:8px; background:rgba(255,255,255,0.03); border-radius:8px;">
+      <b>${esc(x.authorBadge || '👤')} ${esc(x.authorName)} ${x.targetId ? '🔒 (DM Offline)' : ''}:</b> 
+      <span>${esc(x.text)}</span>
+    </div>
+  `).join('');
   m.scrollTop = m.scrollHeight;
 }
+
 async function sendChat() {
   const i = $('#ci'); if(!i || !i.value.trim()) return;
   const text = sanitize(i.value.trim()); i.value='';
-  if(db) await db.collection('global_chat').add({text, by:uid, authorName:myProfile.name, authorBadge:myProfile.badge, ts:Date.now()});
+  const targetId = $('#dm-target') ? $('#dm-target').value : '';
+
+  if(db) await db.collection('global_chat').add({
+    text, 
+    by: uid, 
+    targetId: targetId || null, 
+    authorName: myProfile.name, 
+    authorBadge: myProfile.badge, 
+    ts: Date.now()
+  });
 }
 
 nav();
