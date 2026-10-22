@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box - Edição Suprema com Missões & Chat Offline</title>
+<title>Complete Box</title>
 <style>
 :root {
   --bg: #120e24;
@@ -131,7 +131,6 @@ main {
   padding: 16px;
   margin: 14px 0;
   box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-  animation: fadeIn 0.3s ease-out;
 }
 .rules { font-size: 13px; color: var(--mu); margin-bottom: 8px; }
 input, textarea, select {
@@ -149,7 +148,6 @@ input:focus, textarea:focus, select:focus {
   outline: 2px solid var(--ac);
   border-color: transparent;
 }
-textarea { min-height: 90px; resize: vertical; }
 button.p {
   background: linear-gradient(120deg, var(--ac), #a24bff);
   color: #fff;
@@ -160,9 +158,7 @@ button.p {
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(124,83,255,0.35);
-  transition: transform 0.1s, opacity 0.2s;
 }
-button.p:active { transform: scale(0.96); }
 button.s {
   background: rgba(255,255,255,0.05);
   border: 1px solid var(--bd);
@@ -172,15 +168,11 @@ button.s {
   font: inherit;
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.2s;
 }
-button.s:hover { background: rgba(255,255,255,0.1); }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .by { font-size: 12px; color: var(--mu); }
 .empty { text-align: center; color: var(--mu); padding: 32px 12px; }
 iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 12px; background: #000; }
-iframe.g { aspect-ratio: 4/3; background: #fff; }
-pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; padding: 12px; overflow-x: auto; font-size: 12px; white-space: pre-wrap; color: var(--tx); }
 .av {
   width: 38px;
   height: 38px;
@@ -195,19 +187,6 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
   flex: none;
   font-size: 16px;
 }
-#msgs { height: 45vh; overflow-y: auto; border-radius: 14px; padding: 12px; border: 1px solid var(--bd); background: rgba(18,14,36,0.7); }
-.m { display: flex; gap: 10px; margin: 10px 0; align-items: flex-start; }
-.bub {
-  background: var(--card);
-  color: var(--tx);
-  border-radius: 14px;
-  padding: 8px 14px;
-  max-width: 82%;
-  border: 1px solid var(--bd);
-  word-break: break-word;
-}
-.bub b { font-size: 12px; display: block; margin-bottom: 2px; }
-.bub i { font-size: 11px; color: var(--mu); font-style: normal; }
 #toast {
   position: fixed;
   left: 50%;
@@ -220,10 +199,7 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
   font-weight: 700;
   z-index: 99;
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
-@keyframes pop { from { transform: translate(-50%, -20px) scale(0.7); opacity: 0; } }
 .online-users-list { display: flex; gap: 6px; overflow-x: auto; padding: 6px 0; }
 .online-user-tag { background: var(--bg); border: 1px solid var(--bd); border-radius: 16px; padding: 4px 10px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
 </style>
@@ -231,16 +207,21 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 <body>
 
 <header>
-  <
-    <div style="font-size: 12px; opacity: 0.9; font-weight: normal;">Cumpra missões diárias, envie mensagens offline e divirta-se.</div>
+  <span class="logo">📦 Complete Box</span>
+  <span class="online-badge"><span class="online-dot"></span> Online</span>
+  <span class="coins" id="coins">🪙 0</span>
+</header>
+
+<div class="hero">
+  <div>
+    🌐 <b>Rede Global Conectada!</b>
+    <div style="font-size: 12px; opacity: 0.9;">Missões, chat offline, roleta, poupança e loja ativos.</div>
   </div>
 </div>
 
 <nav id="nav"></nav>
-
 <main id="app"></main>
 
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
@@ -263,7 +244,6 @@ let db = null;
 try {
   firebase.initializeApp(firebaseConfig);
   db = firebase.firestore();
-  db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
 } catch(e) { console.warn("Offline", e); }
 
 let uid = localStorage.getItem('cb_uid');
@@ -278,7 +258,6 @@ if (location.hash === '#pedromesquita2026' || localStorage.getItem(OWNER_KEY) ==
 }
 
 let isOwner = localStorage.getItem(OWNER_KEY) === 'true';
-
 let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 50);
 let mySavings = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_savings')) || 0);
 
@@ -318,21 +297,17 @@ function toast(msg) {
 
 let tab = 'videos';
 let profiles = {};
-let dataList = { videos: [], games: [], news: [], polls: [], chat: [], aiMsgs: [] };
+let dataList = { videos: [], games: [], news: [], polls: [], chat: [] };
 let onlineUsers = [];
 let searchQuery = '';
 
 const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
-  ['chat', '💬 Chat Global & Offline'],
+  ['chat', '💬 Chat'],
   ['missions', '🎯 Missões'],
   ['miner', '⛏️ Mineração'],
-  ['speak', '🗣️ Speak'],
   ['spin', '🎡 Roleta'],
-  ['ai', '🤖 IA'],
-  ['polls', '📊 Enquetes'],
-  ['news', '📰 Notícias'],
   ['bank', '🏦 Poupança'],
   ['shop', '🛍️ Loja'],
   ['me', '👤 Perfil']
@@ -345,664 +320,218 @@ const timeAgo = ts => {
   const sec = Math.floor((Date.now() - ts) / 1000);
   if (sec < 60) return 'agora';
   if (sec < 3600) return Math.floor(sec/60) + 'm atrás';
-  return Math.floor(sec/3600) + 'h     }
-  } catch(e) {
-    fallbackNews();
-  }
-  if (tab === 'news') renderContentList('news');
+  return Math.floor(sec/3600) + 'h atrás';
+};
+
+function nav() {
+  const el = $('#nav');
+  if (el) el.innerHTML = TABS.map(([k, l]) => `<button class="${k === tab ? 'on' : ''}" onclick="go('${k}')">${l}</button>`).join('');
 }
 
-function fallbackNews() {
-  dataList.news = [
-    { id: 'n1', title: 'Inteligência Artificial avança em novas ferramentas web', content: 'Desenvolvedores do mundo todo adotam arquiteturas integradas em nuvem em 2026.', authorName: 'Tech Global News', authorBadge: '📰', ts: Date.now(), likes: [] },
-    { id: 'n2', title: 'Segurança digital e protocolos criptografados em alta', content: 'Novas diretrizes protegem dados de usuários contra ataques cibernéticos em redes globais.', authorName: 'Cyber Watch', authorBadge: '📰', ts: Date.now() - 3600000, likes: [] }
-  ];
+function go(k) { tab = k; searchQuery = ''; nav(); render(); }
+
+function renderHeader() {
+  const el = $('#coins');
+  if (el) el.textContent = isOwner ? '🪙 ∞ (Dono)' : `🪙 ${myProfile.coins}`;
 }
 
-setInterval(() => {
-  if (db) db.collection('profiles').doc(uid).set({ ts: Date.now() }, { merge: true }).catch(()=>{});
-}, 30000);
+function setupGlobalSync() {
+  if (!db) return;
+  db.collection('profiles').onSnapshot(snap => {
+    profiles = {}; onlineUsers = [];
+    snap.docs.forEach(doc => {
+      const d = doc.data(); profiles[doc.id] = d;
+      if (d.ts && (Date.now() - d.ts < 300000)) onlineUsers.push({ id: doc.id, name: d.name || 'Usuário', badge: d.badge || '👤' });
+    });
+    if (tab === 'chat' || tab === 'bank') renderChatUsers();
+  });
+
+  ['videos', 'games', 'polls'].forEach(kind => {
+    db.collection(kind).orderBy('ts', 'desc').limit(50).onSnapshot(snap => {
+      dataList[kind] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      if (tab === kind) renderContentList(kind);
+    });
+  });
+
+  db.collection('global_chat').orderBy('ts', 'asc').limit(100).onSnapshot(snap => {
+    dataList.chat = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    if (tab === 'chat') drawMessages();
+  });
+}
 
 function render() {
   renderHeader();
   const app = $('#app');
+  if (!app) return;
 
   if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); renderChatUsers(); return; }
   if (tab === 'missions') { app.innerHTML = missionsView(); return; }
   if (tab === 'miner') { app.innerHTML = minerView(); return; }
-  if (tab === 'speak') { app.innerHTML = speakView(); return; }
   if (tab === 'spin') { app.innerHTML = spinView(); return; }
-  if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
   if (tab === 'bank') { app.innerHTML = bankView(); renderChatUsers(); return; }
   if (tab === 'shop') { app.innerHTML = shopView(); return; }
   if (tab === 'me') { app.innerHTML = profileView(); return; }
 
   app.innerHTML = `
-    ${postBoxView(tab)}
-    <div class="row" style="margin: 12px 0;">
-      <input id="sq" placeholder="🔍 Buscar publicações..." value="${esc(searchQuery)}" oninput="searchQuery=sanitize(this.value); renderContentList('${tab}')">
+    <div class="card">
+      <b>🎬 Publicar Conteúdo Global</b>
+      <input id="p-title" placeholder="Título" maxlength="100">
+      <input id="p-content" placeholder="Link (YouTube / MP4)">
+      <button class="p" style="margin-top:8px;" onclick="submitPost()">🚀 Publicar</button>
     </div>
     <div id="content-list"></div>
   `;
   renderContentList(tab);
 }
 
-// --- SISTEMA DE MISSÕES DIÁRIAS ---
-function getMissionStatus(key) {
-  return localStorage.getItem('cb_mission_' + key) === 'done';
-}
-
 function claimMission(key, reward) {
-  if (getMissionStatus(key)) return toast('Você já concluiu esta missão!');
-  localStorage.setItem('cb_mission_' + key, 'done');
-  if (!isOwner) {
-    myProfile.coins += reward;
-    saveProfileToGlobal();
-  }
-  renderHeader();
-  render();
-  toast(`🎉 Missão concluída! +${reward} Complete Coins.`);
+  if (localStorage.getItem('cb_m_' + key) === 'done') return toast('Já concluído!');
+  localStorage.setItem('cb_m_' + key, 'done');
+  if (!isOwner) { myProfile.coins += reward; saveProfileToGlobal(); }
+  renderHeader(); render(); toast(`+${reward} moedas ganhas!`);
 }
 
 function missionsView() {
-  const missions = [
-    { key: 'post', title: 'Publicar um Conteúdo', desc: 'Publique um vídeo ou jogo na rede global.', reward: 30, action: () => go('videos') },
-    { key: 'spin', title: 'Girar a Roleta da Sorte', desc: 'Teste sua sorte na aba Roleta.', reward: 20, action: () => go('spin') },
-    { key: 'chat', title: 'Conversar no Chat Global', desc: 'Envie pelo menos uma mensagem no chat.', reward: 15, action: () => go('chat') },
-    { key: 'speak', title: 'Praticar no Complete Speak', desc: 'Responda a um quiz de tradução.', reward: 25, action: () => go('speak') }
-  ];
-
   return `
     <div class="card">
-      <b style="font-size: 18px;">🎯 Missões Diárias & Recompensas</b>
-      <p class="rules">Cumpra as tarefas abaixo para ganhar Complete Coins extras todos os dias!</p>
+      <b>🎯 Missões Diárias</b>
+      <p class="rules">Cumpra missões para ganhar moedas extras.</p>
     </div>
-
-    ${missions.map(m => {
-      const done = getMissionStatus(m.key);
-      return `
-        <div class="card row" style="justify-content:space-between;">
-          <div>
-            <b>${esc(m.title)}${done ? '✅' : ''}</b>
-            <div class="rules" style="margin:4px 0 0;">${esc(m.desc)}</div>
-            <div style="color:var(--gold); font-weight:bold; margin-top:4px;">🪙 +${m.reward} Moedas</div>
-          </div>
-          <div>
-            ${done ? '<button class="s" disabled>Concluído</button>' : `<button class="p" onclick="claimMission('${m.key}', ${m.reward})">Resgatar 🎁</button>`}
-          </div>
-        </div>
-      `;
-    }).join('')}
+    <div class="card row" style="justify-content:space-between;">
+      <div><b>Girar a Roleta</b><div class="rules">Ganhe 20 moedas</div></div>
+      <button class="p" onclick="claimMission('spin', 20)">Resgatar</button>
+    </div>
   `;
 }
 
-// --- MINI-GAME: MINERAÇÃO DE MOEDAS (CLICKER) ---
 let minerClicks = 0;
 function minerView() {
   return `
     <div class="card" style="text-align:center;">
-      <b style="font-size: 20px;">⛏️ Mineração de Complete Coins</b>
-      <p class="rules">Clique freneticamente no bloco para minerar moedas extras para sua carteira!</p>
-      
-      <div style="margin: 30px auto; width: 120px; height: 120px; background: linear-gradient(135deg, var(--ac), var(--ac2)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; cursor: pointer; box-shadow: 0 0 25px rgba(124,83,255,0.6);" onclick="clickMiner()">
-        💎
-      </div>
-      <div style="font-size: 16px; color: var(--gold);">Moedas Mineradas nesta sessão: <b id="miner-count">0</b></div>
+      <b>⛏️ Mineração</b>
+      <div style="margin:20px auto; width:100px; height:100px; background:var(--ac); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer;" onclick="clickMiner()">💎</div>
+      <div>Minerados: <b id="mc">${minerClicks}</b></div>
     </div>
   `;
 }
-
 function clickMiner() {
   minerClicks++;
-  const el = $('#miner-count');
-  if (el) el.textContent = minerClicks;
-  if (!isOwner && minerClicks % 10 === 0) {
-    myProfile.coins += 5;
-    saveProfileToGlobal();
-    renderHeader();
-    toast('⚡ +5 Moedas mineradas!');
-  }
+  const el = $('#mc'); if(el) el.textContent = minerClicks;
+  if(!isOwner && minerClicks % 10 === 0) { myProfile.coins += 5; saveProfileToGlobal(); renderHeader(); toast('+5 moedas!'); }
 }
 
-// --- COMPLETE LUCKY SPIN ---
 function spinView() {
   return `
     <div class="card" style="text-align:center;">
-      <b style="font-size: 20px;">🎡 Complete Lucky Spin</b>
-      <p class="rules">Gire a roleta uma vez por dia e teste sua sorte para ganhar moedas grátis!</p>
-      
-      <div id="spin-wheel-box" style="margin: 20px auto; padding: 30px; background: var(--bg); border: 2px dashed var(--ac); border-radius: 50% / 20%; max-width: 320px;">
-        <span id="spin-result-text" style="font-size: 24px; font-weight: 900; color: var(--gold);">🎁 PRÓXIMO GIRO PRONTO</span>
-      </div>
-
-      <button class="p" style="padding: 12px 24px; font-size: 16px;" onclick="doSpinWheel()">Girar Roleta Agora! 🎰</button>
+      <b>🎡 Roleta da Sorte</b>
+      <p id="sp-txt" style="color:var(--gold); font-size:20px; margin:20px 0;">Gire para ganhar!</p>
+      <button class="p" onclick="doSpin()">Girar 🎰</button>
     </div>
   `;
 }
-
-function doSpinWheel() {
-  const lastSpin = localStorage.getItem('cb_last_spin');
-  const today = new Date().toDateString();
-  if (lastSpin === today) {
-    return toast('⏰ Você já girou a roleta hoje! Volte amanhã.');
-  }
-  localStorage.setItem('cb_last_spin', today);
-
-  const prizes = [20, 50, 100, 200, 500];
-  const won = prizes[Math.floor(Math.random() * prizes.length)];
-
-  $('#spin-result-text').textContent = `🎉 +${won} Moedas!`;
-  if (!isOwner) {
-    myProfile.coins += won;
-    saveProfileToGlobal();
-  }
-  renderHeader();
-  toast(`🎉 Parabéns! Você ganhou ${won} Complete Coins na Roleta!`);
-}
-
-function claimDailyReward() {
-  const lastClaim = localStorage.getItem('cb_last_claim');
-  const today = new Date().toDateString();
-  if (lastClaim === today) {
-    return toast('⏰ Você já resgatou sua recompensa hoje! Volte amanhã.');
-  }
-  localStorage.setItem('cb_last_claim', today);
-  const reward = 50;
-  if (!isOwner) {
-    myProfile.coins += reward;
-    saveProfileToGlobal();
-  }
-  renderHeader();
-  render();
-  toast(`🎉 Resgatado com sucesso! +${reward} Complete Coins.`);
+function doSpin() {
+  const d = new Date().toDateString();
+  if(localStorage.getItem('cb_spin') === d) return toast('Apenas 1 giro por dia!');
+  localStorage.setItem('cb_spin', d);
+  const w = [20, 50, 100, 200][Math.floor(Math.random()*4)];
+  $('#sp-txt').textContent = `+${w} Moedas!`;
+  if(!isOwner) { myProfile.coins += w; saveProfileToGlobal(); }
+  renderHeader(); toast(`Ganhou ${w} moedas!`);
 }
 
 function bankView() {
   return `
     <div class="card">
-      <b style="font-size: 18px;">🏦 Poupança Complete</b>
-      <p class="rules">Guarde suas moedas com segurança. Ao comprar itens na Loja, o saldo da poupança é transferido automaticamente se faltar na carteira!</p>
-      
-      <div style="background:var(--bg); border:1px solid var(--bd); border-radius:12px; padding:14px; margin: 12px 0;">
-        <div style="font-size:14px; color:var(--mu);">Saldo na Carteira: <b>🪙 ${isOwner ? '∞' : myProfile.coins}</b></div>
-        <div style="font-size:16px; margin-top:4px; color:var(--gold);">Saldo na Poupança: <b>🪙 ${isOwner ? '∞' : myProfile.savings}</b></div>
+      <b>🏦 Poupança Complete</b>
+      <div style="margin:10px 0;">Carteira: <b>${isOwner?'∞':myProfile.coins}</b> | Poupança: <b>${isOwner?'∞':myProfile.savings}</b></div>
+      <input id="bk-amt" type="number" placeholder="Valor" min="1">
+      <div class="row" style="margin-top:6px;">
+        <button class="p" onclick="dep()">Depositar</button>
+        <button class="s" onclick="wit()">Sacar</button>
       </div>
-
-      <div class="row" style="margin-top:10px;">
-        <input id="bank-amount" type="number" placeholder="Quantidade" min="1" style="flex:1;">
-        <button class="p" onclick="depositSavings()">Depositar 📥</button>
-        <button class="s" onclick="withdrawSavings()">Sacar 📤</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <b>🎁 Enviar Presente para Amigos na Rede</b>
-      <p class="rules">Envie moedas diretamente para outros usuários online!</p>
-      <select id="gift-target" style="margin:6px 0;">
-        <option value="">Selecione um amigo online...</option>
-        ${onlineUsers.filter(u => u.id !== uid).map(u => `<option value="${u.id}">${esc(u.badge)}${esc(u.name)}</option>`).join('')}
-      </select>
-      <input id="gift-amount" type="number" placeholder="Quantidade de Moedas" min="1">
-      <button class="p" style="margin-top:6px; width:100%;" onclick="sendGift()">🎁 Enviar Presente</button>
     </div>
   `;
 }
-
-function depositSavings() {
-  const amt = parseInt($('#bank-amount').value);
-  if (!amt || amt <= 0) return toast('Insira um valor válido!');
-  if (!isOwner && myProfile.coins < amt) return toast('Moedas insuficientes na carteira!');
-
-  if (!isOwner) {
-    myProfile.coins -= amt;
-    myProfile.savings += amt;
-    saveProfileToGlobal();
-  }
-  toast(`🪙 Depositado ${amt} moedas na Poupança!`);
-  render();
+function dep() {
+  const v = parseInt($('#bk-amt').value);
+  if(!v || myProfile.coins < v) return toast('Valor inválido!');
+  myProfile.coins -= v; myProfile.savings += v; saveProfileToGlobal(); render(); toast('Depositado!');
 }
-
-function withdrawSavings() {
-  const amt = parseInt($('#bank-amount').value);
-  if (!amt || amt <= 0) return toast('Insira um valor válido!');
-  if (!isOwner && myProfile.savings < amt) return toast('Saldo insuficiente na Poupança!');
-
-  if (!isOwner) {
-    myProfile.savings -= amt;
-    myProfile.coins += amt;
-    saveProfileToGlobal();
-  }
-  toast(`🪙 Sacado ${amt} moedas para a carteira!`);
-  render();
-}
-
-function sendGift() {
-  const targetId = $('#gift-target').value;
-  const amt = parseInt($('#gift-amount').value);
-  if (!targetId) return toast('Selecione um destinatário!');
-  if (!amt || amt <= 0) return toast('Insira um valor válido!');
-  if (!isOwner && myProfile.coins < amt) return toast('Moedas insuficientes na carteira!');
-
-  if (!isOwner) {
-    myProfile.coins -= amt;
-    
-  render();
-}
-
-// --- LOJA COM MAIS DE 100 ITENS ---
-const EMOJIS = ['👑','⚡','🔥','💎','🚀','⭐','🌟','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','💎','🎩','🎸','🍕','🍔','⚡','🛸','💡','🪐','🎲','🍉','💎','🍩'];
-const ADJ = ['Lendário','Supremo','Místico','Cósmico','Galáctico','Elite','Imperial','Divino','Solar','Lunar','Titanium','Cyber','Fênix','Soberano','Alpha','Quantum','Vanguard','Stellar','Neon','Prime'];
-const TYPE = ['Coroa','Escudo','Espada','Orbe','Símbolo','Manto','Anel','Cristal','Aura','Emblema'];
-
-let SHOP_ITEMS = [];
-for (let i = 1; i <= 100; i++) {
-  let badge = EMOJIS[(i - 1) % EMOJIS.length];
-  let name = `${badge} ${TYPE[(i - 1) % TYPE.length]} ${ADJ[(i - 1) % ADJ.length]} #${i}`;
-  let desc = `Item exclusivo nível ${i} para customização avançada de perfil.`;
-  let price = 250 + (i * 75);
-  SHOP_ITEMS.push({ id: 'item_' + i, name, desc, price, badge });
+function wit() {
+  const v = parseInt($('#bk-amt').value);
+  if(!v || myProfile.savings < v) return toast('Valor inválido!');
+  myProfile.savings -= v; myProfile.coins += v; saveProfileToGlobal(); render(); toast('Sacado!');
 }
 
 function shopView() {
   return `
     <div class="card">
-      <b style="font-size: 18px;">🛍️ Loja Oficial Expandida (100+ Itens)</b>
-      <p class="rules">Escolha entre mais de 100 itens exclusivos. Se faltar saldo na carteira, o sistema transfere automaticamente da sua <b>Poupança Complete</b>!</p>
-      <div style="font-size:13px; color:var(--gold); margin-bottom:10px;">Saldo Disponível (Carteira + Poupança): 🪙 ${isOwner ? '∞' : (myProfile.coins + myProfile.savings)}</div>
+      <b>🛍️ Loja Oficial</b>
+      <p class="rules">Itens exclusivos. Transferência automática da poupança se faltar na carteira.</p>
     </div>
-
-    ${SHOP_ITEMS.map(item => `
-      <div class="card row" style="justify-content:space-between;">
-        <div>
-          <b style="font-size:16px;">${esc(item.name)}</b>
-          <div class="rules" style="margin:4px 0 0;">${esc(item.desc)}</div>
-          <div style="color:var(--gold); font-weight:bold; margin-top:4px;">🪙 ${item.price} Moedas</div>
-        </div>
-        <button class="p" onclick="buyShopItem('${item.id}', ${item.price}, '${item.badge}')">Comprar 🛒</button>
-      </div>
-    `).join('')}
-  `;
-}
-
-function buyShopItem(id, price, badge) {
-  if (isOwner) {
-    myProfile.badge = badge;
-    saveProfileToGlobal();
-    return toast('🎉 Item adquirido instantaneamente (Dono)!');
-  }
-
-  let totalAvailable = myProfile.coins + myProfile.savings;
-  if (totalAvailable < price) {
-    return toast('❌ Saldo insuficiente na Carteira e na Poupança!');
-  }
-
-  if (myProfile.coins < price) {
-    let diff = price - myProfile.coins;
-    myProfile.coins = 0;
-    myProfile.savings -= diff;
-  } else {
-    myProfile.coins -= price;
-  }
-
-  myProfile.badge = badge;
-  saveProfileToGlobal();
-  renderHeader();
-  render();
-  toast('🎉 Compra realizada com sucesso! Saldo transferido e item aplicado.');
-}
-
-// --- CHAT COM MENSAGENS OFFLINE / CAIXA POSTAL ---
-function chatView() {
-  return `
-    <div class="card">
-      <b style="font-size: 16px;">💬 Chat Global & Mensagens Offline</b>
-      <p class="rules">Envie mensagens públicas no chat ou envie diretamente para um usuário mesmo se ele estiver offline! Ele receberá quando entrar.</p>
-      <div class="online-users-list" id="online-users-box"></div>
-    </div>
-
-    <div class="card">
-      <b>📬 Enviar Mensagem Direta / Offline para Alguém:</b>
-      <select id="dm-target" style="margin:6px 0;">
-        <option value="">Todos no Chat Global</option>
-        ${Object.keys(profiles).map(id => `<option value="${id}">${esc(profiles[id].badge \vert{}\vert{} '👤')} ${esc(profiles[id].name || 'Usuário')}</option>`).join('')}
-      </select>
-    </div>
-
-    <div id="msgs"></div>
-    <div class="row" style="margin-top:10px;">
-      <input id="chat-input" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendChatMessage()" style="flex:1;">
-      <button class="p" onclick="sendChatMessage()">Enviar 🚀</button>
+    <div class="card row" style="justify-content:space-between;">
+      <div><b>👑 Coroa Lendária</b><div style="color:var(--gold)">🪙 500</div></div>
+      <button class="p" onclick="buy('s1', 500, '👑')">Comprar</button>
     </div>
   `;
 }
-
-function renderChatUsers() {
-  const box = $('#online-users-box');
-  if (!box) return;
-  box.innerHTML = onlineUsers.map(u => `<div class="online-user-tag"><span class="online-dot"></span> ${esc(u.badge)} ${esc(u.name)}</div>`).join('');
-}
-
-function drawMessages() {
-  const box = $('#msgs');
-  if (!box) return;
-  const msgs = dataList.chat || [];
-  // Filtra mensagens globais ou direcionadas para mim (mesmo que offline antes)
-  const filtered = msgs.filter(m => !m.targetId || m.targetId === uid || m.by === uid);
-
-  box.innerHTML = filtered.map(m => `
-    <div class="m" style="${m.by === uid ? 'flex-direction:row-reverse;' : ''}">
-      <span class="av">${esc((m.authorName || 'U')[0].toUpperCase())}</span>
-      <div class="bub" style="${m.by === uid ? 'background:var(--ac); color:#fff;' : ''}">
-        <b>${esc(m.authorBadge || '👤')} ${esc(m.authorName || 'Usuário')} ${m.targetId ? '🔒 (Mensagem Direta / Offline)' : ''}</b>
-        ${esc(m.text)}
-        <br><i>${timeAgo(m.ts)}</i>
-      </div>
-    </div>
-  `).join('');
-  box.scrollTop = box.scrollHeight;
-}
-
-async function sendChatMessage() {
-  const input = $('#chat-input');
-  const text = sanitize(input.value.trim());
-  if (!text) return;
-  const targetId = $('#dm-target') ? $('#dm-target').value : '';
-
-  const msgObj = { 
-    text, 
-    by: uid, 
-    targetId: targetId || null, 
-    authorName: myProfile.name, 
-    authorBadge: myProfile.badge, 
-    ts: Date.now() 
-  };
-  input.value = '';
-  if (db) await db.collection('global_chat').add(msgObj);
-}
-
-const SPEAK_LEVELS = {
-  easy: [
-    { pt: 'Olá', en: 'Hello', es: 'Hola', fr: 'Bonjour' },
-    { pt: 'Obrigado', en: 'Thank you', es: 'Gracias', fr: 'Merci' }
-  ],
-  medium: [
-    { pt: 'Bom dia, como vai?', en: 'Good morning, how are you?', es: 'Buenos días, ¿cómo estás?', fr: 'Bonjour, comment ça va?' },
-    { pt: 'Por favor, onde fica?', en: 'Please, where is it?', es: 'Por favor, ¿dónde está?', fr: "S'il vous plaît, où est-ce?" }
-  ],
-  hard: [
-    { pt: 'Eu gostaria de aprender idiomas estrangeiros fluentemente.', en: 'I would like to learn foreign languages fluently.', es: 'Me gustaría aprender idiomas extranjeros con fluidez.', fr: "J'aimerais apprendre couramment des langues étrangères." }
-  ]
-};
-
-let currentSpeakLevel = 'easy';
-let speakQuizIdx = 0;
-
-function speakView() {
-  const list = SPEAK_LEVELS[currentSpeakLevel];
-  const current = list[speakQuizIdx % list.length];
-  const rewardVal = currentSpeakLevel === 'easy' ? 5 : currentSpeakLevel === 'medium' ? 12 : 25;
-
-  return `
-    <div class="card">
-      <b style="font-size: 18px;">🗣️ Complete Speak (Idiomas)</b>
-      <p class="rules">Escolha a dificuldade, aprenda frases e ganhe moedas por acerto!</p>
-      
-      <div class="row" style="margin: 10px 0;">
-        <button class="s ${currentSpeakLevel==='easy'?'on':''}" onclick="currentSpeakLevel='easy'; speakQuizIdx=0; render();">Fácil (+5)</button>
-        <button class="s ${currentSpeakLevel==='medium'?'on':''}" onclick="currentSpeakLevel='medium'; speakQuizIdx=0; render();">Médio (+12)</button>
-        <button class="s ${currentSpeakLevel==='hard'?'on':''}" onclick="currentSpeakLevel='hard'; speakQuizIdx=0; render();">Difícil (+25)</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <b>🧩 Quiz de Tradução (${currentSpeakLevel.toUpperCase()}):</b>
-      <p style="margin: 8px 0;">Como se diz <b>"${current.pt}"</b> em Inglês?</p>
-      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('${current.en}', '${current.en}', ${rewardVal})">A) ${current.en}</button>
-      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('Wrong Option A', '${current.en}', ${rewardVal})">B) Perfect translation option</button>
-      <button class="s" style="display:block; width:100%; margin: 6px 0; padding: 10px;" onclick="checkSpeakQuiz('Wrong Option B', '${current.en}', ${rewardVal})">C) Learning system default</button>
-    </div>
-  `;
-}
-
-function checkSpeakQuiz(selected, correct, reward) {
-  if (selected === correct) {
-    toast(`✅ Correto! +${reward} Complete Coins!`);
-    if (!isOwner) {
-      myProfile.coins += reward;
-      saveProfileToGlobal();
-      renderHeader();
-    }
-  } else {
-    toast('❌ Incorreto! Tente novamente.');
-  }
-  speakQuizIdx++;
-  render();
-}
-
-function postBoxView(kind) {
-  const titles = { videos: '🎬 Publicar Vídeo Global', games: '🎮 Publicar Jogo HTML Global', polls: '📊 Criar Enquete' };
-  return `
-    <div class="card">
-      <b style="font-size: 16px;">${titles[kind]}</b>
-      <p class="rules">Sua publicação ficará visível em tempo real na rede segura!</p>
-      <input id="p-title" placeholder="Título da publicação" maxlength="100">
-      ${kind === 'videos' ? '<input id="p-content" placeholder="Link do YouTube ou URL do vídeo (mp4)">' : ''}
-      ${kind === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML do jogo"></textarea>' : ''}
-      ${kind === 'polls' ? '<input id="p-opt1" placeholder="Opção 1"><input id="p-opt2" placeholder="Opção 2">' : ''}
-      <button class="p" style="margin-top: 8px;" onclick="submitPost('${kind}')">🚀 Publicar</button>
-    </div>
-  `;
-}
-
-async function submitPost(kind) {
-  const title = sanitize($('#p-title').value.trim());
-  if (!title) return toast('Insira um título!');
-
-  let content = $('#p-content') ? sanitize($('#p-content').value.trim()) : '';
-  let options = [];
-
-  if (kind === 'polls') {
-    options = [sanitize($('#p-opt1').value.trim()), sanitize($('#p-opt2').value.trim())].filter(Boolean);
-    if (options.length < 2) return toast('Insira 2 opções!');
-  } else if (!content) {
-    return toast('Preencha o conteúdo!');
-  }
-
-  const postObj = {
-    title, content, options, votes: {}, by: uid,
-    authorName: myProfile.name, authorBadge: myProfile.badge,
-    ts: Date.now(), likes: []
-  };
-
-  if (db) await db.collection(kind).add(postObj);
-  toast('🎉 Publicado globalmente!');
-  if (!isOwner) {
-    myProfile.coins += 10;
-    saveProfileToGlobal();
-    renderHeader();
-  }
-}
-
-function renderContentList(kind) {
-  const container = $('#content-list');
-  if (!container) return;
-
-  let items = dataList[kind] || [];
-  if (searchQuery) {
-    items = items.filter(x => (x.title + ' ' + (x.content || '') + ' ' + (x.authorName || '')).toLowerCase().includes(searchQuery.toLowerCase()));
-  }
-
-  if (!items.length) {
-    container.innerHTML = '<div class="empty">📭 Nenhuma publicação encontrada.</div>';
-    return;
-  }
-
-  container.innerHTML = items.map(x => {
-    let body = '';
-    if (kind === 'videos') {
-      const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
-      body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
-    } else if (kind === 'games') {
-      body = `<button class="p" onclick="playGame(this, '${x.id}')">▶ Jogar Jogo</button><div id="game-frame-${x.id}" style="margin-top:10px;"></div>`;
-    } else if (kind === 'news') {
-      body = `<p style="white-space:pre-wrap;">${esc(x.content)}</p>`;
-    } else if (kind === 'polls') {
-      const votes = x.votes || {}, totalVotes = Object.keys(votes).length;
-      body = (x.options || []).map((opt, idx) => {
-        const count = Object.values(votes).filter(v => v === idx).length;
-        const pct = totalVotes ? Math.round((count / totalVotes) * 100) : 0;
-        return `<button class="s" style="display:block; width:100%; text-align:left; margin:6px 0; padding:10px; position:relative; overflow:hidden;" onclick="votePoll('${x.id}', ${idx})"><span style="position:absolute; left:0; top:0; bottom:0; width:${pct}%; background:var(--ac); opacity:0.25;"></span><span style="position:relative; font-weight:bold;">${esc(opt)} — ${pct}% (${count} votos)</span></button>`;
-      }).join('');
-    }
-
-    return `
-      <div class="card">
-        <div class="row" style="margin-bottom:8px;">
-          <span class="av">${esc((x.authorName || 'U')[0].toUpperCase())}</span>
-          <div>
-            <b>${esc(x.authorBadge || '👤')} ${esc(x.authorName || 'Usuário')}</b>
-            <div class="by">${timeAgo(x.ts)}</div>
-          </div>
-        </div>
-        <h3 style="margin: 6px 0 10px; font-size:18px;">${esc(x.title)}</h3>
-        ${body}
-        <div class="row" style="margin-top: 12px; border-top: 1px solid var(--bd); padding-top: 8px;">
-          <button class="s" onclick="likeItem('${kind}', '${x.id}')">❤️ ${(x.likes || []).length} Curtidas</button>
-          ${(isOwner || x.by === uid) ? `<button class="s" style="color:#ef4444;" onclick="deleteItem('${kind}', '${x.id}')">🗑️ Remover</button>` : ''}
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function playGame(btn, id) {
-  const item = dataList.games.find(g => g.id === id);
-  if (!item) return;
-  const container = document.getElementById(`game-frame-${id}`);
-  if (container) {
-    const iframe = document.createElement('iframe');
-    iframe.className = 'g'; iframe.srcdoc = item.content;
-    container.innerHTML = ''; container.appendChild(iframe); btn.style.display = 'none';
-  }
-}
-
-async function likeItem(kind, id) {
-  const item = dataList[kind].find(x => x.id === id);
-  if (!item) return;
-  const likes = item.likes || [];
-  const updated = likes.includes(uid) ? likes.filter(u => u !== uid) : [...likes, uid];
-  if (db) await db.collection(kind).doc(id).update({ likes: updated });
-}
-
-async function deleteItem(kind, id) {
-  if (db) { await db.collection(kind).doc(id).delete(); toast('Item removido.'); }
-}
-
-async function votePoll(id, optIdx) {
-  const poll = dataList.polls.find(p => p.id === id);
-  if (!poll) return;
-  const votes = poll.votes || {}; votes[uid] = optIdx;
-  if (db) await db.collection('polls').doc(id).update({ votes });
-}
-
-function aiView() {
-  return `
-    <div class="card">
-      <b style="font-size: 16px;">🤖 Complete AI & Criador de Jogos</b>
-      <p class="rules">Crie jogos HTML instantaneamente com inteligência artificial!</p>
-      <input id="ai-game-prompt" placeholder="Ideia de jogo (ex: pular obstáculos)">
-      <button class="p" style="margin-top: 6px; width:100%;" onclick="generateAIGame()">⚡ Gerar Jogo com IA</button>
-    </div>
-    <div id="ai-chat-box" style="height: 35vh; overflow-y: auto; border-radius: 14px; padding: 12px; border: 1px solid var(--bd); background: rgba(18,14,36,0.7);"></div>
-    <div class="row" style="margin-top: 10px;">
-      <input id="ai-input" placeholder="Pergunte à IA..." onkeydown="if(event.key==='Enter')sendAIMessage()" style="flex:1;">
-      <button class="p" onclick="sendAIMessage()">Conversar 🤖</button>
-    </div>
-  `;
-}
-
-function drawAIMessages() {
-  const box = $('#ai-chat-box');
-  if (!box) return;
-  box.innerHTML = dataList.aiMsgs.map(m => `
-    <div class="m" style="${m.role === 'user' ? 'flex-direction:row-reverse;' : ''}">
-      <span class="av" style="background:${m.role === 'user' ? 'var(--ac)' : 'var(--ac2)'};">${m.role === 'user' ? 'Você' : 'IA'}</span>
-      <div class="bub" style="${m.role === 'user' ? 'background:var(--ac); color:#fff;' : ''}">
-        <b>${m.role === 'user' ? 'Você' : '🤖 Complete AI'}</b>
-        <div>${esc(m.text)}</div>
-        ${m.code ? `<pre>${esc(m.code)}</pre><button class="p" style="margin-top:6px;" onclick="publishGeneratedGame('${esc(m.gameTitle)}')">🚀 Publicar este Jogo</button>` : ''}
-      </div>
-    </div>
-  `).join('');
-  box.scrollTop = box.scrollHeight;
-}
-
-function sendAIMessage() {
-  const input = $('#ai-input'), query = sanitize(input.value.trim());
-  if (!query) return;
-  input.value = ''; dataList.aiMsgs.push({ role: 'user', text: query });
-  drawAIMessages();
-  setTimeout(() => {
-    dataList.aiMsgs.push({ role: 'ai', text: `Olá! Sou a IA do Complete Box. Como posso te ajudar com o site ou criar um novo jogo?` });
-    drawAIMessages();
-  }, 500);
-}
-
-function generateAIGame() {
-  const input = $('#ai-game-prompt'), prompt = sanitize(input.value.trim());
-  if (!prompt) return toast('Digite uma ideia!');
-  toast('⏳ IA gerando jogo...');
-  setTimeout(() => {
-    const code = `<!DOCTYPE html><html><head><style>body{margin:0;background:#111;color:#fff;text-align:center;font-family:sans-serif;}canvas{background:#222;border:2px solid #7c53ff;margin-top:10px;}</style></head><body><h2>🎮 ${prompt}</h2><canvas id="c" width="360" height="200"></canvas><p>Pontos: <b id="s">0</b></p><script>const c=document.getElementById('c'),x=c.getContext('2d');let score=0,py=150,vy=0,ox=360;window.onclick=()=>{if(py>=150)vy=-8;};function loop(){vy+=0.4;py+=vy;if(py>150){py=150;vy=0;}ox-=3;if(ox<-20){ox=360;score+=10;document.getElementById('s').textContent=score;}x.clearRect(0,0,360,200);x.fillStyle='#7c53ff';x.fillRect(40,py,20,20);x.fillStyle='#ff6b35';x.fillRect(ox,150,20,20);requestAnimationFrame(loop);}loop();<\/script></body></html>`;
-    dataList.aiMsgs.push({ role: 'ai', text: `Jogo "${prompt}" gerado com sucesso!`, code, gameTitle: prompt });
-    drawAIMessages();
-  }, 1000);
-}
-
-async function publishGeneratedGame(title) {
-  const lastMsg = [...dataList.aiMsgs].reverse().find(m => m.code);
-  if (!lastMsg) return;
-  const postObj = { title: 'Jogo IA: ' + title, content: lastMsg.code, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now(), likes: [] };
-  if (db) await db.collection('games').add(postObj);
-  toast('🎮 Jogo publicado com sucesso!');
-  go('games');
+function buy(id, price, badge) {
+  if(isOwner) { myProfile.badge = badge; saveProfileToGlobal(); return toast('Adquirido (Dono)!'); }
+  let tot = myProfile.coins + myProfile.savings;
+  if(tot < price) return toast('Saldo insuficiente!');
+  if(myProfile.coins < price) { let diff = price - myProfile.coins; myProfile.coins = 0; myProfile.savings -= diff; }
+  else { myProfile.coins -= price; }
+  myProfile.badge = badge; saveProfileToGlobal(); renderHeader(); render(); toast('Compra realizada!');
 }
 
 function profileView() {
   return `
     <div class="card">
-      <div class="row">
-        <span class="av" style="width:50px; height:50px; font-size:22px;">${myProfile.badge}</span>
-        <div>
-          <b style="font-size:18px;">${esc(myProfile.name)}</b>
-          <div class="by">${isOwner ? 'Status: Dono Principal (Infinito)' : 'Status: Jogador'}</div>
-        </div>
-      </div>
+      <div class="row"><span class="av">${myProfile.badge}</span><div><b>${esc(myProfile.name)}</b><div class="by">${isOwner?'Dono':'Jogador'}</div></div></div>
     </div>
-
     <div class="card">
-      <p class="rules">Resgate suas moedas grátis todos os dias!</p>
-      <button class="p" style="width:100%; margin-top:6px;" onclick="claimDailyReward()">✨ Resgatar Recompensa Diária (+50 Moedas)</button>
-    </div>
-
-    <div class="card">
-      <b>Configurações de Perfil</b>
-      ${isOwner ? '<p class="rules">Você está logado como Dono Principal com acesso total e moedas infinitas.</p>' : `
-        <input id="new-name" value="${esc(myProfile.name)}">
-        <button class="p" style="margin-top:6px;" onclick="myProfile.name=sanitize($('#new-name').value); saveProfileToGlobal(); toast('Nome salvo!'); render();">Salvar Nome</button>
-        <hr style="border:0; border-top:1px solid var(--bd); margin:12px 0;">
-        <input id="owner-pass" type="password" placeholder="Senha do Dono (Pedro)">
-        <button class="s" style="margin-top:4px;" onclick="loginOwner()">Ativar Modo Dono</button>
-      `}
+      <b>Painel do Dono</b>
+      <input id="op-pass" type="password" placeholder="Senha do Dono">
+      <button class="p" style="margin-top:6px;" onclick="if($('#op-pass').value==='dono-pedro-2026'){localStorage.setItem('${OWNER_KEY}','true');location.reload();}else{toast('Senha incorreta');}">Ativar</button>
     </div>
   `;
 }
 
-function loginOwner() {
-  const pass = $('#owner-pass').value;
-  if (pass === 'dono-pedro-2026') {
-    localStorage.setItem(OWNER_KEY, 'true');
-    location.reload();
-  } else {
-    toast('Senha incorreta!');
-  }
+async function submitPost() {
+  const t = sanitize($('#p-title').value), c = sanitize($('#p-content').value);
+  if(!t || !c) return toast('Preencha os campos!');
+  if(db) await db.collection(tab).add({title:t, content:c, by:uid, authorName:myProfile.name, authorBadge:myProfile.badge, ts:Date.now(), likes:[]});
+  toast('Publicado!');
+}
+function renderContentList(k) {
+  const box = $('#content-list'); if(!box) return;
+  const items = dataList[k] || [];
+  box.innerHTML = items.length ? items.map(x=>`<div class="card"><h3>${esc(x.title)}</h3><p>${esc(x.content)}</p></div>`).join('') : '<div class="empty">Nenhum post.</div>';
+}
+function chatView() {
+  return `
+    <div class="card"><b>💬 Chat Global</b><div class="online-users-list" id="ub"></div></div>
+    <div id="msgs" style="height:40vh; overflow-y:auto; border:1px solid var(--bd); padding:10px; border-radius:10px; background:rgba(0,0,0,0.2);"></div>
+    <div class="row" style="margin-top:10px;"><input id="ci" style="flex:1;" placeholder="Mensagem..."><button class="p" onclick="sendChat()">Enviar</button></div>
+  `;
+}
+function renderChatUsers() {
+  const b = $('#ub'); if(b) b.innerHTML = onlineUsers.map(u=>`<div class="online-user-tag"><span class="online-dot"></span>${esc(u.name)}</div>`).join('');
+}
+function drawMessages() {
+  const m = $('#msgs'); if(!m) return;
+  m.innerHTML = (dataList.chat||[]).map(x=>`<div style="margin:6px 0;"><b>${esc(x.authorName)}:</b> ${esc(x.text)}</div>`).join('');
+  m.scrollTop = m.scrollHeight;
+}
+async function sendChat() {
+  const i = $('#ci'); if(!i || !i.value.trim()) return;
+  const text = sanitize(i.value.trim()); i.value='';
+  if(db) await db.collection('global_chat').add({text, by:uid, authorName:myProfile.name, authorBadge:myProfile.badge, ts:Date.now()});
+}
+
+nav();
+render();
+setupGlobalSync();
+</script>
+</body>
+</html>
