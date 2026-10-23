@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box - Edição Suprema Definitiva</title>
+<title>Complete Box - Edição Suprema com PV</title>
 <style>
 :root {
   --bg: #07050f;
@@ -221,9 +221,8 @@ iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 14px
   z-index: 999;
   box-shadow: 0 12px 35px rgba(0,0,0,0.55);
 }
-.online-users-list { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; scrollbar-width: none; }
-.online-users-list::-webkit-scrollbar { display: none; }
-.online-user-tag { background: var(--bg); border: 1px solid var(--bd); border-radius: 18px; padding: 6px 14px; font-size: 12px; display: flex; align-items: center; gap: 6px; font-weight: 600; }
+.contact-item { background: var(--bg); border: 1px solid var(--bd); padding: 12px 16px; border-radius: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px; transition: border-color 0.2s; }
+.contact-item:hover { border-color: var(--ac); }
 pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; padding: 12px; overflow-x: auto; font-size: 12px; color: var(--tx); }
 </style>
 </head>
@@ -239,7 +238,7 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
   <div class="hero">
     <div>
       🌐 <b>Rede Global Conectada!</b>
-      <div style="font-size: 12px; opacity: 0.95; margin-top: 3px;">IA Funcional, Jogos HTML, Loja 100+, Baú 1h e Feed Social.</div>
+      <div style="font-size: 12px; opacity: 0.95; margin-top: 3px;">Com Chat PV (Estilo WhatsApp), Speaky, IA e Loja.</div>
     </div>
   </div>
 
@@ -249,8 +248,7 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 
 <script>
 function sanitize(input) {
-  if (typeof input !== 'string') return input;
-  return input.replace(/[<>]/g, '').slice(0, 1000);
+  return typeof input === 'string' ? input : '';
 }
 
 let uid = localStorage.getItem('cb_uid');
@@ -278,26 +276,31 @@ let myProfile = {
 
 function saveProfile() {
   if (!isOwner) {
-    localStorage.setItem('cb_name', sanitize(myProfile.name));
+    localStorage.setItem('cb_name', myProfile.name);
     localStorage.setItem('cb_coins', myProfile.coins);
     localStorage.setItem('cb_savings', myProfile.savings);
     localStorage.setItem('cb_badge', myProfile.badge);
   }
 }
 
+// Registrar usuário ativo para aparecer na lista de contatos do PV
+let allUsers = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
+allUsers[uid] = { name: myProfile.name, badge: myProfile.badge };
+localStorage.setItem('cb_all_users', JSON.stringify(allUsers));
+
 function toast(msg) {
   document.querySelectorAll('#toast').forEach(x => x.remove());
   const e = document.createElement('div');
   e.id = 'toast';
-  e.textContent = sanitize(msg);
+  e.textContent = msg;
   document.body.append(e);
   setTimeout(() => e.remove(), 3500);
 }
 
 let tab = 'videos';
 let shopCategory = 'coroas';
+let currentChatUser = null; // null = lista de contatos do PV, string = ID do usuário conversando
 
-// Carregar dados locais salvos ou itens padrão
 let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify({
   videos: [
     { id: 'v1', title: 'Bem-vindo ao Complete Box', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', ts: Date.now() }
@@ -305,11 +308,10 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
   games: [
     { id: 'g1', title: 'Jogo Exemplo HTML', content: '<body style="background:#111;color:#fff;text-align:center;padding-top:40px;font-family:sans-serif;"><h2>🎮 Jogo de Teste</h2><button onclick="alert(\'Funcionando!\')" style="padding:10px 20px;background:#7c53ff;color:#fff;border:0;border-radius:8px;cursor:pointer;">Clique em mim!</button></body>', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', ts: Date.now() }
   ],
-  chat: [
-    { id: 'c1', text: 'Olá a todos no chat global do Complete Box!', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', ts: Date.now() }
-  ],
+  chat: [],
+  pv: {}, // { 'outro_uid': [ { sender: 'u1', text: 'oi', ts: ... } ] }
   aiMsgs: [
-    { role: 'ai', text: 'Olá, Pedro! Sou a Complete AI. Como posso te ajudar hoje? Posso conversar, tirar dúvidas ou criar jogos HTML para você!' }
+    { role: 'ai', text: 'Olá, Pedro! Sou a Complete AI junto com o Complete Speaky. Posso conversar, ler mensagens em voz alta ou criar jogos HTML para você!' }
   ]
 }));
 
@@ -320,8 +322,8 @@ function saveData() {
 const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
-  ['chat', '💬 Chat'],
-  ['ai', '🤖 IA'],
+  ['chat', '💬 Contatos PV'],
+  ['ai', '🤖 IA & Speaky'],
   ['chest', '🎁 Baú 1h'],
   ['missions', '🎯 Missões'],
   ['miner', '⛏️ Mineração'],
@@ -346,7 +348,12 @@ function nav() {
   if (el) el.innerHTML = TABS.map(([k, l]) => `<button class="${k === tab ? 'on' : ''}" onclick="go('${k}')">${l}</button>`).join('');
 }
 
-function go(k) { tab = k; nav(); render(); }
+function go(k) { 
+  if (k === 'chat') currentChatUser = null; // Reseta para a lista de contatos ao abrir o chat
+  tab = k; 
+  nav(); 
+  render(); 
+}
 
 function renderHeader() {
   const el = $('#coins');
@@ -358,7 +365,15 @@ function render() {
   const app = $('#app');
   if (!app) return;
 
-  if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); return; }
+  if (tab === 'chat') { 
+    if (!currentChatUser) {
+      app.innerHTML = contactsListView();
+    } else {
+      app.innerHTML = chatPVView(currentChatUser);
+      drawPVMessages(currentChatUser);
+    }
+    return; 
+  }
   if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
   if (tab === 'chest') { app.innerHTML = chestView(); return; }
   if (tab === 'missions') { app.innerHTML = missionsView(); return; }
@@ -382,12 +397,123 @@ function render() {
   renderContentList(tab);
 }
 
-// --- COMPLETE AI ---
+// --- SISTEMA DE PV ESTILO WHATSAPP ---
+function contactsListView() {
+  let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
+  // Remove o próprio usuário da lista de contatos
+  delete users[uid];
+
+  let contactsHTML = '';
+  const keys = Object.keys(users);
+  
+  if (keys.length === 0) {
+    contactsHTML = '<div class="empty">Nenhum outro usuário cadastrado ainda. (Abra o site em outra aba/navegador para simular um contato).</div>';
+  } else {
+    contactsHTML = keys.map(id => {
+      let u = users[id];
+      return `
+        <div class="contact-item" onclick="openChatPV('${id}')">
+          <span class="av" style="width:44px; height:44px; font-size:18px;">${esc(u.badge || '👤')}</span>
+          <div>
+            <b style="font-size:16px;">${esc(u.name)}</b>
+            <div class="by">Toque para abrir a conversa privada (PV) 💬</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  return `
+    <div class="card">
+      <b style="font-size:18px;">💬 Conversas Privadas (PV)</b>
+      <p class="rules">Selecione um contato abaixo para conversar no privado, exatamente como no WhatsApp.</p>
+    </div>
+    <div>${contactsHTML}</div>
+  `;
+}
+
+function openChatPV(targetUid) {
+  currentChatUser = targetUid;
+  render();
+}
+
+function chatPVView(targetUid) {
+  let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
+  let target = users[targetUid] || { name: 'Usuário', badge: '👤' };
+
+  return `
+    <div class="card row" style="justify-content:space-between; padding:14px 20px;">
+      <div class="row">
+        <button class="s" onclick="currentChatUser=null; render();">← Voltar</button>
+        <span class="av" style="width:40px; height:40px; font-size:16px;">${esc(target.badge)}</span>
+        <div>
+          <b style="font-size:16px;">${esc(target.name)}</b>
+          <div class="by" style="color:var(--green)">● Conversa Privada Segura</div>
+        </div>
+      </div>
+    </div>
+    <div id="pv-msgs" style="height:44vh; overflow-y:auto; border:1px solid var(--bd); padding:16px; border-radius:16px; background:rgba(7,5,15,0.7);"></div>
+    <div class="row" style="margin-top:14px;">
+      <input id="pv-input" style="flex:1;" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter')sendPVMessage('${targetUid}')">
+      <button class="p" onclick="sendPVMessage('${targetUid}')">Enviar 🚀</button>
+    </div>
+  `;
+}
+
+function drawPVMessages(targetUid) {
+  const m = $('#pv-msgs');
+  if (!m) return;
+  
+  if (!dataList.pv) dataList.pv = {};
+  // Chave única para o chat entre os dois usuários
+  let chatKey = [uid, targetUid].sort().join('_');
+  let msgs = dataList.pv[chatKey] || [];
+
+  if (msgs.length === 0) {
+    m.innerHTML = '<div class="empty">Nenhuma mensagem ainda com este contato. Diga olá!</div>';
+    return;
+  }
+
+  m.innerHTML = msgs.map(x => {
+    let isMe = x.sender === uid;
+    return `
+      <div style="margin:10px 0; display:flex; justify-content:${isMe ? 'flex-end' : 'flex-start'}">
+        <div style="background:${isMe ? 'linear-gradient(135deg, var(--ac), var(--ac2))' : 'var(--card)'}; border:1px solid var(--bd); border-radius:14px; padding:10px 14px; max-width:75%; color:#fff;">
+          <div style="font-size:13px; word-break:break-word;">${esc(x.text)}</div>
+          <div style="font-size:10px; opacity:0.8; text-align:right; margin-top:4px;">${timeAgo(x.ts)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  m.scrollTop = m.scrollHeight;
+}
+
+function sendPVMessage(targetUid) {
+  const input = $('#pv-input');
+  if (!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+
+  if (!dataList.pv) dataList.pv = {};
+  let chatKey = [uid, targetUid].sort().join('_');
+  if (!dataList.pv[chatKey]) dataList.pv[chatKey] = [];
+
+  dataList.pv[chatKey].push({
+    sender: uid,
+    text: text,
+    ts: Date.now()
+  });
+
+  saveData();
+  drawPVMessages(targetUid);
+}
+
+// --- COMPLETE AI & SPEAKY ---
 function aiView() {
   return `
     <div class="card">
-      <b style="font-size:18px;">🤖 Complete AI & Gerador de Jogos</b>
-      <p class="rules">Converse com a IA, tire dúvidas ou peça para ela criar um mini-game interativo em HTML para você publicar!</p>
+      <b style="font-size:18px;">🤖 Complete AI & 🗣️ Complete Speaky</b>
+      <p class="rules">Converse com a IA e use o recurso <b>Speaky</b> para ouvir as respostas faladas em voz alta automaticamente!</p>
       <input id="ai-game-prompt" placeholder="Ex: Criar jogo estilo flappy ou pong">
       <button class="p" style="margin-top:8px; width:100%;" onclick="generateAIGame()">⚡ Gerar Jogo com IA</button>
     </div>
@@ -399,6 +525,17 @@ function aiView() {
   `;
 }
 
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR';
+    utterance.rate = 1.0;
+    window.speechSynthesis.speak(utterance);
+    toast('🗣️ Complete Speaky falando...');
+  }
+}
+
 function drawAIMessages() {
   const box = $('#ai-chat-box');
   if (!box) return;
@@ -406,7 +543,10 @@ function drawAIMessages() {
     <div style="margin:12px 0; display:flex; flex-direction:${m.role === 'user' ? 'row-reverse' : 'row'}; gap:10px; align-items:flex-start;">
       <span class="av" style="width:36px; height:36px; font-size:14px; background:${m.role === 'user' ? 'var(--ac)' : 'var(--ac2)'};">${m.role === 'user' ? '👤' : '🤖'}</span>
       <div style="background:${m.role === 'user' ? 'var(--card)' : 'rgba(28,23,56,0.8)'}; border:1px solid var(--bd); border-radius:14px; padding:10px 14px; max-width:80%;">
-        <b>${m.role === 'user' ? 'Você' : '🤖 Complete AI'}</b>
+        <div class="row" style="justify-content:space-between;">
+          <b>${m.role === 'user' ? 'Você' : '🤖 Complete AI'}</b>
+          ${m.role === 'ai' ? `<button class="s" style="padding:2px 8px; font-size:11px;" onclick="speakText('${m.text.replace(/'/g, "\\'")}')">🗣️ Speaky</button>` : ''}
+        </div>
         <div style="margin-top:4px; font-size:14px; word-break:break-word;">${esc(m.text)}</div>
         ${m.code ? `<pre style="margin-top:8px;">${esc(m.code)}</pre><button class="p" style="margin-top:8px;" onclick="publishAIGame('${esc(m.gameTitle)}')">🚀 Publicar este Jogo</button>` : ''}
       </div>
@@ -418,7 +558,7 @@ function drawAIMessages() {
 function sendAIMessage() {
   const input = $('#ai-input');
   if (!input) return;
-  const q = sanitize(input.value.trim());
+  const q = input.value.trim();
   if (!q) return;
   input.value = '';
   dataList.aiMsgs.push({ role: 'user', text: q });
@@ -426,30 +566,32 @@ function sendAIMessage() {
   drawAIMessages();
 
   setTimeout(() => {
-    let reply = "Entendi! O Complete Box é uma plataforma incrível com jogos, vídeos, poupança, loja com mais de 100 itens e chat global!";
+    let reply = "Entendi! O Complete Box conta com jogos, vídeos, poupança, loja e agora o chat PV estilo WhatsApp e o Complete Speaky!";
     const lower = q.toLowerCase();
-    if (lower.includes('olá') || lower.includes('oi')) reply = "Olá, Pedro! Como posso te ajudar a turbinar o site hoje?";
-    else if (lower.includes('moedas') || lower.includes('dinheiro')) reply = "Você pode ganhar moedas completando missões diárias, girando a roleta, abrindo o baú de 1h ou minerando!";
-    else if (lower.includes('dono')) reply = "O Dono supremo é o Pedro Mesquita! Você possui acesso total e moedas infinitas.";
+    if (lower.includes('olá') || lower.includes('oi')) reply = "Olá, Pedro! O chat PV e o Speaky estão prontos para uso!";
+    else if (lower.includes('moedas')) reply = "Você pode ganhar moedas completando missões diárias, girando a roleta ou minerando!";
+    else if (lower.includes('dono')) reply = "O Dono supremo é o Pedro Mesquita!";
     
     dataList.aiMsgs.push({ role: 'ai', text: reply });
     saveData();
     drawAIMessages();
+    speakText(reply);
   }, 600);
 }
 
 function generateAIGame() {
   const input = $('#ai-game-prompt');
   if (!input) return;
-  const prompt = sanitize(input.value.trim());
+  const prompt = input.value.trim();
   if (!prompt) return toast('Digite uma ideia para o jogo!');
   toast('⏳ IA gerando código do jogo...');
   
   setTimeout(() => {
     const code = `<!DOCTYPE html><html><head><style>body{margin:0;background:#111;color:#fff;text-align:center;font-family:sans-serif;}canvas{background:#222;border:2px solid #7c53ff;margin-top:10px;border-radius:8px;}</style></head><body><h3>🎮 ${prompt}</h3><canvas id="c" width="340" height="200"></canvas><p>Pontos: <b id="s">0</b></p><script>const c=document.getElementById('c'),x=c.getContext('2d');let score=0,py=140,vy=0,ox=340;window.onclick=()=>{if(py>=140)vy=-8;};function loop(){vy+=0.4;py+=vy;if(py>140){py=140;vy=0;}ox-=4;if(ox<-20){ox=340;score+=10;document.getElementById('s').textContent=score;}x.clearRect(0,0,340,200);x.fillStyle='#7c53ff';x.fillRect(40,py,20,20);x.fillStyle='#ff6b35';x.fillRect(ox,140,20,20);requestAnimationFrame(loop);}loop();<\/script></body></html>`;
-    dataList.aiMsgs.push({ role: 'ai', text: `Jogo "${prompt}" gerado com sucesso! Você já pode testá-lo ou publicá-lo diretamente na comunidade.`, code, gameTitle: prompt });
+    dataList.aiMsgs.push({ role: 'ai', text: `Jogo "${prompt}" gerado com sucesso! Teste abaixo ou publique diretamente.`, code, gameTitle: prompt });
     saveData();
     drawAIMessages();
+    speakText(`Jogo ${prompt} gerado com sucesso!`);
     toast('✨ Jogo gerado com sucesso!');
   }, 1000);
 }
@@ -717,7 +859,7 @@ function profileView() {
               <b>🎮 Jogo: ${esc(x.title)}</b>
               <button class="danger" onclick="deletePost('games', '${x.id}')">🗑️ Apagar</button>
             </div>
-            <div style="margin-top:6px;"><iframe class="g" srcdoc="${esc(x.content)}"></iframe></div>
+            <div style="margin-top:6px;"><iframe class="g" srcdoc="${x.content}"></iframe></div>
           </div>
         `).join('')}
       </div>
@@ -725,8 +867,9 @@ function profileView() {
   `;
 }
 
-async function submitPost(kind) {
-  const t = sanitize($('#p-title').value), c = sanitize($('#p-content').value);
+function submitPost(kind) {
+  const t = sanitize($('#p-title').value);
+  const c = $('#p-content').value; 
   if(!t || !c) return toast('❌ Preencha todos os campos!');
   const postObj = { id: 'p_' + Math.random().toString(36).substring(2, 9), title: t, content: c, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now() };
   dataList[kind].unshift(postObj);
@@ -755,7 +898,7 @@ function renderContentList(k) {
       const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
       body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
     } else if (k === 'games') {
-      body = `<div style="background:#000; border-radius:14px; padding:6px;"><iframe class="g" srcdoc="${esc(x.content)}"></iframe></div>`;
+      body = `<div style="background:#000; border-radius:14px; padding:6px;"><iframe class="g" srcdoc="${x.content}"></iframe></div>`;
     }
     const canDelete = isOwner || x.by === uid;
     return `
@@ -772,45 +915,6 @@ function renderContentList(k) {
       </div>
     `;
   }).join('');
-}
-
-// --- CHAT ---
-function chatView() {
-  return `
-    <div class="card">
-      <b style="font-size:17px;">💬 Chat Global</b>
-      <p class="rules">Envie mensagens públicas para toda a comunidade em tempo real.</p>
-    </div>
-    <div id="msgs" style="height:48vh; overflow-y:auto; border:1px solid var(--bd); padding:16px; border-radius:16px; background:rgba(7,5,15,0.7);"></div>
-    <div class="row" style="margin-top:14px;">
-      <input id="ci" style="flex:1;" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendChat()">
-      <button class="p" onclick="sendChat()">Enviar 🚀</button>
-    </div>
-  `;
-}
-
-function drawMessages() {
-  const m = $('#msgs'); if(!m) return;
-  const msgs = dataList.chat || [];
-  
-  m.innerHTML = msgs.map(x => `
-    <div style="margin:12px 0; padding:12px 16px; background:rgba(18,14,36,0.7); border:1px solid var(--bd); border-radius:14px;">
-      <div class="row" style="margin-bottom:6px;">
-        <span><b>${esc(x.authorBadge || '👤')} ${esc(x.authorName)}</b></span>
-        <span class="by" style="margin-left:auto;">${timeAgo(x.ts)}</span>
-      </div>
-      <div style="word-break:break-word; font-size:14px;">${esc(x.text)}</div>
-    </div>
-  `).join('');
-  m.scrollTop = m.scrollHeight;
-}
-
-function sendChat() {
-  const i = $('#ci'); if(!i || !i.value.trim()) return;
-  const text = sanitize(i.value.trim()); i.value='';
-  dataList.chat.push({ id: 'msg_' + Math.random(), text, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now() });
-  saveData();
-  drawMessages();
 }
 
 // Inicialização segura
