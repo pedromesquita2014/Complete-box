@@ -247,29 +247,11 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
   <div id="app"></div>
 </main>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <script>
 function sanitize(input) {
   if (typeof input !== 'string') return input;
   return input.replace(/[<>]/g, '').slice(0, 1000);
 }
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAgRafNnzncOP631NU9oJTfyBNf6bIy1pQ",
-  authDomain: "complete-box-2.firebaseapp.com",
-  projectId: "complete-box-2",
-  storageBucket: "complete-box-2.firebasestorage.app",
-  messagingSenderId: "1010030427570",
-  appId: "1:1010030427570:web:dc9c10130a8b98b0fbf8ab"
-};
-
-let db = null;
-try {
-  firebase.initializeApp(firebaseConfig);
-  db = firebase.firestore();
-} catch(e) { console.warn("Offline", e); }
 
 let uid = localStorage.getItem('cb_uid');
 if (!uid) {
@@ -294,24 +276,14 @@ let myProfile = {
   savings: mySavings
 };
 
-function saveProfileToGlobal() {
+function saveProfile() {
   if (!isOwner) {
     localStorage.setItem('cb_name', sanitize(myProfile.name));
     localStorage.setItem('cb_coins', myProfile.coins);
     localStorage.setItem('cb_savings', myProfile.savings);
     localStorage.setItem('cb_badge', myProfile.badge);
   }
-  if (db) {
-    db.collection('profiles').doc(uid).set({
-      name: sanitize(myProfile.name),
-      badge: myProfile.badge,
-      isOwner: isOwner,
-      coins: isOwner ? 999999999 : myProfile.coins,
-      ts: Date.now()
-    }, { merge: true }).catch(() => {});
-  }
 }
-saveProfileToGlobal();
 
 function toast(msg) {
   document.querySelectorAll('#toast').forEach(x => x.remove());
@@ -323,10 +295,27 @@ function toast(msg) {
 }
 
 let tab = 'videos';
-let profiles = {};
-let dataList = { videos: [], games: [], polls: [], chat: [], aiMsgs: [{ role: 'ai', text: 'Olá! Sou a Complete AI. Como posso te ajudar hoje? Posso conversar, tirar dúvidas ou criar jogos HTML para você!' }] };
-let onlineUsers = [];
 let shopCategory = 'coroas';
+
+// Carregar dados locais salvos ou itens padrão
+let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify({
+  videos: [
+    { id: 'v1', title: 'Bem-vindo ao Complete Box', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', ts: Date.now() }
+  ],
+  games: [
+    { id: 'g1', title: 'Jogo Exemplo HTML', content: '<body style="background:#111;color:#fff;text-align:center;padding-top:40px;font-family:sans-serif;"><h2>🎮 Jogo de Teste</h2><button onclick="alert(\'Funcionando!\')" style="padding:10px 20px;background:#7c53ff;color:#fff;border:0;border-radius:8px;cursor:pointer;">Clique em mim!</button></body>', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', ts: Date.now() }
+  ],
+  chat: [
+    { id: 'c1', text: 'Olá a todos no chat global do Complete Box!', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', ts: Date.now() }
+  ],
+  aiMsgs: [
+    { role: 'ai', text: 'Olá, Pedro! Sou a Complete AI. Como posso te ajudar hoje? Posso conversar, tirar dúvidas ou criar jogos HTML para você!' }
+  ]
+}));
+
+function saveData() {
+  localStorage.setItem('cb_datalist', JSON.stringify(dataList));
+}
 
 const TABS = [
   ['videos', '🎬 Vídeos'],
@@ -364,50 +353,26 @@ function renderHeader() {
   if (el) el.textContent = isOwner ? '🪙 ∞ (Dono)' : `🪙 ${myProfile.coins}`;
 }
 
-function setupGlobalSync() {
-  if (!db) return;
-  db.collection('profiles').onSnapshot(snap => {
-    profiles = {}; onlineUsers = [];
-    snap.docs.forEach(doc => {
-      const d = doc.data(); profiles[doc.id] = d;
-      if (d.ts && (Date.now() - d.ts < 300000)) onlineUsers.push({ id: doc.id, name: d.name || 'Usuário', badge: d.badge || '👤' });
-    });
-    if (tab === 'chat' || tab === 'bank') renderChatUsers();
-  });
-
-  ['videos', 'games', 'polls'].forEach(kind => {
-    db.collection(kind).orderBy('ts', 'desc').limit(50).onSnapshot(snap => {
-      dataList[kind] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      if (tab === kind) renderContentList(kind);
-    });
-  });
-
-  db.collection('global_chat').orderBy('ts', 'asc').limit(100).onSnapshot(snap => {
-    dataList.chat = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    if (tab === 'chat') drawMessages();
-  });
-}
-
 function render() {
   renderHeader();
   const app = $('#app');
   if (!app) return;
 
-  if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); renderChatUsers(); return; }
+  if (tab === 'chat') { app.innerHTML = chatView(); drawMessages(); return; }
   if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
   if (tab === 'chest') { app.innerHTML = chestView(); return; }
   if (tab === 'missions') { app.innerHTML = missionsView(); return; }
   if (tab === 'miner') { app.innerHTML = minerView(); return; }
   if (tab === 'spin') { app.innerHTML = spinView(); return; }
-  if (tab === 'bank') { app.innerHTML = bankView(); renderChatUsers(); return; }
+  if (tab === 'bank') { app.innerHTML = bankView(); return; }
   if (tab === 'shop') { app.innerHTML = shopView(); return; }
   if (tab === 'me') { app.innerHTML = profileView(); return; }
 
-  let titles = { videos: '🎬 Publicar Vídeo Global', games: '🎮 Publicar Jogo HTML', polls: '📊 Criar Enquete' };
+  let titles = { videos: '🎬 Publicar Vídeo Global', games: '🎮 Publicar Jogo HTML' };
   app.innerHTML = `
     <div class="card">
       <b style="font-size:17px;">${titles[tab] || 'Publicar'}</b>
-      <p class="rules">Compartilhe conteúdos instantaneamente na rede global protegida.</p>
+      <p class="rules">Compartilhe conteúdos instantaneamente na rede.</p>
       <input id="p-title" placeholder="Título da publicação" maxlength="100">
       ${tab === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML completo do seu jogo aqui..."></textarea>' : '<input id="p-content" placeholder="Link do YouTube ou URL direta (.mp4)">'}
       <button class="p" style="margin-top:12px; width:100%;" onclick="submitPost('${tab}')">🚀 Publicar Agora</button>
@@ -457,6 +422,7 @@ function sendAIMessage() {
   if (!q) return;
   input.value = '';
   dataList.aiMsgs.push({ role: 'user', text: q });
+  saveData();
   drawAIMessages();
 
   setTimeout(() => {
@@ -467,6 +433,7 @@ function sendAIMessage() {
     else if (lower.includes('dono')) reply = "O Dono supremo é o Pedro Mesquita! Você possui acesso total e moedas infinitas.";
     
     dataList.aiMsgs.push({ role: 'ai', text: reply });
+    saveData();
     drawAIMessages();
   }, 600);
 }
@@ -481,16 +448,18 @@ function generateAIGame() {
   setTimeout(() => {
     const code = `<!DOCTYPE html><html><head><style>body{margin:0;background:#111;color:#fff;text-align:center;font-family:sans-serif;}canvas{background:#222;border:2px solid #7c53ff;margin-top:10px;border-radius:8px;}</style></head><body><h3>🎮 ${prompt}</h3><canvas id="c" width="340" height="200"></canvas><p>Pontos: <b id="s">0</b></p><script>const c=document.getElementById('c'),x=c.getContext('2d');let score=0,py=140,vy=0,ox=340;window.onclick=()=>{if(py>=140)vy=-8;};function loop(){vy+=0.4;py+=vy;if(py>140){py=140;vy=0;}ox-=4;if(ox<-20){ox=340;score+=10;document.getElementById('s').textContent=score;}x.clearRect(0,0,340,200);x.fillStyle='#7c53ff';x.fillRect(40,py,20,20);x.fillStyle='#ff6b35';x.fillRect(ox,140,20,20);requestAnimationFrame(loop);}loop();<\/script></body></html>`;
     dataList.aiMsgs.push({ role: 'ai', text: `Jogo "${prompt}" gerado com sucesso! Você já pode testá-lo ou publicá-lo diretamente na comunidade.`, code, gameTitle: prompt });
+    saveData();
     drawAIMessages();
     toast('✨ Jogo gerado com sucesso!');
   }, 1000);
 }
 
-async function publishAIGame(title) {
+function publishAIGame(title) {
   const lastMsg = [...dataList.aiMsgs].reverse().find(m => m.code);
   if (!lastMsg) return;
-  const postObj = { title: 'Jogo IA: ' + title, content: lastMsg.code, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now(), likes: [] };
-  if (db) await db.collection('games').add(postObj);
+  const postObj = { id: 'g_' + Math.random().toString(36).substring(2, 9), title: 'Jogo IA: ' + title, content: lastMsg.code, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now() };
+  dataList.games.unshift(postObj);
+  saveData();
   toast('🎮 Jogo publicado com sucesso na aba Jogos!');
   go('games');
 }
@@ -523,16 +492,15 @@ function claimChest() {
   if (now - lastChest < 3600000) return toast('O baú ainda está em tempo de recarga (1h)!');
   localStorage.setItem('cb_last_chest', now);
   const reward = Math.floor(Math.random() * 80) + 40;
-  if (!isOwner) { myProfile.coins += reward; saveProfileToGlobal(); }
+  if (!isOwner) { myProfile.coins += reward; saveProfile(); }
   renderHeader(); render();
   toast(`🎉 Você abriu o baú e ganhou ${reward} moedas!`);
 }
 
-// Missões
 function claimMission(key, reward) {
   if (localStorage.getItem('cb_m_' + key) === 'done') return toast('Missão já concluída!');
   localStorage.setItem('cb_m_' + key, 'done');
-  if (!isOwner) { myProfile.coins += reward; saveProfileToGlobal(); }
+  if (!isOwner) { myProfile.coins += reward; saveProfile(); }
   renderHeader(); render(); toast(`🎉 +${reward} Complete Coins resgatadas!`);
 }
 
@@ -552,14 +520,13 @@ function missionsView() {
   `;
 }
 
-// Mineração
 let minerClicks = 0;
 function minerView() {
   return `
     <div class="card" style="text-align:center; padding:35px 20px;">
       <b style="font-size:22px;">⛏️ Mineração de Complete Coins</b>
       <p class="rules">Clique rapidamente no bloco abaixo para farmar moedas na sua sessão!</p>
-      <div style="margin:30px auto; width:140px; height:140px; background:linear-gradient(135deg, var(--ac), var(--ac2)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:50px; cursor:pointer; box-shadow: 0 0 35px rgba(124,83,255,0.6); transition: transform 0.1s;" onclick="clickMiner()" onmousedown="this.style.transform='scale(0.92)'" onmouseup="this.style.transform='scale(1)'">
+      <div style="margin:30px auto; width:140px; height:140px; background:linear-gradient(135deg, var(--ac), var(--ac2)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:50px; cursor:pointer; box-shadow: 0 0 35px rgba(124,83,255,0.6);" onclick="clickMiner()" onmousedown="this.style.transform='scale(0.92)'" onmouseup="this.style.transform='scale(1)'">
         💎
       </div>
       <div style="font-size:16px; color:var(--gold);">Moedas mineradas nesta sessão: <b id="mc">${minerClicks}</b></div>
@@ -569,10 +536,9 @@ function minerView() {
 function clickMiner() {
   minerClicks++;
   const el = $('#mc'); if(el) el.textContent = minerClicks;
-  if(!isOwner && minerClicks % 10 === 0) { myProfile.coins += 5; saveProfileToGlobal(); renderHeader(); toast('⚡ +5 moedas mineradas!'); }
+  if(!isOwner && minerClicks % 10 === 0) { myProfile.coins += 5; saveProfile(); renderHeader(); toast('⚡ +5 moedas mineradas!'); }
 }
 
-// Roleta
 function spinView() {
   return `
     <div class="card" style="text-align:center; padding:35px 20px;">
@@ -589,11 +555,10 @@ function doSpin() {
   localStorage.setItem('cb_spin', d);
   const w = [20, 50, 100, 200][Math.floor(Math.random()*4)];
   $('#sp-txt').textContent = `🎉 +${w} Moedas Ganhas!`;
-  if(!isOwner) { myProfile.coins += w; saveProfileToGlobal(); }
+  if(!isOwner) { myProfile.coins += w; saveProfile(); }
   renderHeader(); toast(`🎉 Parabéns! Você ganhou ${w} moedas!`);
 }
 
-// Banco
 function bankView() {
   return `
     <div class="card">
@@ -616,12 +581,12 @@ function bankView() {
 function dep() {
   const v = parseInt($('#bk-amt').value);
   if(!v || v <= 0 || myProfile.coins < v) return toast('Quantidade inválida ou saldo insuficiente na carteira!');
-  myProfile.coins -= v; myProfile.savings += v; saveProfileToGlobal(); render(); toast(`🪙 Depositado ${v} moedas na poupança!`);
+  myProfile.coins -= v; myProfile.savings += v; saveProfile(); render(); toast(`🪙 Depositado ${v} moedas na poupança!`);
 }
 function wit() {
   const v = parseInt($('#bk-amt').value);
   if(!v || v <= 0 || myProfile.savings < v) return toast('Quantidade inválida ou saldo insuficiente na poupança!');
-  myProfile.savings -= v; myProfile.coins += v; saveProfileToGlobal(); render(); toast(`🪙 Sacado ${v} moedas para a carteira!`);
+  myProfile.savings -= v; myProfile.coins += v; saveProfile(); render(); toast(`🪙 Sacado ${v} moedas para a carteira!`);
 }
 
 // --- LOJA ---
@@ -681,7 +646,7 @@ function shopView() {
 function buy(id, price, badge) {
   if(isOwner) { 
     myProfile.badge = badge; 
-    saveProfileToGlobal(); 
+    saveProfile(); 
     return toast('🎉 Item adquirido instantaneamente (Dono)!'); 
   }
   let tot = myProfile.coins + myProfile.savings;
@@ -694,7 +659,7 @@ function buy(id, price, badge) {
     myProfile.coins -= price; 
   }
   myProfile.badge = badge; 
-  saveProfileToGlobal(); 
+  saveProfile(); 
   renderHeader(); 
   render(); 
   toast('🎉 Compra realizada com sucesso! Saldo debitado e item aplicado.');
@@ -709,7 +674,7 @@ function profileView() {
     <div class="card" style="text-align:center; padding:35px 20px;">
       <span class="av" style="width:80px; height:80px; font-size:34px; margin-bottom:10px;">${myProfile.badge}</span>
       <h2 style="margin:4px 0 2px; font-size:24px;">${esc(myProfile.name)}</h2>
-      <div class="by">${isOwner ? '👑 Administrador / Dono Principal' : '👤 Membro da Rede Global'}</div>
+      <div class="by">${isOwner ? '👑 Administrador / Dono Principal' : '👤 Membro da Rede'}</div>
       
       <div class="row" style="justify-content:center; gap:30px; margin-top:20px; border-top:1px solid var(--bd); border-bottom:1px solid var(--bd); padding:14px 0;">
         <div><b style="font-size:17px;">${myVideos.length + myGames.length}</b><div class="by">Publicações</div></div>
@@ -722,7 +687,7 @@ function profileView() {
       <b style="font-size:17px;">⚙️ Configurações de Perfil & Dono</b>
       ${isOwner ? '<p class="rules" style="margin-top:6px;">Você está logado como Dono Principal com privilégios absolutos e saldo infinito.</p>' : `
         <input id="new-name" value="${esc(myProfile.name)}" placeholder="Seu nome de usuário">
-        <button class="p" style="margin-top:10px;" onclick="myProfile.name=sanitize($('#new-name').value); saveProfileToGlobal(); toast('🎉 Nome alterado com sucesso!'); render();">Salvar Novo Nome</button>
+        <button class="p" style="margin-top:10px;" onclick="myProfile.name=sanitize($('#new-name').value); saveProfile(); toast('🎉 Nome alterado com sucesso!'); render();">Salvar Novo Nome</button>
         <hr style="border:0; border-top:1px solid var(--bd); margin:18px 0;">
         <input id="op-pass" type="password" placeholder="Insira a senha do Dono">
         <button class="s" style="margin-top:6px; width:100%;" onclick="if($('#op-pass').value==='dono-pedro-2026'){localStorage.setItem('${OWNER_KEY}','true');location.reload();}else{toast('❌ Senha incorreta!');}">Ativar Modo Dono 👑</button>
@@ -731,10 +696,10 @@ function profileView() {
 
     <div class="card">
       <b style="font-size:17px;">📸 Suas Publicações (Feed Estilo Instagram)</b>
-      <p class="rules">Aqui estão todos os seus vídeos e jogos publicados para a comunidade ver. Você pode apagá-los instantaneamente quando quiser.</p>
+      <p class="rules">Aqui estão todos os seus vídeos e jogos publicados. Você pode apagá-los instantaneamente quando quiser.</p>
       
       <div style="margin-top:16px;">
-        ${!myVideos.length && !myGames.length ? '<div class="empty">📭 Você ainda não publicou nenhum conteúdo. Vá até as abas Vídeos ou Jogos e compartilhe sua primeira criação!</div>' : ''}
+        ${!myVideos.length && !myGames.length ? '<div class="empty">📭 Você ainda não publicou nenhum conteúdo.</div>' : ''}
         
         ${myVideos.map(x => `
           <div style="background:var(--bg); border:1px solid var(--bd); border-radius:16px; padding:16px; margin-bottom:16px;">
@@ -763,15 +728,18 @@ function profileView() {
 async function submitPost(kind) {
   const t = sanitize($('#p-title').value), c = sanitize($('#p-content').value);
   if(!t || !c) return toast('❌ Preencha todos os campos!');
-  if(db) await db.collection(kind).add({title:t, content:c, by:uid, authorName:myProfile.name, authorBadge:myProfile.badge, ts:Date.now(), likes:[]});
-  toast('🎉 Publicado globalmente com sucesso!');
+  const postObj = { id: 'p_' + Math.random().toString(36).substring(2, 9), title: t, content: c, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now() };
+  dataList[kind].unshift(postObj);
+  saveData();
+  toast('🎉 Publicado com sucesso!');
   go(kind);
 }
 
-async function deletePost(kind, id) {
-  if (confirm('Deseja realmente apagar esta publicação da rede global?')) {
-    if (db) await db.collection(kind).doc(id).delete();
-    toast('🗑️ Publicação apagada com sucesso!');
+function deletePost(kind, id) {
+  if (confirm('Deseja realmente apagar esta publicação?')) {
+    dataList[kind] = dataList[kind].filter(x => x.id !== id);
+    saveData();
+    toast('🗑️ Publicação apagada!');
     render();
   }
 }
@@ -779,7 +747,7 @@ async function deletePost(kind, id) {
 function renderContentList(k) {
   const box = $('#content-list'); if(!box) return;
   const items = dataList[k] || [];
-  if (!items.length) { box.innerHTML = '<div class="empty">📭 Nenhum conteúdo publicado no momento. Seja o primeiro a postar!</div>'; return; }
+  if (!items.length) { box.innerHTML = '<div class="empty">📭 Nenhum conteúdo publicado. Seja o primeiro a postar!</div>'; return; }
 
   box.innerHTML = items.map(x => {
     let body = '';
@@ -810,17 +778,10 @@ function renderContentList(k) {
 function chatView() {
   return `
     <div class="card">
-      <b style="font-size:17px;">💬 Chat Global & Mensagens Offline</b>
-      <p class="rules">Envie mensagens públicas para todos ou selecione um usuário específico (mesmo offline) para enviar uma mensagem direta que ele lerá assim que entrar no site.</p>
-      <select id="dm-target" style="margin:10px 0;">
-        <option value="">💬 Todos no Chat Global</option>
-        ${Object.keys(profiles).map(id => `<option value="${id}">${esc(profiles[id].badge || '👤')} ${esc(profiles[id].name || 'Usuário')}</option>`).join('')}
-      </select>
+      <b style="font-size:17px;">💬 Chat Global</b>
+      <p class="rules">Envie mensagens públicas para toda a comunidade em tempo real.</p>
     </div>
-    <div class="card" style="padding:12px; margin-bottom:12px;">
-      <div class="online-users-list" id="ub"></div>
-    </div>
-    <div id="msgs" style="height:44vh; overflow-y:auto; border:1px solid var(--bd); padding:16px; border-radius:16px; background:rgba(7,5,15,0.7);"></div>
+    <div id="msgs" style="height:48vh; overflow-y:auto; border:1px solid var(--bd); padding:16px; border-radius:16px; background:rgba(7,5,15,0.7);"></div>
     <div class="row" style="margin-top:14px;">
       <input id="ci" style="flex:1;" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendChat()">
       <button class="p" onclick="sendChat()">Enviar 🚀</button>
@@ -828,19 +789,14 @@ function chatView() {
   `;
 }
 
-function renderChatUsers() {
-  const b = $('#ub'); if(b) b.innerHTML = onlineUsers.map(u=>`<div class="online-user-tag"><span class="online-dot"></span>${esc(u.badge || '👤')} ${esc(u.name)}</div>`).join('');
-}
-
 function drawMessages() {
   const m = $('#msgs'); if(!m) return;
   const msgs = dataList.chat || [];
-  const filtered = msgs.filter(x => !x.targetId || x.targetId === uid || x.by === uid);
   
-  m.innerHTML = filtered.map(x => `
+  m.innerHTML = msgs.map(x => `
     <div style="margin:12px 0; padding:12px 16px; background:rgba(18,14,36,0.7); border:1px solid var(--bd); border-radius:14px;">
       <div class="row" style="margin-bottom:6px;">
-        <span><b>${esc(x.authorBadge || '👤')} ${esc(x.authorName)}</b> ${x.targetId ? '🔒 <span style="font-size:11px; color:var(--gold);">(Mensagem Direta / Offline)</span>' : ''}</span>
+        <span><b>${esc(x.authorBadge || '👤')} ${esc(x.authorName)}</b></span>
         <span class="by" style="margin-left:auto;">${timeAgo(x.ts)}</span>
       </div>
       <div style="word-break:break-word; font-size:14px;">${esc(x.text)}</div>
@@ -849,26 +805,18 @@ function drawMessages() {
   m.scrollTop = m.scrollHeight;
 }
 
-async function sendChat() {
+function sendChat() {
   const i = $('#ci'); if(!i || !i.value.trim()) return;
   const text = sanitize(i.value.trim()); i.value='';
-  const targetId = $('#dm-target') ? $('#dm-target'].value : '';
-
-  if(db) await db.collection('global_chat').add({
-    text, 
-    by: uid, 
-    targetId: targetId || null, 
-    authorName: myProfile.name, 
-    authorBadge: myProfile.badge, 
-    ts: Date.now()
-  });
+  dataList.chat.push({ id: 'msg_' + Math.random(), text, authorName: myProfile.name, authorBadge: myProfile.badge, ts: Date.now() });
+  saveData();
+  drawMessages();
 }
 
-// Inicialização segura garantida após o carregamento da página
+// Inicialização segura
 window.addEventListener('DOMContentLoaded', () => {
   nav();
   render();
-  setupGlobalSync();
 });
 </script>
 </body>
