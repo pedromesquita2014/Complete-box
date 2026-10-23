@@ -136,9 +136,7 @@ main {
   padding: 22px;
   margin: 16px 0;
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-  transition: border-color 0.2s, transform 0.2s;
 }
-.card:hover { border-color: rgba(124,83,255,0.5); }
 .rules { font-size: 13px; color: var(--mu); margin-bottom: 8px; }
 input, textarea, select {
   width: 100%;
@@ -150,7 +148,6 @@ input, textarea, select {
   border-radius: 14px;
   padding: 12px 16px;
   margin: 8px 0;
-  transition: all 0.2s;
 }
 input:focus, textarea:focus, select:focus {
   outline: none;
@@ -168,9 +165,7 @@ button.p {
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(124,83,255,0.45);
-  transition: transform 0.15s, opacity 0.2s;
 }
-button.p:active { transform: scale(0.97); }
 button.s {
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--bd);
@@ -181,10 +176,8 @@ button.s {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
 }
-button.s:hover { background: rgba(255,255,255,0.08); border-color: var(--ac); }
-button.s.on { background: var(--ac); border-color: transparent; color: #fff; box-shadow: 0 4px 12px rgba(124,83,255,0.4); }
+button.s.on { background: var(--ac); border-color: transparent; color: #fff; }
 button.danger {
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.35);
@@ -195,9 +188,7 @@ button.danger {
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
 }
-button.danger:hover { background: rgba(239, 68, 68, 0.25); }
 .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .by { font-size: 12px; color: var(--mu); }
 .empty { text-align: center; color: var(--mu); padding: 45px 16px; font-weight: 500; }
@@ -216,7 +207,6 @@ iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 14px
   overflow: hidden;
   flex: none;
   font-size: 24px;
-  box-shadow: 0 6px 16px rgba(124,83,255,0.35);
 }
 #toast {
   position: fixed;
@@ -230,9 +220,7 @@ iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 14px
   font-weight: 700;
   z-index: 999;
   box-shadow: 0 12px 35px rgba(0,0,0,0.55);
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-@keyframes popIn { from { transform: translate(-50%, -20px) scale(0.8); opacity: 0; } }
 .online-users-list { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; scrollbar-width: none; }
 .online-users-list::-webkit-scrollbar { display: none; }
 .online-user-tag { background: var(--bg); border: 1px solid var(--bd); border-radius: 18px; padding: 6px 14px; font-size: 12px; display: flex; align-items: center; gap: 6px; font-weight: 600; }
@@ -429,7 +417,7 @@ function render() {
   renderContentList(tab);
 }
 
-// --- COMPLETE AI TOTALMENTE FUNCIONAL ---
+// --- COMPLETE AI ---
 function aiView() {
   return `
     <div class="card">
@@ -636,7 +624,7 @@ function wit() {
   myProfile.savings -= v; myProfile.coins += v; saveProfileToGlobal(); render(); toast(`🪙 Sacado ${v} moedas para a carteira!`);
 }
 
-// --- LOJA ORGANIZADA POR CATEGORIAS (100+ ITENS) ---
+// --- LOJA ---
 const EMOJIS = ['👑','⚡','🔥','💎','🚀','⭐','🌟','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','💎','🎩','🎸','🍕','🍔','⚡','🛸','💡','🪐','🎲','🍉','💎','🍩'];
 const ADJ = ['Lendário','Supremo','Místico','Cósmico','Galáctico','Elite','Imperial','Divino','Solar','Lunar','Titanium','Cyber','Fênix','Soberano','Alpha','Quantum','Vanguard','Stellar','Neon','Prime'];
 const TYPE = ['Coroa','Escudo','Espada','Orbe','Símbolo','Manto','Anel','Cristal','Aura','Emblema'];
@@ -712,7 +700,7 @@ function buy(id, price, badge) {
   toast('🎉 Compra realizada com sucesso! Saldo debitado e item aplicado.');
 }
 
-// --- PERFIL ESTILO INSTAGRAM COM POSTS DO USUÁRIO ---
+// --- PERFIL ---
 function profileView() {
   const myVideos = (dataList.videos || []).filter(x => x.by === uid);
   const myGames = (dataList.games || []).filter(x => x.by === uid);
@@ -772,7 +760,6 @@ function profileView() {
   `;
 }
 
-// --- PUBLICAR E APAGAR POSTS COM 1 CLIQUE ---
 async function submitPost(kind) {
   const t = sanitize($('#p-title').value), c = sanitize($('#p-content').value);
   if(!t || !c) return toast('❌ Preencha todos os campos!');
@@ -819,7 +806,7 @@ function renderContentList(k) {
   }).join('');
 }
 
-// --- CHAT COM MENSAGENS OFFLINE / DIRETAS ---
+// --- CHAT ---
 function chatView() {
   return `
     <div class="card">
@@ -877,10 +864,12 @@ async function sendChat() {
   });
 }
 
-// Inicialização segura
-nav();
-render();
-setupGlobalSync();
+// Inicialização segura garantida após o carregamento da página
+window.addEventListener('DOMContentLoaded', () => {
+  nav();
+  render();
+  setupGlobalSync();
+});
 </script>
 </body>
 </html>
