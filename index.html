@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box - Edição Ultra Complete Coins</title>
+<title>Complete Box - Edição Koda Shop & Speaky Dedicado</title>
 <style>
 :root {
   --bg: #0b0f19;
@@ -243,8 +243,8 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 <main>
   <div class="hero">
     <div>
-      🌐 <b>Rede Global Ultra Ativa!</b>
-      <div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">Com Ultra Complete Coins, Loja de Acessórios e Áudio no PV.</div>
+      🌐 <b>Rede Global Ultra Completa!</b>
+      <div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">Koda Shop Estilizada, Speaky Dedicado, Chat PV com Áudio e Jogos HTML.</div>
     </div>
   </div>
 
@@ -269,8 +269,8 @@ if (location.hash === '#pedromesquita2026' || localStorage.getItem(OWNER_KEY) ==
 }
 
 let isOwner = localStorage.getItem(OWNER_KEY) === 'true';
-let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 200);
-let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 5); // ✨ Ultra Complete Coins iniciais
+let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 250);
+let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 10);
 let mySavings = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_savings')) || 0);
 let myBadge = localStorage.getItem('cb_badge') || (isOwner ? '👑' : '👤');
 
@@ -306,6 +306,7 @@ function toast(msg) {
 }
 
 let tab = 'videos';
+let kodaSubTab = 'ofertas';
 let shopCategory = 'coroas';
 let currentChatUser = null;
 let mediaRecorder = null;
@@ -320,7 +321,7 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI com o Speaky e as novas Ultra Complete Coins ✨!' }
+    { role: 'ai', text: 'Olá! Sou a Complete AI. Use a aba dedicada ao Complete Speaky para ouvir qualquer texto em voz alta!' }
   ]
 }));
 
@@ -332,8 +333,10 @@ const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
   ['chat', '💬 Contatos PV'],
-  ['shop', '🛍️ Loja & Ultra Coins'],
-  ['ai', '🤖 IA & Speaky'],
+  ['kodashop', '🛍️ Koda Shop'],
+  ['accessories', '👑 Acessórios'],
+  ['speaky', '🗣️ Speaky Dedicado'],
+  ['ai', '🤖 IA Chat'],
   ['chest', '🎁 Baú 1h'],
   ['missions', '🎯 Missões'],
   ['miner', '⛏️ Mineração'],
@@ -381,7 +384,9 @@ function render() {
     else { app.innerHTML = chatPVView(currentChatUser); drawPVMessages(currentChatUser); }
     return; 
   }
-  if (tab === 'shop') { app.innerHTML = shopView(); return; }
+  if (tab === 'kodashop') { app.innerHTML = kodaShopView(); return; }
+  if (tab === 'accessories') { app.innerHTML = accessoriesView(); return; }
+  if (tab === 'speaky') { app.innerHTML = speakyDedView(); return; }
   if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
   if (tab === 'chest') { app.innerHTML = chestView(); return; }
   if (tab === 'missions') { app.innerHTML = missionsView(); return; }
@@ -404,7 +409,165 @@ function render() {
   renderContentList(tab);
 }
 
-// --- LOJA & ULTRA COMPLETE COINS ---
+// --- KODA SHOP EXATA ---
+function kodaShopView() {
+  return `
+    <div class="card row" style="gap:6px; background: rgba(19,27,46,0.9);">
+      <button class="s ${kodaSubTab==='ofertas'?'on':''}" onclick="kodaSubTab='ofertas'; render();">🔥 Ofertas</button>
+      <button class="s ${kodaSubTab==='trocas'?'on':''}" onclick="kodaSubTab='trocas'; render();">🔄 Trocas</button>
+      <button class="s ${kodaSubTab==='halloween'?'on':''}" onclick="kodaSubTab='halloween'; render();">🎃 Eventos</button>
+      <button class="s ${kodaSubTab==='baus'?'on':''}" onclick="kodaSubTab='baus'; render();">🎁 Baús Raros</button>
+    </div>
+
+    ${kodaSubTab === 'ofertas' ? `
+      <div class="card" style="border: 2px solid var(--ultra);">
+        <div class="row" style="justify-content:space-between;">
+          <b style="color:var(--ultra); font-size:18px;">✨ Pacote Ultra Diamonds</b>
+          <span style="background:rgba(16,185,129,0.2); color:var(--green); padding:4px 10px; border-radius:10px; font-size:12px; font-weight:bold;">SUPER OFERTA</span>
+        </div>
+        <div style="font-size:40px; text-align:center; margin:16px 0;">✨ 10 Ultra Complete Coins</div>
+        <p class="rules" style="text-align:center;">Adquira pacotes de moedas raras para abrir baús lendários e comprar itens exclusivos.</p>
+        <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#000;" onclick="buyUltraPackage(10, 150000)">Comprar por 🪙 150.000 Moedas</button>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+        <div class="card" style="text-align:center;">
+          <div style="font-size:26px;">✨ 5 Ultra</div>
+          <div style="color:var(--gold); margin:8px 0;">🪙 80.000 Moedas</div>
+          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(5, 80000)">Comprar</button>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div style="font-size:26px;">✨ 25 Ultra</div>
+          <div style="color:var(--gold); margin:8px 0;">🪙 350.000 Moedas</div>
+          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(25, 350000)">Comprar</button>
+        </div>
+      </div>
+    ` : ''}
+
+    ${kodaSubTab === 'trocas' ? `
+      <div class="card">
+        <b style="font-size:18px;">🔄 Câmbio Koda de Moedas por Ultra Coins</b>
+        <p class="rules">Converta suas moedas normais em ✨ Ultra Complete Coins ou vice-versa.</p>
+        <div style="margin:20px 0; text-align:center;">
+          <div style="font-size:20px; color:var(--ultra); margin-bottom:14px;">✨ Suas Ultra Coins: <b>${myProfile.ultra}</b></div>
+          <button class="p" style="margin-bottom:10px; width:100%;" onclick="exchangeCoinsToUltra()">Trocar 25.000 Moedas por 1 ✨ Ultra Coin</button>
+          <button class="s" style="width:100%;" onclick="exchangeUltraToCoins()">Trocar 1 ✨ Ultra Coin por 20.000 Moedas 🪙</button>
+        </div>
+      </div>
+    ` : ''}
+
+    ${kodaSubTab === 'halloween' ? `
+      <div class="card">
+        <b style="font-size:18px;">🎃 Evento Especial Sazonal</b>
+        <p class="rules">Adquira abóboras e itens misteriosos limitados da temporada.</p>
+        <button class="p" style="margin-top:10px; width:100%; background:var(--gold); color:#000;" onclick="toast('🎃 Abóbora Misteriosa resgatada com sucesso!')">Comprar Caixa Misteriosa (✨ 2 Ultra Coins)</button>
+      </div>
+    ` : ''}
+
+    ${kodaSubTab === 'baus' ? `
+      <div class="card">
+        <b style="font-size:18px;">🎁 Baús de Recompensas Exclusivas</b>
+        <p class="rules">Gaste suas moedas ou Ultra Coins para abrir baús e faturar prêmios surpresa.</p>
+        <div class="row" style="margin-top:14px; gap:10px;">
+          <button class="s" style="flex:1; padding:12px;" onclick="openChestType('common')">Abrir Baú Comum (🪙 2.000)</button>
+          <button class="p" style="flex:1; padding:12px; background:var(--ultra); color:#000;" onclick="openChestType('ultra')">Abrir Baú Ultra (✨ 5)</button>
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+function buyUltraPackage(amount, cost) {
+  if (!isOwner && myProfile.coins < cost) return toast('❌ Moedas insuficientes na carteira!');
+  if (!isOwner) myProfile.coins -= cost;
+  myProfile.ultra += amount;
+  saveProfile();
+  renderHeader();
+  render();
+  toast(`🎉 Parabéns! Você adquiriu ${amount} ✨ Ultra Complete Coins!`);
+}
+
+function exchangeCoinsToUltra() {
+  const cost = 25000;
+  if (!isOwner && myProfile.coins < cost) return toast('❌ Você precisa de 25.000 moedas!');
+  if (!isOwner) myProfile.coins -= cost;
+  myProfile.ultra += 1;
+  saveProfile();
+  renderHeader();
+  render();
+  toast('🎉 Câmbio realizado: +1 ✨ Ultra Coin!');
+}
+
+function exchangeUltraToCoins() {
+  if (!isOwner && myProfile.ultra < 1) return toast('❌ Você não tem Ultra Coins suficientes!');
+  if (!isOwner) myProfile.ultra -= 1;
+  myProfile.coins += 20000;
+  saveProfile();
+  renderHeader();
+  render();
+  toast('🎉 Câmbio realizado: +20.000 Moedas!');
+}
+
+function openChestType(type) {
+  if (type === 'common') {
+    if (!isOwner && myProfile.coins < 2000) return toast('❌ Moedas insuficientes!');
+    if (!isOwner) myProfile.coins -= 2000;
+    let reward = Math.floor(Math.random() * 3000) + 1000;
+    myProfile.coins += reward;
+    toast(`🎁 Baú Comum aberto! Você ganhou +${reward} moedas!`);
+  } else {
+    if (!isOwner && myProfile.ultra < 5) return toast('❌ Você precisa de 5 ✨ Ultra Coins!');
+    if (!isOwner) myProfile.ultra -= 5;
+    let rewardUltra = Math.floor(Math.random() * 8) + 3;
+    myProfile.ultra += rewardUltra;
+    toast(`🎁 Baú Ultra aberto! Você ganhou +${rewardUltra} ✨ Ultra Coins bônus!`);
+  }
+  saveProfile();
+  renderHeader();
+  render();
+}
+
+// --- ABA EXCLUSIVA COMPLETE SPEAKY ---
+function speakyDedView() {
+  return `
+    <div class="card" style="text-align:center; padding:30px 20px;">
+      <span style="font-size:60px;">🗣️</span>
+      <b style="font-size:22px; display:block; margin:10px 0;">Complete Speaky (Voz Oficial)</b>
+      <p class="rules">Digite qualquer texto abaixo e escolha a velocidade para a IA falar em voz alta instantaneamente no seu dispositivo.</p>
+      
+      <textarea id="speaky-text" placeholder="Digite aqui o que você quer que o Speaky fale em voz alta..."></textarea>
+      
+      <div class="row" style="justify-content:center; margin:14px 0;">
+        <label class="by">Velocidade da Voz:</label>
+        <select id="speaky-rate" style="width:120px; display:inline-block;">
+          <option value="0.8">Lenta</option>
+          <option value="1.0" selected>Normal</option>
+          <option value="1.3">Rápida</option>
+        </select>
+      </div>
+
+      <button class="p" style="width:100%; padding:14px; font-size:16px;" onclick="triggerSpeakyDedicated()">🗣️ Falar Texto em Voz Alta</button>
+    </div>
+  `;
+}
+
+function triggerSpeakyDedicated() {
+  const txt = $('#speaky-text').value.trim();
+  const rate = parseFloat($('#speaky-rate').value) || 1.0;
+  if (!txt) return toast('❌ Digite algum texto para o Speaky falar!');
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(txt);
+    utterance.lang = 'pt-BR';
+    utterance.rate = rate;
+    window.speechSynthesis.speak(utterance);
+    toast('🗣️ Complete Speaky reproduzindo áudio...');
+  } else {
+    toast('❌ Seu navegador não suporta síntese de voz.');
+  }
+}
+
+// --- LOJA DE ACESSÓRIOS ---
 const EMOJIS = ['👑','✨','🔥','⚡','🚀','💎','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','🎩','🎸','🍕','🍔','🛸','💡','🪐','🎲','🍉','🍩'];
 const ADJ = ['Lendário','Supremo','Místico','Elite','Imperial','Divino','Solar','Lunar','Cyber','Fênix','Soberano','Alpha','Quantum','Vanguard','Stellar','Neon','Prime'];
 const TYPE = ['Coroa','Escudo','Espada','Orbe','Símbolo','Manto','Anel','Cristal','Aura','Emblema'];
@@ -415,27 +578,18 @@ for (let i = 1; i <= 60; i++) {
   let badge = EMOJIS[(i - 1) % EMOJIS.length];
   let name = `${badge} ${TYPE[(i - 1) % TYPE.length]} ${ADJ[(i - 1) % TYPE.length]} #${i}`;
   let price = 100 + (i * 40);
-  let isUltraItem = i % 5 === 0; // Itens ultra exigem ✨ Ultra Complete Coins
+  let isUltraItem = i % 5 === 0;
   SHOP_ITEMS.push({ id: 'item_' + i, name, desc: `Personalização exclusiva nível ${i}`, price, currency: isUltraItem ? 'ultra' : 'coins', badge, category: cat });
 }
 
-function shopView() {
+function accessoriesView() {
   const cats = [['coroas', '👑 Coroas'], ['auras', '🔥 Auras'], ['espadas', '🗡️ Espadas'], ['emblemas', '✨ Emblemas']];
   const filtered = SHOP_ITEMS.filter(i => i.category === shopCategory);
 
   return `
     <div class="card">
-      <b style="font-size:18px;">🛍️ Loja & Câmbio de ✨ Ultra Complete Coins</b>
-      <p class="rules">Adquira acessórios exclusivos ou troque suas moedas por Ultra Complete Coins valiosas.</p>
-      
-      <div style="background:var(--bg); border:1px solid var(--bd); padding:14px; border-radius:14px; margin:14px 0;" class="row" style="justify-content:space-between;">
-        <div>
-          <b style="color:var(--ultra);">🔄 Câmbio Rápido:</b>
-          <div class="by">Troque 20.000 Moedas por 1 ✨ Ultra Complete Coin</div>
-        </div>
-        <button class="p" style="background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#000;" onclick="exchangeCoinsToUltra()">Trocar Moedas 🪙</button>
-      </div>
-
+      <b style="font-size:18px;">👑 Loja de Acessórios & Distintivos</b>
+      <p class="rules">Compre itens exclusivos para equipar no perfil e exibir na rede.</p>
       <div class="row" style="gap:6px; margin-top:12px;">
         ${cats.map(([k, l]) => `<button class="s ${shopCategory===k?'on':''}" onclick="shopCategory='${k}'; render();">${l}</button>`).join('')}
       </div>
@@ -456,26 +610,6 @@ function shopView() {
       `).join('')}
     </div>
   `;
-}
-
-function exchangeCoinsToUltra() {
-  const cost = 20000;
-  if (!isOwner) {
-    let tot = myProfile.coins + myProfile.savings;
-    if (tot < cost) return toast('❌ Você precisa de pelo menos 20.000 Moedas para trocar por 1 ✨ Ultra Complete Coin!');
-    if (myProfile.coins < cost) {
-      let diff = cost - myProfile.coins;
-      myProfile.coins = 0;
-      myProfile.savings -= diff;
-    } else {
-      myProfile.coins -= cost;
-    }
-  }
-  myProfile.ultra += 1;
-  saveProfile();
-  renderHeader();
-  render();
-  toast('🎉 Sucesso! +1 ✨ Ultra Complete Coin adicionada à sua carteira.');
 }
 
 function buyCustomization(id, price, currency, badge) {
@@ -636,12 +770,12 @@ function toggleAudioRecording(targetUid) {
   }
 }
 
-// --- AI & SPEAKY ---
+// --- AI CHAT ---
 function aiView() {
   return `
     <div class="card">
-      <b style="font-size:18px;">🤖 Complete AI & 🗣️ Complete Speaky</b>
-      <p class="rules">Converse com a IA e use o recurso <b>Speaky</b> para ouvir as respostas faladas em voz alta!</p>
+      <b style="font-size:18px;">🤖 Complete AI & Gerador de Jogos</b>
+      <p class="rules">Converse com a IA ou peça para gerar mini-games interativos na hora!</p>
       <input id="ai-game-prompt" placeholder="Ex: Criar jogo estilo flappy ou pong">
       <button class="p" style="margin-top:8px; width:100%;" onclick="generateAIGame()">⚡ Gerar Jogo com IA</button>
     </div>
@@ -653,17 +787,6 @@ function aiView() {
   `;
 }
 
-function speakText(text) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'pt-BR';
-    utterance.rate = 1.0;
-    window.speechSynthesis.speak(utterance);
-    toast('🗣️ Complete Speaky falando...');
-  }
-}
-
 function drawAIMessages() {
   const box = $('#ai-chat-box');
   if (!box) return;
@@ -671,10 +794,7 @@ function drawAIMessages() {
     <div style="margin:12px 0; display:flex; flex-direction:${m.role === 'user' ? 'row-reverse' : 'row'}; gap:10px; align-items:flex-start;">
       <span class="av" style="width:36px; height:36px; font-size:14px; background:${m.role === 'user' ? 'var(--ac)' : 'var(--ultra)'};">${m.role === 'user' ? '👤' : '🤖'}</span>
       <div style="background:${m.role === 'user' ? 'var(--card)' : 'rgba(28,37,65,0.8)'}; border:1px solid var(--bd); border-radius:14px; padding:10px 14px; max-width:80%;">
-        <div class="row" style="justify-content:space-between;">
-          <b>${m.role === 'user' ? 'Você' : '🤖 Complete AI'}</b>
-          ${m.role === 'ai' ? `<button class="s" style="padding:2px 8px; font-size:11px;" onclick="speakText('${m.text.replace(/'/g, "\\'")}')">🗣️ Speaky</button>` : ''}
-        </div>
+        <b>${m.role === 'user' ? 'Você' : '🤖 Complete AI'}</b>
         <div style="margin-top:4px; font-size:14px; word-break:break-word;">${esc(m.text)}</div>
         ${m.code ? `<pre style="margin-top:8px;">${esc(m.code)}</pre><button class="p" style="margin-top:8px;" onclick="publishAIGame('${esc(m.gameTitle)}')">🚀 Publicar este Jogo</button>` : ''}
       </div>
@@ -694,16 +814,15 @@ function sendAIMessage() {
   drawAIMessages();
 
   setTimeout(() => {
-    let reply = "Entendi! As Ultra Complete Coins estão funcionando a todo vapor.";
+    let reply = "Entendi! Visite a aba Speaky Dedicado para ouvir qualquer voz em áudio.";
     const lower = q.toLowerCase();
-    if (lower.includes('olá') || lower.includes('oi')) reply = "Olá! O Speaky e as Ultra Coins estão ativos!";
-    else if (lower.includes('loja')) reply = "Você pode comprar acessórios na loja ou trocar moedas por Ultra Complete Coins!";
+    if (lower.includes('olá') || lower.includes('oi')) reply = "Olá! Como posso ajudar na rede hoje?";
+    else if (lower.includes('loja')) reply = "A Koda Shop está cheia de ofertas e baús raros!";
     else if (lower.includes('dono')) reply = "O Dono supremo é o Pedro Mesquita!";
     
     dataList.aiMsgs.push({ role: 'ai', text: reply });
     saveData();
     drawAIMessages();
-    speakText(reply);
   }, 600);
 }
 
@@ -719,7 +838,6 @@ function generateAIGame() {
     dataList.aiMsgs.push({ role: 'ai', text: `Jogo "${prompt}" gerado com sucesso!`, code, gameTitle: prompt });
     saveData();
     drawAIMessages();
-    speakText(`Jogo ${prompt} gerado!`);
     toast('✨ Jogo gerado!');
   }, 1000);
 }
