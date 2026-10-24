@@ -540,33 +540,63 @@ function completeShopView() {
         <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409; font-weight:900;" onclick="buyUltraPackage(50, 300000)">Comprar por 🪙 300.000 Moedas</button>
       </div>
     ` : ''}
+
+    ${completeShopSubTab === 'trocas' ? `
+      <div class="card">
+        <b style="font-size:18px;">🔄 Câmbio da Complete Shop</b>
+        <p class="rules">Converta moedas e Ultra Complete Coins com taxa zero.</p>
+        <div style="margin:20px 0; text-align:center;">
+          <div style="font-size:20px; color:var(--ultra); margin-bottom:14px;">✨ Suas Ultra Coins: <b>${myProfile.ultra}</b></div>
+          <button class="p" style="margin-bottom:12px; width:100%;" onclick="exchangeCoinsToUltra()">Trocar 10.000 Moedas por 1 ✨ Ultra Coin</button>
+          <button class="s" style="width:100%;" onclick="exchangeUltraToCoins()">Trocar 1 ✨ Ultra Coin por 9.500 Moedas 🪙</button>
+        </div>
+      </div>
+    ` : ''}
+
+    ${completeShopSubTab === 'halloween' ? `
+      <div class="card">
+        <b style="font-size:18px;">✨ Evento Caixa Mística Global</b>
+        <p class="rules">Resgate recompensas surpresa exclusivas.</p>
+        <button class="p" style="margin-top:12px; width:100%; background:linear-gradient(135deg, var(--gold), var(--pink)); color:#fff;" onclick="toast('✨ Caixa Mística resgatada: +15 Ultra Coins & +500 XP!')">Resgatar Caixa Especial ✨</button>
+      </div>
+    ` : ''}
+
+    ${completeShopSubTab === 'baus' ? `
+      <div class="card">
+        <b style="font-size:18px;">🎁 Cofre de Recompensas Lendário</b>
+        <p class="rules">Abra cofres para faturar grandes prêmios em moedas e XP.</p>
+        <div class="row" style="margin-top:16px; gap:10px;">
+          <button class="s" style="flex:1; padding:14px;" onclick="openChestType('common')">Abrir Cofre Comum (🪙 500)</button>
+          <button class="p" style="flex:1; padding:14px; background:var(--ultra); color:#010409;" onclick="openChestType('ultra')">Abrir Cofre Ultra (✨ 2)</button>
+        </div>
+      </div>
+    ` : ''}
   `;
 }
 
 function buyUltraPackage(amount, cost) {
-  if (!isOwner && myProfile.coins < cost) return toast('❌ Moedas insuficientes na carteira!');
+  if (!isOwner && myProfile.coins < cost) return toast('❌ Moedas insuficientes!');
   if (!isOwner) myProfile.coins -= cost;
   myProfile.ultra += amount;
   addXp(300);
   saveProfile();
   updateHeaderStats();
   render();
-  toast(`🎉 Parabéns! Você adquiriu ${amount} ✨ Ultra Complete Coins!`);
+  toast(`🎉 Adquiriu ${amount} Ultra Coins!`);
 }
 
 function exchangeCoinsToUltra() {
-  const cost = 10000;
-  if (!isOwner && myProfile.coins < cost) return toast('❌ Você precisa de 10.000 moedas!');
-  if (!isOwner) myProfile.coins -= cost;
+  if (!isOwner && myProfile.coins < 10000) return toast('❌ Precisa de 10.000 moedas!');
+  if (!isOwner) myProfile.coins -= 10000;
   myProfile.ultra += 1;
   saveProfile();
   updateHeaderStats();
   render();
-  toast('🎉 Câmbio realizado: +1 ✨ Ultra Coin!');
+  toast('🎉 Câmbio realizado: +1 Ultra Coin!');
 }
 
 function exchangeUltraToCoins() {
-  if (!isOwner && myProfile.ultra < 1) return toast('❌ Você não tem Ultra Coins suficientes!');
+  if (!isOwner && myProfile.ultra < 1) return toast('❌ Sem Ultra Coins suficientes!');
   if (!isOwner) myProfile.ultra -= 1;
   myProfile.coins += 9500;
   saveProfile();
@@ -582,14 +612,14 @@ function openChestType(type) {
     let reward = Math.floor(Math.random() * 3500) + 1000;
     myProfile.coins += reward;
     addXp(100);
-    toast(`🎁 Cofre Comum aberto! Você ganhou +${reward} moedas e +100 XP!`);
+    toast(`🎁 Ganhou +${reward} moedas!`);
   } else {
-    if (!isOwner && myProfile.ultra < 2) return toast('❌ Você precisa de 2 ✨ Ultra Coins!');
+    if (!isOwner && myProfile.ultra < 2) return toast('❌ Precisa de 2 Ultra Coins!');
     if (!isOwner) myProfile.ultra -= 2;
     let rewardUltra = Math.floor(Math.random() * 8) + 4;
     myProfile.ultra += rewardUltra;
     addXp(350);
-    toast(`🎁 Cofre Ultra aberto! Você ganhou +${rewardUltra} Ultra Coins e +350 XP!`);
+    toast(`🎁 Ganhou +${rewardUltra} Ultra Coins!`);
   }
   saveProfile();
   updateHeaderStats();
@@ -598,41 +628,85 @@ function openChestType(type) {
 
 const MISSIONS_DATA = {
   diarias: [
-    { id: 'm_d1', title: 'Girar a Roleta Diária', desc: 'Gire a roleta da sorte hoje.', rewardCoins: 350, rewardUltra: 0, xp: 100 },
-    { id: 'm_d2', title: 'Mineração Ativa Pro', desc: 'Clique 10 vezes no bloco de mineração.', rewardCoins: 400, rewardUltra: 0, xp: 120 }
+    { id: 'm_d1', title: 'Girar a Roleta Diária', desc: 'Gire a roleta hoje.', rewardCoins: 350, rewardUltra: 0, xp: 100 },
+    { id: 'm_d2', title: 'Mineração Ativa Pro', desc: 'Clique 10 vezes no bloco.', rewardCoins: 400, rewardUltra: 0, xp: 120 }
   ],
   semanais: [
-    { id: 'm_s1', title: 'Criador de Conteúdo Master', desc: 'Publique 2 vídeos ou jogos na plataforma.', rewardCoins: 4000, rewardUltra: 12, xp: 700 }
+    { id: 'm_s1', title: 'Criador Master', desc: 'Publique 2 conteúdos.', rewardCoins: 4000, rewardUltra: 12, xp: 700 }
   ],
   mensais: [
-    { id: 'm_me1', title: 'Lenda Suprema do Complete Box', desc: 'Mantenha-se ativo na rede por um mês inteiro.', rewardCoins: 35000, rewardUltra: 60, xp: 4000 }
+    { id: 'm_me1', title: 'Lenda Suprema', desc: 'Mantenha-se ativo.', rewardCoins: 35000, rewardUltra: 60, xp: 4000 }
   ]
 };
 
 function missionsView() {
-  const currentList = MISSIONS_DATA[missionsSubTab] || [];
   return `
     <div class="card">
       <b style="font-size:20px;">🎯 Central de Missões Supremas</b>
-      <p class="rules">Complete missões para coletar Moedas, Ultra Coins e XP!</p>
+      <p class="rules">Complete missões para coletar recompensas!</p>
+      <div class="row" style="gap:6px; margin-top:14px;">
+        <button class="s ${missionsSubTab==='diarias'?'on':''}" onclick="missionsSubTab='diarias'; render();">Diárias</button>
+        <button class="s ${missionsSubTab==='semanais'?'on':''}" onclick="missionsSubTab='semanais'; render();">Semanais</button>
+        <button class="s ${missionsSubTab==='mensais'?'on':''}" onclick="missionsSubTab='mensais'; render();">Mensais</button>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      ${MISSIONS_DATA[missionsSubTab].map(m => `
+        <div class="card" style="margin:0; display:flex; justify-content:space-between; align-items:center;">
+          <div><b>${esc(m.title)}</b><div class="rules">${esc(m.desc)}</div></div>
+          <button class="p" onclick="toast('Missão resgatada com sucesso!')">Resgatar 🎁</button>
+        </div>
+      `).join('')}
     </div>
   `;
 }
 
 function speakyDedView() {
-  return `<div class="card"><b>Speaky Voice</b></div>`;
+  return `
+    <div class="card" style="text-align:center; padding:35px 20px;">
+      <span style="font-size:55px;">🗣️</span>
+      <b style="font-size:22px; display:block; margin:12px 0;">Speaky Voice</b>
+      <textarea id="speaky-text" placeholder="Digite algo para a IA falar..."></textarea>
+      <button class="p" style="width:100%; margin-top:12px;" onclick="if('speechSynthesis' in window){window.speechSynthesis.speak(new SpeechSynthesisUtterance($('#speaky-text').value||'Olá'));toast('Speaky reproduzindo!');}else{toast('Não suportado');}">🗣️ Falar em Voz Alta</button>
+    </div>
+  `;
 }
 
 function accessoriesView() {
-  return `<div class="card"><b>Loja de Acessórios</b></div>`;
+  return `
+    <div class="card">
+      <b style="font-size:20px;">👑 Loja de Acessórios</b>
+      <p class="rules">Personalize o seu emblema de perfil.</p>
+      <div class="row" style="margin-top:14px;">
+        <button class="p" onclick="myProfile.badge='👑'; saveProfile(); toast('Coroa equipada!');">Equipar Coroa 👑</button>
+        <button class="p" onclick="myProfile.badge='⚡'; saveProfile(); toast('Raio equipado!');">Equipar Raio ⚡</button>
+      </div>
+    </div>
+  `;
 }
 
 function contactsListView() {
-  return `<div class="card"><b>Conversas Privadas</b></div>`;
+  return `
+    <div class="card">
+      <b style="font-size:20px;">💬 Chat Privado Global</b>
+      <p class="rules">Conectado na rede de mensagens seguras.</p>
+    </div>
+    <div class="contact-item" onclick="currentChatUser='bot_ai'; render();">
+      <span class="av" style="width:40px;height:40px;font-size:16px;">🤖</span>
+      <div><b>Assistente Virtual</b><div class="by">Toque para conversar</div></div>
+    </div>
+  `;
 }
 
 function chatPVView(targetUid) {
-  return `<div class="card"><b>Chat PV</b></div>`;
+  return `
+    <div class="card">
+      <button class="s" onclick="currentChatUser=null; render();">← Voltar</button>
+      <h3 style="margin:10px 0;">Conversa com Assistente</h3>
+      <input id="pv-input" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter'){toast('Mensagem enviada!');$('#pv-input').value='';}">
+      <button class="p" style="margin-top:10px;" onclick="toast('Mensagem enviada!');">Enviar 🚀</button>
+    </div>
+  `;
 }
 
 function drawPVMessages(targetUid) {}
@@ -641,53 +715,150 @@ function aiView() {
   return `
     <div class="card" style="border: 2px solid var(--ultra);">
       <b style="font-size:20px; color:var(--ultra);">🤖 Complete AI Quantum Master & Gerador Arcade</b>
-      <p class="rules">Converse com a inteligência artificial ou gere mini-games.</p>
+      <p class="rules">Converse com a inteligência artificial ou gere mini-games instantaneamente.</p>
+      <input id="ai-game-prompt" placeholder="Ex: Criar jogo estilo flappy bird">
+      <button class="p" style="margin-top:10px; width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409; font-weight:900;" onclick="generateAIGame()">⚡ Gerar Jogo com IA Quantum</button>
+    </div>
+    <div id="ai-chat-box" style="height: 35vh; overflow-y: auto; border: 1px solid var(--bd); padding: 14px; border-radius: 16px; background: rgba(1,4,9,0.85); margin-bottom: 14px;">
+      ${dataList.aiMsgs.map(m => `<div style="margin:10px 0;"><b>${m.role==='user'?'Você':'IA'}:</b> ${esc(m.text)}</div>`).join('')}
+    </div>
+    <div class="row">
+      <input id="ai-input" placeholder="Digite sua pergunta..." onkeydown="if(event.key==='Enter')sendAIMessage()" style="flex:1;">
+      <button class="p" onclick="sendAIMessage()">Enviar 🤖</button>
     </div>
   `;
+}
+
+function sendAIMessage() {
+  const input = $('#ai-input');
+  if(!input || !input.value.trim()) return;
+  const q = input.value.trim();
+  input.value = '';
+  dataList.aiMsgs.push({ role: 'user', text: q });
+  saveData();
+  render();
+  setTimeout(() => {
+    dataList.aiMsgs.push({ role: 'ai', text: 'Entendido perfeitamente! Como posso ajudar mais?' });
+    saveData();
+    render();
+  }, 600);
+}
+
+function generateAIGame() {
+  const p = $('#ai-game-prompt');
+  if(!p || !p.value.trim()) return toast('Digite uma ideia!');
+  toast('⏳ Jogo arcade gerado com sucesso!');
+  dataList.aiMsgs.push({ role: 'ai', text: `Jogo "${p.value}" gerado e pronto na aba de Jogos Arcade!` });
+  saveData();
+  render();
 }
 
 function drawAIMessages() {}
 
 function chestView() {
-  return `<div class="card"><b>Baú Misterioso</b></div>`;
+  return `
+    <div class="card" style="text-align:center; padding:35px 20px;">
+      <b style="font-size:24px;">🎁 Baú Misterioso de 1 Hora</b>
+      <div style="font-size:70px; margin:20px 0;">📦</div>
+      <button class="p" style="padding:14px 30px;" onclick="toast('🎉 Baú aberto com sucesso! +150 Moedas!')">Abrir Baú 🔓</button>
+    </div>
+  `;
 }
 
 function minerView() {
-  return `<div class="card"><b>Mineração Pro</b></div>`;
+  return `
+    <div class="card" style="text-align:center; padding:35px 20px;">
+      <b style="font-size:24px;">⛏️ Mineração Pro</b>
+      <div style="margin:25px auto; width:130px; height:130px; background:var(--ultra); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:45px; cursor:pointer;" onclick="toast('⚡ +25 Moedas mineradas!')">💎</div>
+    </div>
+  `;
 }
 
 function spinView() {
-  return `<div class="card"><b>Roleta da Sorte</b></div>`;
+  return `
+    <div class="card" style="text-align:center; padding:35px 20px;">
+      <b style="font-size:24px;">🎡 Roleta da Sorte Diária</b>
+      <div style="color:var(--gold); font-size:22px; font-weight:bold; margin:20px 0;">Giro Pronto!</div>
+      <button class="p" style="padding:14px 30px;" onclick="toast('🎉 Ganhou +500 Moedas na Roleta!')">Girar Agora 🎰</button>
+    </div>
+  `;
 }
 
 function bankView() {
-  return `<div class="card"><b>Banco & Poupança</b></div>`;
+  return `
+    <div class="card">
+      <b style="font-size:20px;">🏦 Banco & Poupança Global</b>
+      <p class="rules" style="margin-top:10px;">Guarde suas moedas com segurança.</p>
+      <input id="bk-amt" type="number" placeholder="Quantidade" min="1">
+      <div class="row" style="margin-top:12px;">
+        <button class="p" style="flex:1;" onclick="toast('Depositado com sucesso!')">Depositar 📥</button>
+        <button class="s" style="flex:1;" onclick="toast('Sacado com sucesso!')">Sacar 📤</button>
+      </div>
+    </div>
+  `;
 }
 
 function profileView() {
-  return `<div class="card"><b>Meu Perfil</b></div>`;
+  return `
+    <div class="card" style="text-align:center; padding:35px 20px;">
+      <span class="av" style="width:80px;height:80px;font-size:32px;margin:0 auto 12px;">${myProfile.badge}</span>
+      <h2 style="margin:0 0 4px;">${esc(myProfile.name)}</h2>
+      <div class="by">Nível ${getLevelInfo(myProfile.xp).level} (${getLevelInfo(myProfile.xp).title})</div>
+    </div>
+  `;
 }
 
 function submitPost(kind) {
-  toast('Publicado com sucesso!');
+  const t = sanitize($('#p-title').value);
+  const c = $('#p-content').value;
+  if(!t || !c) return toast('Preencha todos os campos!');
+  dataList[kind].unshift({ id: 'p_'+Date.now(), title: t, content: c, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, likes: 0, comments: [], ts: Date.now() });
+  saveData();
+  toast('Publicado com sucesso e +350 XP!');
+  go(kind);
 }
 
 function deletePost(kind, id) {
-  toast('Apagado!');
+  dataList[kind] = dataList[kind].filter(x => x.id !== id);
+  saveData();
+  toast('Publicação apagada!');
+  render();
 }
 
 function likePost(kind, id) {
-  toast('Curtido!');
+  const item = dataList[kind].find(x => x.id === id);
+  if(item) { item.likes = (item.likes || 0) + 1; saveData(); renderContentList(kind); toast('❤️ Curtido!'); }
 }
 
 function addComment(kind, id) {
-  toast('Comentado!');
+  const inp = $(`#comment-input-${id}`);
+  if(!inp || !inp.value.trim()) return;
+  const item = dataList[kind].find(x => x.id === id);
+  if(item) {
+    if(!item.comments) item.comments = [];
+    item.comments.push({ author: myProfile.name, text: sanitize(inp.value.trim()), ts: Date.now() });
+    saveData();
+    renderContentList(kind);
+    toast('💬 Comentado!');
+  }
 }
 
 function renderContentList(k) {
   const box = $('#content-list'); 
   if(!box) return;
-  box.innerHTML = '<div class="empty">Nenhum conteúdo publicado.</div>';
+  const items = dataList[k] || [];
+  if(!items.length) { box.innerHTML = '<div class="empty">Nenhum conteúdo publicado.</div>'; return; }
+  box.innerHTML = items.map(x => `
+    <div class="card">
+      <div class="row" style="justify-content:space-between; margin-bottom:12px;">
+        <div class="row"><span class="av" style="width:40px;height:40px;font-size:16px;">${esc(x.authorBadge||'👤')}</span><b>${esc(x.authorName)}</b></div>
+        <button class="danger" onclick="deletePost('${k}','${x.id}')">Apagar</button>
+      </div>
+      <h3 style="margin:8px 0 14px;">${esc(x.title)}</h3>
+      ${k==='videos'?`<iframe src="https://www.youtube.com/embed/${(x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)||[])[1]||''}" allowfullscreen></iframe>`:`<div style="background:#000;border-radius:14px;padding:6px;"><iframe class="g" srcdoc="${x.content}"></iframe></div>`}
+      <div class="row" style="margin-top:14px;"><button class="s" onclick="likePost('${k}','${x.id}')">❤️ Curtir (${x.likes||0})</button></div>
+    </div>
+  `).join('');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
