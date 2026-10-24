@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box - Edição Recompensa por Tempo</title>
+<title>Complete Box</title>
 <style>
 :root {
   --bg: #0b0f19;
@@ -243,8 +243,8 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 <main>
   <div class="hero">
     <div>
-      ⏱️ <b>Recompensa por Tempo de Jogo Ativa!</b>
-      <div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">Fique conectado e jogando para farmar moedas automaticamente a cada minuto.</div>
+      📦 <b>Complete Box Ativo!</b>
+      <div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">Fique conectado, jogue, cumpra missões e ganhe recompensas automáticas por tempo.</div>
     </div>
   </div>
 
@@ -313,11 +313,10 @@ let currentChatUser = null;
 let mediaRecorder = null;
 let audioChunks = [];
 
-// Contador de Tempo de Sessão (em segundos)
+// Recompensa por Tempo de Jogo (a cada 1 minuto)
 let sessionSeconds = 0;
 setInterval(() => {
   sessionSeconds++;
-  // A cada 60 segundos (1 minuto) jogando/conectado, ganha recompensa automática
   if (sessionSeconds % 60 === 0) {
     if (!isOwner) {
       myProfile.coins += 50;
@@ -425,7 +424,7 @@ function render() {
   renderContentList(tab);
 }
 
-// --- COMPLETE SHOP OFICIAL ---
+// --- COMPLETE SHOP ---
 function completeShopView() {
   return `
     <div class="card row" style="gap:6px; background: rgba(19,27,46,0.9);">
@@ -617,7 +616,7 @@ function claimSupremeMission(id, coins, ultra) {
   toast(`🎉 Missão concluída com sucesso! +${coins} moedas ${ultra > 0 ? '+ ' + ultra + ' Ultra Coins' : ''}!`);
 }
 
-// --- ABA EXCLUSIVA COMPLETE SPEAKY ---
+// --- SPEAKS DEDICATED ---
 function speakyDedView() {
   return `
     <div class="card" style="text-align:center; padding:30px 20px;">
@@ -658,7 +657,7 @@ function triggerSpeakyDedicated() {
   }
 }
 
-// --- LOJA DE ACESSÓRIOS ---
+// --- ACESSÓRIOS ---
 const EMOJIS = ['👑','✨','🔥','⚡','🚀','💎','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','🎩','🎸','🍕','🍔','🛸','💡','🪐','🎲','🍉','🍩'];
 const ADJ = ['Lendário','Supremo','Místico','Elite','Imperial','Divino','Solar','Lunar','Cyber','Fênix','Soberano','Alpha','Quantum','Vanguard','Stellar','Neon','Prime'];
 const TYPE = ['Coroa','Escudo','Espada','Orbe','Símbolo','Manto','Anel','Cristal','Aura','Emblema'];
