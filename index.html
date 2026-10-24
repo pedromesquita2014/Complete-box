@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box - Edição complete Shop & Speaky Dedicado</title>
+<title>Complete Box - Edição Recompensa por Tempo</title>
 <style>
 :root {
   --bg: #0b0f19;
@@ -243,8 +243,8 @@ pre { background: var(--bg); border: 1px solid var(--bd); border-radius: 10px; p
 <main>
   <div class="hero">
     <div>
-      🌐 <b>Rede Global Ultra Completa!</b>
-      <div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">Koda Shop Estilizada, Speaky Dedicado, Chat PV com Áudio e Jogos HTML.</div>
+      ⏱️ <b>Recompensa por Tempo de Jogo Ativa!</b>
+      <div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">Fique conectado e jogando para farmar moedas automaticamente a cada minuto.</div>
     </div>
   </div>
 
@@ -269,8 +269,8 @@ if (location.hash === '#pedromesquita2026' || localStorage.getItem(OWNER_KEY) ==
 }
 
 let isOwner = localStorage.getItem(OWNER_KEY) === 'true';
-let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 250);
-let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 10);
+let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 500);
+let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 25);
 let mySavings = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_savings')) || 0);
 let myBadge = localStorage.getItem('cb_badge') || (isOwner ? '👑' : '👤');
 
@@ -306,11 +306,27 @@ function toast(msg) {
 }
 
 let tab = 'videos';
-let kodaSubTab = 'ofertas';
+let completeShopSubTab = 'ofertas';
+let missionsSubTab = 'diarias';
 let shopCategory = 'coroas';
 let currentChatUser = null;
 let mediaRecorder = null;
 let audioChunks = [];
+
+// Contador de Tempo de Sessão (em segundos)
+let sessionSeconds = 0;
+setInterval(() => {
+  sessionSeconds++;
+  // A cada 60 segundos (1 minuto) jogando/conectado, ganha recompensa automática
+  if (sessionSeconds % 60 === 0) {
+    if (!isOwner) {
+      myProfile.coins += 50;
+      saveProfile();
+    }
+    renderHeader();
+    toast('⏱️ +50 Moedas ganhas por tempo de jogo!');
+  }
+}, 1000);
 
 let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify({
   videos: [
@@ -321,7 +337,7 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI. Use a aba dedicada ao Complete Speaky para ouvir qualquer texto em voz alta!' }
+    { role: 'ai', text: 'Olá! Complete AI pronta. Fique online para farmar moedas por tempo de jogo!' }
   ]
 }));
 
@@ -333,12 +349,12 @@ const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
   ['chat', '💬 Contatos PV'],
-  ['kodashop', '🛍️ Koda Shop'],
+  ['completeshop', '🛍️ Complete Shop'],
   ['accessories', '👑 Acessórios'],
   ['speaky', '🗣️ Speaky Dedicado'],
   ['ai', '🤖 IA Chat'],
-  ['chest', '🎁 Baú 1h'],
   ['missions', '🎯 Missões'],
+  ['chest', '🎁 Baú 1h'],
   ['miner', '⛏️ Mineração'],
   ['spin', '🎡 Roleta'],
   ['bank', '🏦 Poupança'],
@@ -384,12 +400,12 @@ function render() {
     else { app.innerHTML = chatPVView(currentChatUser); drawPVMessages(currentChatUser); }
     return; 
   }
-  if (tab === 'kodashop') { app.innerHTML = kodaShopView(); return; }
+  if (tab === 'completeshop') { app.innerHTML = completeShopView(); return; }
   if (tab === 'accessories') { app.innerHTML = accessoriesView(); return; }
   if (tab === 'speaky') { app.innerHTML = speakyDedView(); return; }
   if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
-  if (tab === 'chest') { app.innerHTML = chestView(); return; }
   if (tab === 'missions') { app.innerHTML = missionsView(); return; }
+  if (tab === 'chest') { app.innerHTML = chestView(); return; }
   if (tab === 'miner') { app.innerHTML = minerView(); return; }
   if (tab === 'spin') { app.innerHTML = spinView(); return; }
   if (tab === 'bank') { app.innerHTML = bankView(); return; }
@@ -409,66 +425,66 @@ function render() {
   renderContentList(tab);
 }
 
-// --- KODA SHOP EXATA ---
-function kodaShopView() {
+// --- COMPLETE SHOP OFICIAL ---
+function completeShopView() {
   return `
     <div class="card row" style="gap:6px; background: rgba(19,27,46,0.9);">
-      <button class="s ${kodaSubTab==='ofertas'?'on':''}" onclick="kodaSubTab='ofertas'; render();">🔥 Ofertas</button>
-      <button class="s ${kodaSubTab==='trocas'?'on':''}" onclick="kodaSubTab='trocas'; render();">🔄 Trocas</button>
-      <button class="s ${kodaSubTab==='halloween'?'on':''}" onclick="kodaSubTab='halloween'; render();">🎃 Eventos</button>
-      <button class="s ${kodaSubTab==='baus'?'on':''}" onclick="kodaSubTab='baus'; render();">🎁 Baús Raros</button>
+      <button class="s ${completeShopSubTab==='ofertas'?'on':''}" onclick="completeShopSubTab='ofertas'; render();">🔥 Ofertas Speaky</button>
+      <button class="s ${completeShopSubTab==='trocas'?'on':''}" onclick="completeShopSubTab='trocas'; render();">🔄 Câmbio Ultra</button>
+      <button class="s ${completeShopSubTab==='halloween'?'on':''}" onclick="completeShopSubTab='halloween'; render();">🎃 Eventos</button>
+      <button class="s ${completeShopSubTab==='baus'?'on':''}" onclick="completeShopSubTab='baus'; render();">🎁 Baús Lendários</button>
     </div>
 
-    ${kodaSubTab === 'ofertas' ? `
+    ${completeShopSubTab === 'ofertas' ? `
       <div class="card" style="border: 2px solid var(--ultra);">
         <div class="row" style="justify-content:space-between;">
-          <b style="color:var(--ultra); font-size:18px;">✨ Pacote Ultra Diamonds</b>
-          <span style="background:rgba(16,185,129,0.2); color:var(--green); padding:4px 10px; border-radius:10px; font-size:12px; font-weight:bold;">SUPER OFERTA</span>
+          <b style="color:var(--ultra); font-size:18px;">✨ Pacote Supreme Ultra Coins</b>
+          <span style="background:rgba(16,185,129,0.2); color:var(--green); padding:4px 10px; border-radius:10px; font-size:12px; font-weight:bold;">DESTAQUE</span>
         </div>
-        <div style="font-size:40px; text-align:center; margin:16px 0;">✨ 10 Ultra Complete Coins</div>
-        <p class="rules" style="text-align:center;">Adquira pacotes de moedas raras para abrir baús lendários e comprar itens exclusivos.</p>
-        <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#000;" onclick="buyUltraPackage(10, 150000)">Comprar por 🪙 150.000 Moedas</button>
+        <div style="font-size:40px; text-align:center; margin:16px 0;">✨ 15 Ultra Complete Coins</div>
+        <p class="rules" style="text-align:center;">Adquira pacotes promocionais da Complete Shop para desbloquear itens exclusivos.</p>
+        <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#000;" onclick="buyUltraPackage(15, 200000)">Comprar por 🪙 200.000 Moedas</button>
       </div>
       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
         <div class="card" style="text-align:center;">
           <div style="font-size:26px;">✨ 5 Ultra</div>
-          <div style="color:var(--gold); margin:8px 0;">🪙 80.000 Moedas</div>
-          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(5, 80000)">Comprar</button>
+          <div style="color:var(--gold); margin:8px 0;">🪙 75.000 Moedas</div>
+          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(5, 75000)">Comprar</button>
         </div>
         <div class="card" style="text-align:center;">
-          <div style="font-size:26px;">✨ 25 Ultra</div>
-          <div style="color:var(--gold); margin:8px 0;">🪙 350.000 Moedas</div>
-          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(25, 350000)">Comprar</button>
+          <div style="font-size:26px;">✨ 30 Ultra</div>
+          <div style="color:var(--gold); margin:8px 0;">🪙 400.000 Moedas</div>
+          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(30, 400000)">Comprar</button>
         </div>
       </div>
     ` : ''}
 
-    ${kodaSubTab === 'trocas' ? `
+    ${completeShopSubTab === 'trocas' ? `
       <div class="card">
-        <b style="font-size:18px;">🔄 Câmbio Koda de Moedas por Ultra Coins</b>
-        <p class="rules">Converta suas moedas normais em ✨ Ultra Complete Coins ou vice-versa.</p>
+        <b style="font-size:18px;">🔄 Câmbio da Complete Shop</b>
+        <p class="rules">Converta moedas e Ultra Complete Coins livremente.</p>
         <div style="margin:20px 0; text-align:center;">
           <div style="font-size:20px; color:var(--ultra); margin-bottom:14px;">✨ Suas Ultra Coins: <b>${myProfile.ultra}</b></div>
-          <button class="p" style="margin-bottom:10px; width:100%;" onclick="exchangeCoinsToUltra()">Trocar 25.000 Moedas por 1 ✨ Ultra Coin</button>
-          <button class="s" style="width:100%;" onclick="exchangeUltraToCoins()">Trocar 1 ✨ Ultra Coin por 20.000 Moedas 🪙</button>
+          <button class="p" style="margin-bottom:10px; width:100%;" onclick="exchangeCoinsToUltra()">Trocar 20.000 Moedas por 1 ✨ Ultra Coin</button>
+          <button class="s" style="width:100%;" onclick="exchangeUltraToCoins()">Trocar 1 ✨ Ultra Coin por 18.000 Moedas 🪙</button>
         </div>
       </div>
     ` : ''}
 
-    ${kodaSubTab === 'halloween' ? `
+    ${completeShopSubTab === 'halloween' ? `
       <div class="card">
-        <b style="font-size:18px;">🎃 Evento Especial Sazonal</b>
-        <p class="rules">Adquira abóboras e itens misteriosos limitados da temporada.</p>
-        <button class="p" style="margin-top:10px; width:100%; background:var(--gold); color:#000;" onclick="toast('🎃 Abóbora Misteriosa resgatada com sucesso!')">Comprar Caixa Misteriosa (✨ 2 Ultra Coins)</button>
+        <b style="font-size:18px;">🎃 Eventos Sazonais Especiais</b>
+        <p class="rules">Itens limitados da Complete Shop com bônus exclusivos na rede.</p>
+        <button class="p" style="margin-top:10px; width:100%; background:var(--gold); color:#000;" onclick="toast('🎃 Pacote de Evento resgatado com sucesso!')">Resgatar Caixa Especial (✨ 3 Ultra Coins)</button>
       </div>
     ` : ''}
 
-    ${kodaSubTab === 'baus' ? `
+    ${completeShopSubTab === 'baus' ? `
       <div class="card">
-        <b style="font-size:18px;">🎁 Baús de Recompensas Exclusivas</b>
-        <p class="rules">Gaste suas moedas ou Ultra Coins para abrir baús e faturar prêmios surpresa.</p>
+        <b style="font-size:18px;">🎁 Baús de Recompensas da Complete Shop</b>
+        <p class="rules">Abra baús usando suas moedas ou Ultra Coins para faturar grandes prêmios.</p>
         <div class="row" style="margin-top:14px; gap:10px;">
-          <button class="s" style="flex:1; padding:12px;" onclick="openChestType('common')">Abrir Baú Comum (🪙 2.000)</button>
+          <button class="s" style="flex:1; padding:12px;" onclick="openChestType('common')">Abrir Baú Comum (🪙 1.500)</button>
           <button class="p" style="flex:1; padding:12px; background:var(--ultra); color:#000;" onclick="openChestType('ultra')">Abrir Baú Ultra (✨ 5)</button>
         </div>
       </div>
@@ -483,47 +499,122 @@ function buyUltraPackage(amount, cost) {
   saveProfile();
   renderHeader();
   render();
-  toast(`🎉 Parabéns! Você adquiriu ${amount} ✨ Ultra Complete Coins!`);
+  toast(`🎉 Parabéns! Você adquiriu ${amount} ✨ Ultra Complete Coins na Complete Shop!`);
 }
 
 function exchangeCoinsToUltra() {
-  const cost = 25000;
-  if (!isOwner && myProfile.coins < cost) return toast('❌ Você precisa de 25.000 moedas!');
+  const cost = 20000;
+  if (!isOwner && myProfile.coins < cost) return toast('❌ Você precisa de 20.000 moedas!');
   if (!isOwner) myProfile.coins -= cost;
   myProfile.ultra += 1;
   saveProfile();
   renderHeader();
   render();
-  toast('🎉 Câmbio realizado: +1 ✨ Ultra Coin!');
+  toast('🎉 Câmbio realizado na Complete Shop: +1 ✨ Ultra Coin!');
 }
 
 function exchangeUltraToCoins() {
   if (!isOwner && myProfile.ultra < 1) return toast('❌ Você não tem Ultra Coins suficientes!');
   if (!isOwner) myProfile.ultra -= 1;
-  myProfile.coins += 20000;
+  myProfile.coins += 18000;
   saveProfile();
   renderHeader();
   render();
-  toast('🎉 Câmbio realizado: +20.000 Moedas!');
+  toast('🎉 Câmbio realizado na Complete Shop: +18.000 Moedas!');
 }
 
 function openChestType(type) {
   if (type === 'common') {
-    if (!isOwner && myProfile.coins < 2000) return toast('❌ Moedas insuficientes!');
-    if (!isOwner) myProfile.coins -= 2000;
-    let reward = Math.floor(Math.random() * 3000) + 1000;
+    if (!isOwner && myProfile.coins < 1500) return toast('❌ Moedas insuficientes!');
+    if (!isOwner) myProfile.coins -= 1500;
+    let reward = Math.floor(Math.random() * 2500) + 800;
     myProfile.coins += reward;
     toast(`🎁 Baú Comum aberto! Você ganhou +${reward} moedas!`);
   } else {
     if (!isOwner && myProfile.ultra < 5) return toast('❌ Você precisa de 5 ✨ Ultra Coins!');
     if (!isOwner) myProfile.ultra -= 5;
-    let rewardUltra = Math.floor(Math.random() * 8) + 3;
+    let rewardUltra = Math.floor(Math.random() * 6) + 2;
     myProfile.ultra += rewardUltra;
     toast(`🎁 Baú Ultra aberto! Você ganhou +${rewardUltra} ✨ Ultra Coins bônus!`);
   }
   saveProfile();
   renderHeader();
   render();
+}
+
+// --- MISSÕES SUPREMAS ---
+const MISSIONS_DATA = {
+  diarias: [
+    { id: 'm_d1', title: 'Girar a Roleta Diária', desc: 'Gire a roleta da sorte hoje.', rewardCoins: 150, rewardUltra: 0 },
+    { id: 'm_d2', title: 'Mineração Ativa', desc: 'Clique 10 vezes no bloco de mineração.', rewardCoins: 200, rewardUltra: 0 },
+    { id: 'm_d3', title: 'Converse com a AI', desc: 'Envie uma mensagem para a Complete AI.', rewardCoins: 100, rewardUltra: 1 },
+    { id: 'm_d4', title: 'Abrir Baú de 1h', desc: 'Resgate o baú misterioso de 1 hora.', rewardCoins: 300, rewardUltra: 0 },
+    { id: 'm_d5', title: 'Speaky Ativo', desc: 'Use o Speaky Dedicado para falar um texto.', rewardCoins: 250, rewardUltra: 1 }
+  ],
+  semanais: [
+    { id: 'm_s1', title: 'Publicador Semanal', desc: 'Publique pelo menos 2 vídeos ou jogos na rede.', rewardCoins: 2000, rewardUltra: 5 },
+    { id: 'm_s2', title: 'Mestre do Câmbio', desc: 'Realize 3 trocas na Complete Shop.', rewardCoins: 1500, rewardUltra: 4 },
+    { id: 'm_s3', title: 'Socializador PV', desc: 'Envie 5 mensagens no chat privado.', rewardCoins: 1200, rewardUltra: 3 },
+    { id: 'm_s4', title: 'Poupador Elite', desc: 'Deposite moedas na sua poupança.', rewardCoins: 2500, rewardUltra: 5 },
+    { id: 'm_s5', title: 'Explorador da Loja', desc: 'Compre 2 acessórios na loja de customização.', rewardCoins: 3000, rewardUltra: 8 }
+  ],
+  mensais: [
+    { id: 'm_me1', title: 'Lenda da Complete Box', desc: 'Mantenha-se ativo na rede por um mês.', rewardCoins: 15000, rewardUltra: 25 },
+    { id: 'm_me2', title: 'Imperador do Speaky', desc: 'Use os recursos de voz e IA 30 vezes.', rewardCoins: 10000, rewardUltra: 20 },
+    { id: 'm_me3', title: 'Colecionador Supremo', desc: 'Adquira 10 itens raros na Complete Shop.', rewardCoins: 20000, rewardUltra: 40 },
+    { id: 'm_me4', title: 'Magnata das Moedas', desc: 'Acumule mais de 100.000 moedas no total.', rewardCoins: 30000, rewardUltra: 50 },
+    { id: 'm_me5', title: 'Criador Mestre', desc: 'Publique 10 mini-games HTML na comunidade.', rewardCoins: 25000, rewardUltra: 35 }
+  ]
+};
+
+function missionsView() {
+  const currentList = MISSIONS_DATA[missionsSubTab] || [];
+
+  return `
+    <div class="card">
+      <b style="font-size:18px;">🎯 Central de Missões Supremas</b>
+      <p class="rules">Complete missões diárias, semanais e mensais para coletar Moedas e ✨ Ultra Complete Coins!</p>
+      <div class="row" style="gap:6px; margin-top:12px;">
+        <button class="s ${missionsSubTab==='diarias'?'on':''}" onclick="missionsSubTab='diarias'; render();">📅 Diárias (5)</button>
+        <button class="s ${missionsSubTab==='semanais'?'on':''}" onclick="missionsSubTab='semanais'; render();">📆 Semanais (5)</button>
+        <button class="s ${missionsSubTab==='mensais'?'on':''}" onclick="missionsSubTab='mensais'; render();">🗓️ Mensais (5)</button>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      ${currentList.map(m => {
+        let isDone = localStorage.getItem('cb_mission_' + m.id) === 'done';
+        return `
+          <div class="card" style="margin:0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <div>
+              <b style="font-size:16px;">${esc(m.title)}</b>
+              <div class="rules" style="margin:2px 0 0;">${esc(m.desc)}</div>
+              <div class="row" style="margin-top:6px; font-size:13px; font-weight:bold;">
+                <span style="color:var(--gold);">🪙 +${m.rewardCoins}</span>
+                ${m.rewardUltra > 0 ? `<span style="color:var(--ultra);">✨ +${m.rewardUltra} Ultra Coins</span>` : ''}
+              </div>
+            </div>
+            <div>
+              ${isDone ? '<span style="background:rgba(16,185,129,0.2); color:var(--green); padding:6px 14px; border-radius:12px; font-weight:bold; font-size:13px;">✅ Concluído</span>' : `<button class="p" onclick="claimSupremeMission('${m.id}', ${m.rewardCoins}, ${m.rewardUltra})">Resgatar Prêmio 🎁</button>`}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function claimSupremeMission(id, coins, ultra) {
+  if (localStorage.getItem('cb_mission_' + id) === 'done') return toast('❌ Esta missão já foi concluída!');
+  localStorage.setItem('cb_mission_' + id, 'done');
+
+  if (!isOwner) {
+    myProfile.coins += coins;
+    myProfile.ultra += ultra;
+    saveProfile();
+  }
+  renderHeader();
+  render();
+  toast(`🎉 Missão concluída com sucesso! +${coins} moedas ${ultra > 0 ? '+ ' + ultra + ' Ultra Coins' : ''}!`);
 }
 
 // --- ABA EXCLUSIVA COMPLETE SPEAKY ---
@@ -588,8 +679,8 @@ function accessoriesView() {
 
   return `
     <div class="card">
-      <b style="font-size:18px;">👑 Loja de Acessórios & Distintivos</b>
-      <p class="rules">Compre itens exclusivos para equipar no perfil e exibir na rede.</p>
+      <b style="font-size:18px;">👑 Acessórios & Distintivos</b>
+      <p class="rules">Compre itens exclusivos na Complete Shop para equipar no perfil.</p>
       <div class="row" style="gap:6px; margin-top:12px;">
         ${cats.map(([k, l]) => `<button class="s ${shopCategory===k?'on':''}" onclick="shopCategory='${k}'; render();">${l}</button>`).join('')}
       </div>
@@ -638,7 +729,7 @@ function buyCustomization(id, price, currency, badge) {
   saveProfile();
   renderHeader();
   render();
-  toast('🎉 Compra realizada! Sua nova personalização foi aplicada.');
+  toast('🎉 Compra realizada na Complete Shop! Item aplicado.');
 }
 
 // --- CHAT PV COM ÁUDIO ---
@@ -814,10 +905,10 @@ function sendAIMessage() {
   drawAIMessages();
 
   setTimeout(() => {
-    let reply = "Entendi! Visite a aba Speaky Dedicado para ouvir qualquer voz em áudio.";
+    let reply = "Entendi! Visite a aba de Missões para coletar suas recompensas.";
     const lower = q.toLowerCase();
     if (lower.includes('olá') || lower.includes('oi')) reply = "Olá! Como posso ajudar na rede hoje?";
-    else if (lower.includes('loja')) reply = "A Koda Shop está cheia de ofertas e baús raros!";
+    else if (lower.includes('loja')) reply = "A Complete Shop está com ofertas imperdíveis de Ultra Coins!";
     else if (lower.includes('dono')) reply = "O Dono supremo é o Pedro Mesquita!";
     
     dataList.aiMsgs.push({ role: 'ai', text: reply });
@@ -883,29 +974,6 @@ function claimChest() {
   if (!isOwner) { myProfile.coins += reward; saveProfile(); }
   renderHeader(); render();
   toast(`🎉 +${reward} moedas no baú!`);
-}
-
-function claimMission(key, reward) {
-  if (localStorage.getItem('cb_m_' + key) === 'done') return toast('Missão já concluída!');
-  localStorage.setItem('cb_m_' + key, 'done');
-  if (!isOwner) { myProfile.coins += reward; saveProfile(); }
-  renderHeader(); render(); toast(`🎉 +${reward} moedas!`);
-}
-
-function missionsView() {
-  return `
-    <div class="card">
-      <b style="font-size:18px;">🎯 Missões Diárias</b>
-      <p class="rules">Complete as tarefas para acumular moedas.</p>
-    </div>
-    <div class="card row" style="justify-content:space-between;">
-      <div>
-        <b style="font-size:15px;">Girar a Roleta da Sorte</b>
-        <div class="rules" style="margin:2px 0 0;">Ganhe 20 moedas.</div>
-      </div>
-      <button class="p" onclick="claimMission('spin', 20)">Resgatar 🎁</button>
-    </div>
-  `;
 }
 
 let minerClicks = 0;
