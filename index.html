@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box - O Melhor Site do Mundo</title>
+<title>Complete Box</title>
 <style>
 :root {
   --bg: #010409;
@@ -263,7 +263,7 @@ pre { background: rgba(1,4,9,0.95); border: 1px solid var(--bd); border-radius: 
 <body>
 
 <header>
-  <span class="logo">📦 Complete Box</span>
+  <span class="logo">Complete Box</span>
   <span class="online-badge"><span class="online-dot"></span> Online Global</span>
   <div class="wallet-box">
     <span class="currency-pill" id="coins-pill">🪙 0</span>
@@ -275,7 +275,7 @@ pre { background: rgba(1,4,9,0.95); border: 1px solid var(--bd); border-radius: 
   <div class="hero">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
       <div>
-        <h2 style="margin:0 0 4px; font-size:22px;">🌟 Complete Box - Quantum Supreme Master</h2>
+        <h2 style="margin:0 0 4px; font-size:22px;">Complete Box - Quantum Supreme Master</h2>
         <div style="font-size:13px; opacity:0.9;">O ápice mundial em jogos, inteligência artificial neural, chats de voz e missões.</div>
       </div>
       <div id="user-level-badge" style="background:rgba(255,255,255,0.08); border:1px solid var(--bd); padding:8px 16px; border-radius:14px; font-weight:bold; font-size:13px;">
@@ -308,8 +308,8 @@ if (location.hash === '#pedromesquita2026' || localStorage.getItem(OWNER_KEY) ==
 }
 
 let isOwner = localStorage.getItem(OWNER_KEY) === 'true';
-let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 2000);
-let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 100);
+let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 2500);
+let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 120);
 let mySavings = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_savings')) || 0);
 let myXp = isOwner ? 999999 : (parseInt(localStorage.getItem('cb_xp')) || 0);
 let myBadge = localStorage.getItem('cb_badge') || (isOwner ? '👑' : '👤');
@@ -376,21 +376,21 @@ setInterval(() => {
   sessionSeconds++;
   if (sessionSeconds % 60 === 0) {
     if (!isOwner) {
-      myProfile.coins += 150;
-      addXp(100);
+      myProfile.coins += 200;
+      addXp(120);
       saveProfile();
     }
     updateHeaderStats();
-    toast('⏱️ +150 Moedas & +100 XP por tempo online!');
+    toast('⏱️ +200 Moedas & +120 XP por tempo online!');
   }
 }, 1000);
 
 let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify({
   videos: [
-    { id: 'v1', title: 'Lançamento Global do Complete Box Quantum', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 450, comments: [], ts: Date.now() }
+    { id: 'v1', title: 'Lançamento Global do Complete Box Quantum', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 500, comments: [], ts: Date.now() }
   ],
   games: [
-    { id: 'g1', title: 'Cyber Quantum Arcade', content: '<body style="background:#010409;color:#fff;text-align:center;padding-top:40px;font-family:sans-serif;"><h2>🚀 Nave Quantum</h2><canvas id="c" width="300" height="180" style="background:#111;border:2px solid #3b82f6;border-radius:12px;"></canvas><script>const ctx=document.getElementById("c").getContext("2d");let x=150;window.onkeydown=e=>{if(e.key==="ArrowLeft")x-=15;if(e.key==="ArrowRight")x+=15;};function loop(){ctx.clearRect(0,0,300,180);ctx.fillStyle="#00f0ff";ctx.fillRect(x,150,40,15);requestAnimationFrame(loop);}loop();<\/script></body>', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 230, comments: [], ts: Date.now() }
+    { id: 'g1', title: 'Cyber Quantum Arcade', content: '<body style="background:#010409;color:#fff;text-align:center;padding-top:40px;font-family:sans-serif;"><h2>🚀 Nave Quantum</h2><canvas id="c" width="300" height="180" style="background:#111;border:2px solid #3b82f6;border-radius:12px;"></canvas><script>const ctx=document.getElementById("c").getContext("2d");let x=150;window.onkeydown=e=>{if(e.key==="ArrowLeft")x-=15;if(e.key==="ArrowRight")x+=15;};function loop(){ctx.clearRect(0,0,300,180);ctx.fillStyle="#00f0ff";ctx.fillRect(x,150,40,15);requestAnimationFrame(loop);}loop();<\/script></body>', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 280, comments: [], ts: Date.now() }
   ],
   pv: {},
   aiMsgs: [
@@ -447,8 +447,7 @@ function updateHeaderStats() {
   const lEl = $('#user-level-badge');
   const xpEl = $('#hero-xp-fill');
 
-  if (cEl) cEl.textContent = isOwner ? '🪙 ∞' : `🪙 ${myProfile.coins}`;
-  if (uEl) uEl.textContent = isOwner ? '✨ ∞' : `✨ ${myProfile.ultra}`;
+  if (cEl) cEl.textContent = isOwner ? '🪙 ∞' : `🪙 ${myProfile.coins}`; if (uEl) uEl.textContent = isOwner ? '✨ ∞' : `✨ ${myProfile.ultra}`;
   
   const info = getLevelInfo(myProfile.xp);
   if (lEl) lEl.textContent = `⭐ Nível ${isOwner ? 99 : info.level} (${info.title})`;
@@ -539,20 +538,20 @@ function completeShopView() {
           <b style="color:var(--ultra); font-size:18px;">✨ Pacote Quantum Ultra</b>
           <span style="background:rgba(35,134,54,0.25); color:#3fb950; padding:4px 10px; border-radius:10px; font-size:12px; font-weight:bold;">OFERTA IMPERDÍVEL</span>
         </div>
-        <div style="font-size:42px; text-align:center; margin:18px 0;">✨ 50 Ultra Complete Coins</div>
+        <div style="font-size:42px; text-align:center; margin:18px 0;">✨ 60 Ultra Complete Coins</div>
         <p class="rules" style="text-align:center;">Adquira créditos de elite na Complete Shop para desbloquear itens exclusivos instantaneamente.</p>
-        <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409; font-weight:900;" onclick="buyUltraPackage(50, 300000)">Comprar por 🪙 300.000 Moedas</button>
+        <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409; font-weight:900;" onclick="buyUltraPackage(60, 250000)">Comprar por 🪙 250.000 Moedas</button>
       </div>
       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
         <div class="card" style="text-align:center;">
-          <div style="font-size:26px;">✨ 15 Ultra</div>
-          <div style="color:var(--gold); margin:8px 0;">🪙 90.000 Moedas</div>
-          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(15, 90000)">Comprar</button>
+          <div style="font-size:26px;">✨ 20 Ultra</div>
+          <div style="color:var(--gold); margin:8px 0;">🪙 80.000 Moedas</div>
+          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(20, 80000)">Comprar</button>
         </div>
         <div class="card" style="text-align:center;">
-          <div style="font-size:26px;">✨ 100 Ultra</div>
-          <div style="color:var(--gold); margin:8px 0;">🪙 450.000 Moedas</div>
-          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(100, 450000)">Comprar</button>
+          <div style="font-size:26px;">✨ 120 Ultra</div>
+          <div style="color:var(--gold); margin:8px 0;">🪙 400.000 Moedas</div>
+          <button class="p" style="width:100%; padding:8px;" onclick="buyUltraPackage(120, 400000)">Comprar</button>
         </div>
       </div>
     ` : ''}
@@ -563,8 +562,8 @@ function completeShopView() {
         <p class="rules">Converta moedas e Ultra Complete Coins com taxa zero.</p>
         <div style="margin:20px 0; text-align:center;">
           <div style="font-size:20px; color:var(--ultra); margin-bottom:14px;">✨ Suas Ultra Coins: <b>${myProfile.ultra}</b></div>
-          <button class="p" style="margin-bottom:12px; width:100%;" onclick="exchangeCoinsToUltra()">Trocar 10.000 Moedas por 1 ✨ Ultra Coin</button>
-          <button class="s" style="width:100%;" onclick="exchangeUltraToCoins()">Trocar 1 ✨ Ultra Coin por 9.500 Moedas 🪙</button>
+          <button class="p" style="margin-bottom:12px; width:100%;" onclick="exchangeCoinsToUltra()">Trocar 8.000 Moedas por 1 ✨ Ultra Coin</button>
+          <button class="s" style="width:100%;" onclick="exchangeUltraToCoins()">Trocar 1 ✨ Ultra Coin por 7.500 Moedas 🪙</button>
         </div>
       </div>
     ` : ''}
@@ -573,7 +572,7 @@ function completeShopView() {
       <div class="card">
         <b style="font-size:18px;">✨ Evento Caixa Mística Global</b>
         <p class="rules">Resgate recompensas surpresa exclusivas da temporada atual.</p>
-        <button class="p" style="margin-top:12px; width:100%; background:linear-gradient(135deg, var(--gold), var(--pink)); color:#fff;" onclick="toast('✨ Caixa Mística resgatada: +15 Ultra Coins & +500 XP!')">Resgatar Caixa Especial ✨</button>
+        <button class="p" style="margin-top:12px; width:100%; background:linear-gradient(135deg, var(--gold), var(--pink)); color:#fff;" onclick="toast('✨ Caixa Mística resgatada: +20 Ultra Coins & +600 XP!')">Resgatar Caixa Especial ✨</button>
       </div>
     ` : ''}
 
@@ -582,8 +581,8 @@ function completeShopView() {
         <b style="font-size:18px;">🎁 Cofre de Recompensas Lendário</b>
         <p class="rules">Abra cofres para faturar grandes prêmios em moedas e XP.</p>
         <div class="row" style="margin-top:16px; gap:10px;">
-          <button class="s" style="flex:1; padding:14px;" onclick="openChestType('common')">Abrir Cofre Comum (🪙 500)</button>
-          <button class="p" style="flex:1; padding:14px; background:var(--ultra); color:#010409;" onclick="openChestType('ultra')">Abrir Cofre Ultra (✨ 2)</button>
+          <button class="s" style="flex:1; padding:14px;" onclick="openChestType('common')">Abrir Cofre Comum (🪙 400)</button>
+          <button class="p" style="flex:1; padding:14px; background:var(--ultra); color:#010409;" onclick="openChestType('ultra')">Abrir Cofre Ultra (✨ 1)</button>
         </div>
       </div>
     ` : ''}
@@ -594,7 +593,7 @@ function buyUltraPackage(amount, cost) {
   if (!isOwner && myProfile.coins < cost) return toast('❌ Moedas insuficientes na carteira!');
   if (!isOwner) myProfile.coins -= cost;
   myProfile.ultra += amount;
-  addXp(300);
+  addXp(350);
   saveProfile();
   updateHeaderStats();
   render();
@@ -602,8 +601,8 @@ function buyUltraPackage(amount, cost) {
 }
 
 function exchangeCoinsToUltra() {
-  const cost = 10000;
-  if (!isOwner && myProfile.coins < cost) return toast('❌ Você precisa de 10.000 moedas!');
+  const cost = 8000;
+  if (!isOwner && myProfile.coins < cost) return toast('❌ Você precisa de 8.000 moedas!');
   if (!isOwner) myProfile.coins -= cost;
   myProfile.ultra += 1;
   saveProfile();
@@ -615,28 +614,28 @@ function exchangeCoinsToUltra() {
 function exchangeUltraToCoins() {
   if (!isOwner && myProfile.ultra < 1) return toast('❌ Você não tem Ultra Coins suficientes!');
   if (!isOwner) myProfile.ultra -= 1;
-  myProfile.coins += 9500;
+  myProfile.coins += 7500;
   saveProfile();
   updateHeaderStats();
   render();
-  toast('🎉 Câmbio realizado: +9.500 Moedas!');
+  toast('🎉 Câmbio realizado: +7.500 Moedas!');
 }
 
 function openChestType(type) {
   if (type === 'common') {
-    if (!isOwner && myProfile.coins < 500) return toast('❌ Moedas insuficientes!');
-    if (!isOwner) myProfile.coins -= 500;
-    let reward = Math.floor(Math.random() * 3500) + 1000;
+    if (!isOwner && myProfile.coins < 400) return toast('❌ Moedas insuficientes!');
+    if (!isOwner) myProfile.coins -= 400;
+    let reward = Math.floor(Math.random() * 4000) + 1200;
     myProfile.coins += reward;
-    addXp(100);
-    toast(`🎁 Cofre Comum aberto! Você ganhou +${reward} moedas e +100 XP!`);
+    addXp(120);
+    toast(`🎁 Cofre Comum aberto! Você ganhou +${reward} moedas e +120 XP!`);
   } else {
-    if (!isOwner && myProfile.ultra < 2) return toast('❌ Você precisa de 2 ✨ Ultra Coins!');
-    if (!isOwner) myProfile.ultra -= 2;
-    let rewardUltra = Math.floor(Math.random() * 8) + 4;
+    if (!isOwner && myProfile.ultra < 1) return toast('❌ Você precisa de 1 ✨ Ultra Coin!');
+    if (!isOwner) myProfile.ultra -= 1;
+    let rewardUltra = Math.floor(Math.random() * 10) + 5;
     myProfile.ultra += rewardUltra;
-    addXp(350);
-    toast(`🎁 Cofre Ultra aberto! Você ganhou +${rewardUltra} Ultra Coins e +350 XP!`);
+    addXp(400);
+    toast(`🎁 Cofre Ultra aberto! Você ganhou +${rewardUltra} Ultra Coins e +400 XP!`);
   }
   saveProfile();
   updateHeaderStats();
@@ -646,24 +645,24 @@ function openChestType(type) {
 // --- MISSÕES SUPREMAS ---
 const MISSIONS_DATA = {
   diarias: [
-    { id: 'm_d1', title: 'Girar a Roleta Diária', desc: 'Gire a roleta da sorte hoje.', rewardCoins: 350, rewardUltra: 0, xp: 100 },
-    { id: 'm_d2', title: 'Mineração Ativa Pro', desc: 'Clique 10 vezes no bloco de mineração.', rewardCoins: 400, rewardUltra: 0, xp: 120 },
-    { id: 'm_d3', title: 'Diálogo com a Complete AI', desc: 'Envie uma mensagem para a Complete AI.', rewardCoins: 300, rewardUltra: 1, xp: 140 },
-    { id: 'm_d4', title: 'Resgate do Baú', desc: 'Abra o baú misterioso de 1 hora.', rewardCoins: 600, rewardUltra: 0, xp: 180 },
-    { id: 'm_d5', title: 'Oratória Speaky', desc: 'Use o Speaky Voice para falar um texto.', rewardCoins: 450, rewardUltra: 1, xp: 160 }
+    { id: 'm_d1', title: 'Girar a Roleta Diária', desc: 'Gire a roleta da sorte hoje.', rewardCoins: 400, rewardUltra: 0, xp: 120 },
+    { id: 'm_d2', title: 'Mineração Ativa Pro', desc: 'Clique 10 vezes no bloco de mineração.', rewardCoins: 450, rewardUltra: 0, xp: 140 },
+    { id: 'm_d3', title: 'Diálogo com a Complete AI', desc: 'Envie uma mensagem para a Complete AI.', rewardCoins: 350, rewardUltra: 1, xp: 160 },
+    { id: 'm_d4', title: 'Resgate do Baú', desc: 'Abra o baú misterioso de 1 hora.', rewardCoins: 700, rewardUltra: 0, xp: 200 },
+    { id: 'm_d5', title: 'Oratória Speaky', desc: 'Use o Speaky Voice para falar um texto.', rewardCoins: 500, rewardUltra: 1, xp: 180 }
   ],
   semanais: [
-    { id: 'm_s1', title: 'Criador de Conteúdo Master', desc: 'Publique 2 vídeos ou jogos na plataforma.', rewardCoins: 4000, rewardUltra: 12, xp: 700 },
-    { id: 'm_s2', title: 'Magnata do Câmbio', desc: 'Realize 3 trocas na Complete Shop.', rewardCoins: 3000, rewardUltra: 8, xp: 500 },
-    { id: 'm_s3', title: 'Socializador PV', desc: 'Envie 5 mensagens no chat privado com áudio.', rewardCoins: 2500, rewardUltra: 6, xp: 450 },
-    { id: 'm_s4', title: 'Poupador de Elite', desc: 'Faça um depósito no Banco Complete.', rewardCoins: 4500, rewardUltra: 12, xp: 800 },
-    { id: 'm_s5', title: 'Colecionador de Acessórios', desc: 'Compre 2 acessórios na loja de customização.', rewardCoins: 5000, rewardUltra: 20, xp: 900 }
+    { id: 'm_s1', title: 'Criador de Conteúdo Master', desc: 'Publique 2 vídeos ou jogos na plataforma.', rewardCoins: 5000, rewardUltra: 15, xp: 800 },
+    { id: 'm_s2', title: 'Magnata do Câmbio', desc: 'Realize 3 trocas na Complete Shop.', rewardCoins: 3500, rewardUltra: 10, xp: 600 },
+    { id: 'm_s3', title: 'Socializador PV', desc: 'Envie 5 mensagens no chat privado com áudio.', rewardCoins: 3000, rewardUltra: 8, xp: 500 },
+    { id: 'm_s4', title: 'Poupador de Elite', desc: 'Faça um depósito no Banco Complete.', rewardCoins: 5000, rewardUltra: 15, xp: 900 },
+    { id: 'm_s5', title: 'Colecionador de Acessórios', desc: 'Compre 2 acessórios na loja de customização.', rewardCoins: 6000, rewardUltra: 25, xp: 1000 }
   ],
   mensais: [
-    { id: 'm_me1', title: 'Lenda Suprema do Complete Box', desc: 'Mantenha-se ativo na rede por um mês inteiro.', rewardCoins: 35000, rewardUltra: 60, xp: 4000 },
-    { id: 'm_me2', title: 'Imperador da Voz e IA', desc: 'Utilize os recursos de IA e Speaky 30 vezes.', rewardCoins: 25000, rewardUltra: 40, xp: 3500 },
-    { id: 'm_me3', title: 'Magnata das Moedas Global', desc: 'Acumule mais de 150.000 moedas no total.', rewardCoins: 70000, rewardUltra: 120, xp: 7000 },
-    { id: 'm_me4', title: 'Mestre dos Mini-Games', desc: 'Publique 10 jogos HTML na comunidade.', rewardCoins: 45000, rewardUltra: 75, xp: 6000 }
+    { id: 'm_me1', title: 'Lenda Suprema do Complete Box', desc: 'Mantenha-se ativo na rede por um mês inteiro.', rewardCoins: 40000, rewardUltra: 80, xp: 5000 },
+    { id: 'm_me2', title: 'Imperador da Voz e IA', desc: 'Utilize os recursos de IA e Speaky 30 vezes.', rewardCoins: 30000, rewardUltra: 50, xp: 4000 },
+    { id: 'm_me3', title: 'Magnata das Moedas Global', desc: 'Acumule mais de 150.000 moedas no total.', rewardCoins: 80000, rewardUltra: 150, xp: 8000 },
+    { id: 'm_me4', title: 'Mestre dos Mini-Games', desc: 'Publique 10 jogos HTML na comunidade.', rewardCoins: 50000, rewardUltra: 90, xp: 7000 }
   ]
 };
 
@@ -695,7 +694,7 @@ function missionsView() {
               </div>
             </div>
             <div>
-              ${isDone ? '<span style="background:rgba(35,134,54,0.25); color:#3fb950; padding:8px 16px; border-radius:12px; font-weight:bold; font-size:13px;">✅ Concluído</span>' : `<button class="p" onclick="claimSupremeMission('${m.id}', ${m.rewardCoins}, ${m.rewardUltra}, ${m.xp})">Resgatar 🎁</button>`}
+              ${isDone ? '<span style="background:rgba(35,134,54,0.25); color:#3fb950; padding:8px 16px; border-radius:12px; font-weight:bold; font-size:13px;">✅ Concluído</span>' : `<button class="p" onclick="claimSupremeMission('${m.id}',${m.rewardCoins}, ${m.rewardUltra},${m.xp})">Resgatar 🎁</button>`}
             </div>
           </div>
         `;
@@ -754,8 +753,8 @@ function triggerSpeakyDedicated() {
     utterance.lang = 'pt-BR';
     utterance.rate = rate;
     window.speechSynthesis.speak(utterance);
-    addXp(35);
-    toast('🗣️ Speaky reproduzindo áudio e +35 XP!');
+    addXp(40);
+    toast('🗣️ Speaky reproduzindo áudio e +40 XP!');
   } else {
     toast('❌ Seu navegador não suporta síntese de voz.');
   }
@@ -770,8 +769,8 @@ let SHOP_ITEMS = [];
 for (let i = 1; i <= 60; i++) {
   let cat = i <= 15 ? 'coroas' : i <= 30 ? 'auras' : i <= 45 ? 'espadas' : 'emblemas';
   let badge = EMOJIS[(i - 1) % EMOJIS.length];
-  let name = `${badge} ${TYPE[(i - 1) % TYPE.length]} ${ADJ[(i - 1) % TYPE.length]} #${i}`;
-  let price = 90 + (i * 35);
+  let name = `${badge}${TYPE[(i - 1) % TYPE.length]} ${ADJ[(i - 1) \% TYPE.length]} #${i}`;
+  let price = 80 + (i * 30);
   let isUltraItem = i % 5 === 0;
   SHOP_ITEMS.push({ id: 'item_' + i, name, desc: `Customização oficial nível ${i} da Complete Shop`, price, currency: isUltraItem ? 'ultra' : 'coins', badge, category: cat });
 }
@@ -829,7 +828,7 @@ function buyCustomization(id, price, currency, badge) {
   }
 
   myProfile.badge = badge;
-  addXp(180);
+  addXp(200);
   saveProfile();
   updateHeaderStats();
   render();
@@ -926,7 +925,7 @@ function sendPVMessage(targetUid) {
   if (!dataList.pv[chatKey]) dataList.pv[chatKey] = [];
 
   dataList.pv[chatKey].push({ sender: uid, type: 'text', text, ts: Date.now() });
-  addXp(30);
+  addXp(35);
   saveData();
   drawPVMessages(targetUid);
 }
@@ -951,7 +950,7 @@ function toggleAudioRecording(targetUid) {
         if (!dataList.pv[chatKey]) dataList.pv[chatKey] = [];
 
         dataList.pv[chatKey].push({ sender: uid, type: 'audio', audioUrl, ts: Date.now() });
-        addXp(60);
+        addXp(70);
         saveData();
         drawPVMessages(targetUid);
         toast('🎤 Mensagem de voz enviada com sucesso!');
@@ -992,8 +991,7 @@ function drawAIMessages() {
       <span class="av" style="width:38px; height:38px; font-size:14px; background:${m.role === 'user' ? 'var(--ac)' : 'var(--ultra)'};">${m.role === 'user' ? '👤' : '🤖'}</span>
       <div style="background:${m.role === 'user' ? 'var(--card)' : 'rgba(22,27,34,0.95)'}; border:1px solid var(--bd); border-radius:16px; padding:12px 16px; max-width:82%;">
         <b>${m.role === 'user' ? 'Você' : '🤖 Complete AI Quantum Master'}</b>
-        <div style="margin-top:6px; font-size:14px; word-break:break-word; line-height:1.6;">${esc(m.text)}</div>
-        ${m.code ? `<pre style="margin-top:10px;">${esc(m.code)}</pre><button class="p" style="margin-top:10px;" onclick="publishAIGame('${esc(m.gameTitle)}')">🚀 Publicar Jogo na Comunidade</button>` : ''}
+        <div style="margin-top:6px; font-size:14px; word-break:break-word; line-height:1.6;">${esc(m.text)}</div>${m.code ? `<pre style="margin-top:10px;">${esc(m.code)}</pre><button class="p" style="margin-top:10px;" onclick="publishAIGame('${esc(m.gameTitle)}')">🚀 Publicar Jogo na Comunidade</button>` : ''}
       </div>
     </div>
   `).join('');
@@ -1007,7 +1005,7 @@ function sendAIMessage() {
   if (!q) return;
   input.value = '';
   dataList.aiMsgs.push({ role: 'user', text: q });
-  addXp(25);
+  addXp(30);
   saveData();
   drawAIMessages();
 
@@ -1041,281 +1039,4 @@ function generateAIGame() {
   toast('⏳ IA Quantum compilando código do jogo arcade...');
   
   setTimeout(() => {
-    const code = `<!DOCTYPE html><html><head><style>body{margin:0;background:#010409;color:#fff;text-align:center;font-family:sans-serif;}canvas{background:#111;border:2px solid #00f0ff;margin-top:10px;border-radius:12px;box-shadow:0 0 25px rgba(0,240,255,0.35);}</style></head><body><h3>🎮 ${prompt}</h3><canvas id="c" width="320" height="200"></canvas><p>Pontos: <b id="s">0</b></p><script>const c=document.getElementById('c'),x=c.getContext('2d');let score=0,py=140,vy=0,ox=320;window.onclick=()=>{if(py>=140)vy=-9.5;};function loop(){vy+=0.48;py+=vy;if(py>140){py=140;vy=0;}ox-=5.5;if(ox<-20){ox=320;score+=20;document.getElementById('s').textContent=score;}x.clearRect(0,0,320,200);x.fillStyle='#2563eb';x.fillRect(40,py,22,22);x.fillStyle='#00f0ff';x.fillRect(ox,140,22,22);requestAnimationFrame(loop);}loop();<\/script></body></html>`;
-    dataList.aiMsgs.push({ role: 'ai', text: `Jogo arcade "${prompt}" gerado com sucesso pela rede Quantum!`, code, gameTitle: prompt });
-    addXp(200);
-    saveData();
-    drawAIMessages();
-    toast('✨ Jogo arcade quantum gerado com sucesso!');
-  }, 1200);
-}
-
-function publishAIGame(title) {
-  const lastMsg = [...dataList.aiMsgs].reverse().find(m => m.code);
-  if (!lastMsg) return;
-  const postObj = { id: 'g_' + Math.random().toString(36).substring(2, 9), title: 'Arcade Quantum: ' + title, content: lastMsg.code, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, likes: 0, comments: [], ts: Date.now() };
-  dataList.games.unshift(postObj);
-  addXp(250);
-  saveData();
-  toast('🎮 Jogo publicado na comunidade global!');
-  go('games');
-}
-
-// --- BAÚ 1H ---
-function chestView() {
-  const lastChest = parseInt(localStorage.getItem('cb_last_chest') || '0');
-  const now = Date.now();
-  const diff = now - lastChest;
-  const oneHour = 3600000;
-  const canClaim = diff >= oneHour;
-  const timeLeft = canClaim ? 0 : Math.ceil((oneHour - diff) / 60000);
-
-  return `
-    <div class="card" style="text-align:center; padding:40px 20px;">
-      <b style="font-size:24px;">🎁 Baú Misterioso de 1 Hora</b>
-      <p class="rules" style="margin-top:10px;">Volte a cada 1 hora exata para abrir seu baú de recompensas gratuitas!</p>
-      <div style="font-size:80px; margin:26px 0;">📦</div>
-      <div style="margin-bottom:22px; font-weight:bold; font-size:17px; color:var(--gold);">
-        ${canClaim ? '✨ Baú Disponível para Resgate!' : `⏳ Próximo baú em ${timeLeft} minutos.`}
-      </div>
-      <button class="p" style="padding:14px 34px; font-size:16px;" ${canClaim ? '' : 'disabled style="opacity:0.5; cursor:not-allowed;"'} onclick="claimChest()">Abrir Baú 🔓</button>
-    </div>
-  `;
-}
-
-function claimChest() {
-  const lastChest = parseInt(localStorage.getItem('cb_last_chest') || '0');
-  const now = Date.now();
-  if (now - lastChest < 3600000) return toast('Recarga de 1h em andamento!');
-  localStorage.setItem('cb_last_chest', now);
-  const reward = Math.floor(Math.random() * 250) + 120;
-  if (!isOwner) { myProfile.coins += reward; addXp(150); saveProfile(); }
-  updateHeaderStats(); 
-  render();
-  toast(`🎉 +${reward} moedas e +150 XP no baú!`);
-}
-
-let minerClicks = 0;
-function minerView() {
-  return `
-    <div class="card" style="text-align:center; padding:40px 20px;">
-      <b style="font-size:24px;">⛏️ Mineração Pro de Moedas</b>
-      <p class="rules">Clique rapidamente no bloco energético abaixo para farmar moedas e XP!</p>
-      <div style="margin:30px auto; width:150px; height:150px; background:linear-gradient(135deg, var(--ac), var(--ultra)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:55px; cursor:pointer; box-shadow: 0 10px 30px rgba(0,240,255,0.45); transition: transform 0.1s;" onclick="clickMiner()">✨</div>
-      <div style="font-size:17px; color:var(--gold);">Moedas mineradas: <b id="mc">${minerClicks}</b></div>
-    </div>
-  `;
-}
-function clickMiner() {
-  minerClicks++;
-  const el = $('#mc'); if(el) el.textContent = minerClicks;
-  if(!isOwner && minerClicks % 8 === 0) { 
-    myProfile.coins += 25; 
-    addXp(30);
-    saveProfile(); 
-    updateHeaderStats(); 
-    toast('⚡ +25 moedas e +30 XP minerados!'); 
-  }
-}
-
-function spinView() {
-  return `
-    <div class="card" style="text-align:center; padding:40px 20px;">
-      <b style="font-size:24px;">🎡 Roleta da Sorte Diária</b>
-      <div id="sp-txt" style="color:var(--gold); font-size:24px; font-weight:800; margin:26px 0; padding:18px; background:rgba(1,4,9,0.9); border:2px dashed var(--ac); border-radius:16px;">GIRO DIÁRIO PRONTO</div>
-      <button class="p" style="padding:14px 30px;" onclick="doSpin()">Girar Roleta 🎰</button>
-    </div>
-  `;
-}
-function doSpin() {
-  const d = new Date().toDateString();
-  if(localStorage.getItem('cb_spin') === d) return toast('Você já girou a roleta hoje!');
-  localStorage.setItem('cb_spin', d);
-  const w = [150, 250, 500, 1000][Math.floor(Math.random()*4)];
-  $('#sp-txt').textContent = `🎉 +${w} Moedas Ganhas!`;
-  if(!isOwner) { myProfile.coins += w; addXp(250); saveProfile(); }
-  updateHeaderStats(); 
-  toast(`🎉 Parabéns! Ganhou ${w} moedas e +250 XP!`);
-}
-
-function bankView() {
-  return `
-    <div class="card">
-      <b style="font-size:20px;">🏦 Banco & Poupança Global</b>
-      <div style="background:rgba(1,4,9,0.9); border:1px solid var(--bd); border-radius:16px; padding:18px; margin: 18px 0;">
-        <div style="font-size:14px; color:var(--mu);">Carteira Disponível: <b>🪙 ${isOwner ? '∞' : myProfile.coins}</b></div>
-        <div style="font-size:16px; margin-top:6px; color:var(--gold);">Poupança Segura: <b>🪙 ${isOwner ? '∞' : myProfile.savings}</b></div>
-      </div>
-      <input id="bk-amt" type="number" placeholder="Quantidade de moedas" min="1">
-      <div class="row" style="margin-top:12px;">
-        <button class="p" style="flex:1;" onclick="dep()">Depositar na Poupança 📥</button>
-        <button class="s" style="flex:1;" onclick="wit()">Sacar para Carteira 📤</button>
-      </div>
-    </div>
-  `;
-}
-function dep() {
-  const v = parseInt($('#bk-amt').value);
-  if(!v || v <= 0 || myProfile.coins < v) return toast('Saldo insuficiente na carteira!');
-  myProfile.coins -= v; myProfile.savings += v; addXp(75); saveProfile(); updateHeaderStats(); render(); toast('Depositado com sucesso!');
-}
-function wit() {
-  const v = parseInt($('#bk-amt').value);
-  if(!v || v <= 0 || myProfile.savings < v) return toast('Saldo insuficiente na poupança!');
-  myProfile.savings -= v; myProfile.coins += v; saveProfile(); updateHeaderStats(); render(); toast('Sacado com sucesso!');
-}
-
-// --- PERFIL ---
-function profileView() {
-  const myVideos = (dataList.videos || []).filter(x => x.by === uid);
-  const myGames = (dataList.games || []).filter(x => x.by === uid);
-  const info = getLevelInfo(myProfile.xp);
-
-  return `
-    <div class="card" style="text-align:center; padding:40px 20px;">
-      <span class="av" style="width:90px; height:90px; font-size:38px; margin-bottom:12px;">${myProfile.badge}</span>
-      <h2 style="margin:4px 0 2px; font-size:26px;">${esc(myProfile.name)}</h2>
-      <div class="by">${isOwner ? '👑 Administrador Supremo / Dono' : `👤 Nível ${info.level} (${info.title})`}</div>
-      <div class="row" style="justify-content:center; gap:24px; margin-top:22px; border-top:1px solid var(--bd); border-bottom:1px solid var(--bd); padding:16px 0;">
-        <div><b style="font-size:16px;">${myVideos.length + myGames.length}</b><div class="by">Posts</div></div>
-        <div><b style="font-size:16px;">🪙 ${isOwner ? '∞' : myProfile.coins}</b><div class="by">Moedas</div></div>
-        <div><b style="font-size:16px;">✨ ${isOwner ? '∞' : myProfile.ultra}</b><div class="by">Ultra</div></div>
-        <div><b style="font-size:16px;">⭐ ${isOwner ? '∞' : myProfile.xp}</b><div class="by">XP Total</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <b style="font-size:18px;">⚙️ Configurações da Conta</b>
-      ${isOwner ? '<p class="rules" style="margin-top:6px;">Modo Dono Supremo Ativo.</p>' : `
-        <input id="new-name" value="${esc(myProfile.name)}" placeholder="Seu nome global">
-        <button class="p" style="margin-top:10px;" onclick="myProfile.name=sanitize($('#new-name').value); saveProfile(); toast('Nome alterado com sucesso!'); render();">Salvar Nome</button>
-        <hr style="border:0; border-top:1px solid var(--bd); margin:20px 0;">
-        <input id="op-pass" type="password" placeholder="Senha secreta do Dono">
-        <button class="s" style="margin-top:6px; width:100%;" onclick="if($('#op-pass').value==='dono-pedro-2026'){localStorage.setItem('${OWNER_KEY}','true');location.reload();}else{toast('Senha incorreta!');}">Ativar Modo Dono 👑</button>
-      `}
-    </div>
-    <div class="card">
-      <b style="font-size:18px;">📸 Suas Publicações Globais</b>
-      <div style="margin-top:16px;">
-        ${!myVideos.length && !myGames.length ? '<div class="empty">Nenhuma publicação feita ainda.</div>' : ''}
-        ${myVideos.map(x => `
-          <div style="background:rgba(1,4,9,0.9); border:1px solid var(--bd); border-radius:18px; padding:18px; margin-bottom:18px;">
-            <div class="row" style="justify-content:space-between; margin-bottom:12px;">
-              <b>🎬 Vídeo: ${esc(x.title)}</b>
-              <button class="danger" onclick="deletePost('videos', '${x.id}')">Apagar</button>
-            </div>
-            <div><iframe src="https://www.youtube.com/embed/${(x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)||[])[1]||''}" allowfullscreen></iframe></div>
-          </div>
-        `).join('')}
-        ${myGames.map(x => `
-          <div style="background:rgba(1,4,9,0.9); border:1px solid var(--bd); border-radius:18px; padding:18px; margin-bottom:18px;">
-            <div class="row" style="justify-content:space-between; margin-bottom:12px;">
-              <b>🎮 Jogo: ${esc(x.title)}</b>
-              <button class="danger" onclick="deletePost('games', '${x.id}')">Apagar</button>
-            </div>
-            <div style="margin-top:8px;"><iframe class="g" srcdoc="${x.content}"></iframe></div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function submitPost(kind) {
-  const t = sanitize($('#p-title').value);
-  const c = $('#p-content').value;
-  if(!t || !c) return toast('Preencha todos os campos!');
-  const postObj = { id: 'p_' + Math.random().toString(36).substring(2, 9), title: t, content: c, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, likes: 0, comments: [], ts: Date.now() };
-  dataList[kind].unshift(postObj);
-  addXp(350);
-  saveData();
-  toast('Publicado com sucesso e +350 XP!');
-  go(kind);
-}
-
-function deletePost(kind, id) {
-  if (confirm('Deseja realmente apagar esta publicação?')) {
-    dataList[kind] = dataList[kind].filter(x => x.id !== id);
-    saveData();
-    toast('Publicação apagada!');
-    render();
-  }
-}
-
-function likePost(kind, id) {
-  const item = (dataList[kind] || []).find(x => x.id === id);
-  if (item) {
-    item.likes = (item.likes || 0) + 1;
-    addXp(25);
-    saveData();
-    renderContentList(kind);
-    toast('❤️ Curtido! +25 XP');
-  }
-}
-
-function addComment(kind, id) {
-  const input = $(`#comment-input-${id}`);
-  if (!input || !input.value.trim()) return;
-  const item = (dataList[kind] || []).find(x => x.id === id);
-  if (item) {
-    if (!item.comments) item.comments = [];
-    item.comments.push({ author: myProfile.name, text: sanitize(input.value.trim()), ts: Date.now() });
-    addXp(30);
-    saveData();
-    renderContentList(kind);
-    toast('💬 Comentário enviado! +30 XP');
-  }
-}
-
-function renderContentList(k) {
-  const box = $('#content-list'); if(!box) return;
-  const items = dataList[k] || [];
-  if (!items.length) { box.innerHTML = '<div class="empty">Nenhum conteúdo publicado nesta categoria.</div>'; return; }
-
-  box.innerHTML = items.map(x => {
-    let body = '';
-    if (k === 'videos') {
-      const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
-      body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
-    } else if (k === 'games') {
-      body = `<div style="background:#000; border-radius:14px; padding:6px;"><iframe class="g" srcdoc="${x.content}"></iframe></div>`;
-    }
-    const canDelete = isOwner || x.by === uid;
-    const commentsList = (x.comments || []).map(cm => `
-      <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:8px 12px; border-radius:10px; margin-top:6px; font-size:13px;">
-        <b>${esc(cm.author)}:</b> ${esc(cm.text)}
-      </div>
-    `).join('');
-
-    return `
-      <div class="card">
-        <div class="row" style="margin-bottom:14px; justify-content:space-between;">
-          <div class="row">
-            <span class="av" style="width:44px; height:44px; font-size:18px;">${esc(x.authorBadge || '👤')}</span>
-            <div><b>${esc(x.authorName)}</b><div class="by">${timeAgo(x.ts)}</div></div>
-          </div>
-          ${canDelete ? `<button class="danger" onclick="deletePost('${k}', '${x.id}')">Apagar</button>` : ''}
-        </div>
-        <h3 style="margin:8px 0 14px; font-size:19px;">${esc(x.title)}</h3>
-        ${body}
-        <div class="row" style="margin-top:14px; gap:12px;">
-          <button class="s" onclick="likePost('${k}', '${x.id}')">❤️ Curtir (${x.likes || 0})</button>
-        </div>
-        <div style="margin-top:14px; border-top:1px solid var(--bd); padding-top:12px;">
-          <div class="row">
-            <input id="comment-input-${x.id}" placeholder="Escreva um comentário..." style="flex:1; margin:0;" onkeydown="if(event.key==='Enter')addComment('${k}', '${x.id}')">
-            <button class="p" style="padding:10px 16px;" onclick="addComment('${k}', '${x.id}')">Comentar</button>
-          </div>
-          <div style="margin-top:8px;">${commentsList}</div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  nav();
-  render();
-});
-</script>
-</body>
-</html>
+    const code = `<!DOCTYPE html><html><head><style>body{margin:0;background:#010409;color:#fff;text-align:center;font-family:sans-serif;}canvas{background:#111;border:2px solid #00f0ff;margin-top:10px;border-radius:12px;box-shadow:0 0 25px rgba(0,240,255,0.35);}</style></head><body><h3>🎮 ${prompt}</h3><canvas id="c" width="320" height="200"></canvas><p>Pontos: <b id="s">0</b></p><script>const c=document.getElementById('c'),x=c.getContext('2d');let score=0,py=140,vy=0,ox=320;window.onclick=()=>{if(py>=140)vy=-10;};function loop(){vy+=0.5;py+=vy;if(py>140){py=1
