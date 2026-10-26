@@ -219,7 +219,7 @@ button.danger:hover { background: rgba(218,54,51,0.3); }
 .by { font-size: 12px; color: var(--mu); }
 .empty { text-align: center; color: var(--mu); padding: 50px 20px; font-weight: 500; font-size: 15px; }
 iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 16px; background: #000; }
-iframe.game-frame { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--bd); border-radius: 16px; background: #000; }
+iframe.game-frame { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--bd); border-radius: 16px; background: #0a0e17; }
 .av {
   width: 60px;
   height: 60px;
@@ -386,11 +386,11 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
     { id: 'v1', title: 'Lançamento Global do Complete Box', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 450, comments: [], ts: Date.now() }
   ],
   games: [
-    { id: 'g1', title: 'Cyber Quantum Arcade', content: '<body style="background:#010409;color:#fff;text-align:center;padding-top:40px;font-family:sans-serif;"><h2>🚀 Nave Quantum</h2><canvas id="c" width="300" height="180" style="background:#111;border:2px solid #3b82f6;border-radius:12px;"></canvas><script>const ctx=document.getElementById("c").getContext("2d");let x=150;window.onkeydown=e=>{if(e.key==="ArrowLeft")x-=15;if(e.key==="ArrowRight")x+=15;};function loop(){ctx.clearRect(0,0,300,180);ctx.fillStyle="#00f0ff";ctx.fillRect(x,150,40,15);requestAnimationFrame(loop);}loop();<\/script></body>', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 320, comments: [], ts: Date.now() }
+    { id: 'g1', title: 'Cyber Quantum Arcade', content: '<body style="background:#0a0e17;color:#fff;text-align:center;padding-top:40px;font-family:sans-serif;"><h2>🚀 Nave Quantum</h2><canvas id="c" width="300" height="180" style="background:#111;border:2px solid #3b82f6;border-radius:12px;"></canvas><script>const ctx=document.getElementById("c").getContext("2d");let x=150;window.onkeydown=e=>{if(e.key==="ArrowLeft")x-=15;if(e.key==="ArrowRight")x+=15;};function loop(){ctx.clearRect(0,0,300,180);ctx.fillStyle="#00f0ff";ctx.fillRect(x,150,40,15);requestAnimationFrame(loop);}loop();<\/script></body>', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 320, comments: [], ts: Date.now() }
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Perfil global supremo e imersivo ativado!' }
+    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Jogos HTML renderizados perfeitamente com fundo imersivo!' }
   ]
 }));
 
@@ -927,7 +927,6 @@ function bankView() {
   `;
 }
 
-// --- ABA MEU PERFIL SUPREMA & COMPLEXA ---
 function profileView() {
   const info = getLevelInfo(myProfile.xp);
   let myVideos = (dataList.videos || []).filter(x => x.by === uid);
@@ -1062,7 +1061,12 @@ function renderContentList(k) {
       const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
       body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
     } else if (k === 'games') {
-      body = `<iframe class="game-frame" srcdoc="${x.content}"></iframe>`;
+      // Injeta estilos de fundo automático caso o HTML do jogo não venha estilizado
+      let gameHtml = x.content;
+      if (!gameHtml.includes('background') && !gameHtml.includes('<style>')) {
+        gameHtml = `<style>body{background:#0a0e17;color:#fff;font-family:sans-serif;margin:0;padding:10px;}</style>` + gameHtml;
+      }
+      body = `<iframe class="game-frame" srcdoc="${esc(gameHtml)}"></iframe>`;
     }
     
     let deleteBtnHtml = isOwner ? `<button class="danger" onclick="deletePost('${k}','${x.id}')">Apagar</button>` : '';
