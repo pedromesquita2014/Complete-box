@@ -219,10 +219,9 @@ button.danger:hover { background: rgba(218,54,51,0.3); }
 .by { font-size: 12px; color: var(--mu); }
 .empty { text-align: center; color: var(--mu); padding: 50px 20px; font-weight: 500; font-size: 15px; }
 iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 16px; background: #000; }
-iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 16px; border: 1px solid var(--bd); }
 .av {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--ac), var(--ac2));
   color: #fff;
@@ -232,8 +231,8 @@ iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 16px
   font-weight: 800;
   overflow: hidden;
   flex: none;
-  font-size: 22px;
-  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+  font-size: 26px;
+  box-shadow: 0 6px 18px rgba(37,99,235,0.4);
 }
 #toast {
   position: fixed;
@@ -253,8 +252,8 @@ iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 16px
 @keyframes toastIn {
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
-.chat-row { background: rgba(13,17,23,0.9); border: 1px solid var(--bd); padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; margin-bottom: 8px; transition: all 0.2s; }
-.chat-row:hover { border-color: var(--ac); background: var(--card-hover); transform: translateX(4px); }
+.contact-item { background: rgba(1,4,9,0.7); border: 1px solid var(--bd); padding: 14px 18px; border-radius: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; }
+.contact-item:hover { border-color: var(--ac); background: var(--card-hover); transform: translateX(4px); }
 pre { background: rgba(1,4,9,0.95); border: 1px solid var(--bd); border-radius: 14px; padding: 14px; overflow-x: auto; font-size: 12px; color: var(--ultra); }
 .xp-bar-container { background: rgba(255,255,255,0.06); border-radius: 10px; height: 10px; width: 100%; overflow: hidden; margin: 8px 0; border: 1px solid var(--bd); }
 .xp-bar-fill { background: linear-gradient(90deg, var(--ac), var(--ultra)); height: 100%; width: 0%; transition: width 0.4s ease; }
@@ -276,7 +275,7 @@ pre { background: rgba(1,4,9,0.95); border: 1px solid var(--bd); border-radius: 
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
       <div>
         <h2 style="margin:0 0 4px; font-size:22px;">Complete Box - Quantum Supreme Master</h2>
-        <div style="font-size:13px; opacity:0.9;">O ápice mundial em jogos, inteligência artificial neural, chats de voz e missões.</div>
+        <div style="font-size:13px; opacity:0.9;">O ápice mundial em jogos diretos, vídeos liberados e busca global de usuários.</div>
       </div>
       <div id="user-level-badge" style="background:rgba(255,255,255,0.08); border:1px solid var(--bd); padding:8px 16px; border-radius:14px; font-weight:bold; font-size:13px;">
         ⭐ Nível 1 (Novato)
@@ -367,7 +366,6 @@ let completeShopSubTab = 'ofertas';
 let missionsSubTab = 'diarias';
 let shopCategory = 'coroas';
 let currentChatUser = null;
-let chatFilter = 'Todas';
 
 let sessionSeconds = 0;
 setInterval(() => {
@@ -385,14 +383,14 @@ setInterval(() => {
 
 let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify({
   videos: [
-    { id: 'v1', title: 'Lançamento Global do Complete Box Quantum', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 450, comments: [], ts: Date.now() }
+    { id: 'v1', title: 'Lançamento Global do Complete Box', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 450, comments: [], ts: Date.now() }
   ],
   games: [
-    { id: 'g1', title: 'Cyber Quantum Arcade', content: '<body style="background:#010409;color:#fff;text-align:center;padding-top:40px;font-family:sans-serif;"><h2>🚀 Nave Quantum</h2><canvas id="c" width="300" height="180" style="background:#111;border:2px solid #3b82f6;border-radius:12px;"></canvas><script>const ctx=document.getElementById("c").getContext("2d");let x=150;window.onkeydown=e=>{if(e.key==="ArrowLeft")x-=15;if(e.key==="ArrowRight")x+=15;};function loop(){ctx.clearRect(0,0,300,180);ctx.fillStyle="#00f0ff";ctx.fillRect(x,150,40,15);requestAnimationFrame(loop);}loop();<\/script></body>', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 230, comments: [], ts: Date.now() }
+    { id: 'g1', title: 'Jogo Direto Arcade', content: 'https://play.gamedistribution.com/popup/arcade/', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 230, comments: [], ts: Date.now() }
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Todos os meus sistemas neurais estão otimizados ao máximo. Como posso ajudar?' }
+    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Sistema de vídeos sem restrição e jogos diretos ativados!' }
   ]
 }));
 
@@ -402,8 +400,8 @@ function saveData() {
 
 const TABS = [
   ['videos', '🎬 Vídeos'],
-  ['games', '🎮 Jogos Arcade'],
-  ['chat', '💬 Conversas'],
+  ['games', '🎮 Jogos Diretos'],
+  ['chat', '💬 PV com Voz'],
   ['completeshop', '🛍️ Complete Shop'],
   ['accessories', '👑 Acessórios'],
   ['speaky', '🗣️ Speaky Voice'],
@@ -420,12 +418,11 @@ const TABS = [
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const timeAgo = ts => {
-  if (!ts) return 'ontem';
+  if (!ts) return 'agora';
   const sec = Math.floor((Date.now() - ts) / 1000);
   if (sec < 60) return 'agora';
   if (sec < 3600) return Math.floor(sec/60) + 'm atrás';
-  if (sec < 86400) return Math.floor(sec/3600) + 'h atrás';
-  return 'ontem';
+  return Math.floor(sec/3600) + 'h atrás';
 };
 
 function nav() {
@@ -476,13 +473,17 @@ function render() {
   if (tab === 'bank') { app.innerHTML = bankView(); return; }
   if (tab === 'me') { app.innerHTML = profileView(); return; }
 
-  let titles = { videos: '🎬 Publicar Vídeo na Rede Global', games: '🎮 Publicar Jogo Arcade HTML' };
+  let titles = { 
+    videos: '🎬 Publicar Vídeo Global (Sem Restrição)', 
+    games: '🎮 Adicionar Jogo Direto (Joga na Hora)' 
+  };
+  
   app.innerHTML = `
     <div class="card">
       <b style="font-size:18px;">${titles[tab] || 'Publicar'}</b>
-      <p class="rules">Compartilhe conteúdos de alta qualidade para ganhar engajamento e XP.</p>
+      <p class="rules">${tab==='games' ? 'Cole o link de qualquer jogo online ou arcade web para rodar direto sem travar!' : 'Cole o link do YouTube (qualquer vídeo do mundo sem restrição).'}</p>
       <input id="p-title" placeholder="Título chamativo" maxlength="100">
-      ${tab === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML completo do seu jogo arcade aqui..."></textarea>' : '<input id="p-content" placeholder="Link do YouTube ou URL direta (.mp4)">'}
+      <input id="p-content" placeholder="${tab==='games' ? 'URL direta do jogo (ex: https://...)' : 'Link do YouTube (ex: https://youtube.com/watch?v=...)'}">
       <button class="p" style="margin-top:14px; width:100%;" onclick="submitPost('${tab}')">🚀 Publicar e Ganhar XP</button>
     </div>
     <div id="content-list"></div>
@@ -490,83 +491,108 @@ function render() {
   renderContentList(tab);
 }
 
-// --- NOVO DESIGN DE CONVERSAS ESTILO APP DE MENSAGENS ---
+// --- BUSCA GLOBAL DE USUÁRIOS ---
 function contactsListView() {
   let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
   delete users[uid];
-  const keys = Object.keys(users);
+  let userList = Object.entries(users).map(([id, u]) => ({ id, ...u }));
+
+  window.filterUsersQuery = function(q) {
+    const term = (q || '').toLowerCase();
+    const container = $('#search-results-box');
+    if(!container) return;
+    let filtered = userList.filter(u => u.name.toLowerCase().includes(term));
+    container.innerHTML = filtered.length === 0 ? '<div class="empty">Nenhum usuário encontrado com esse nome.</div>' : filtered.map(u => `
+      <div class="contact-item" onclick="currentChatUser='${u.id}'; render();">
+        <span class="av" style="width:46px; height:46px; font-size:18px;">${esc(u.badge || '👤')}</span>
+        <div>
+          <b style="font-size:16px;">${esc(u.name)}</b>
+          <div class="by">Clique para conversar no PV 💬</div>
+        </div>
+      </div>
+    `).join('');
+  };
 
   return `
-    <div style="margin-bottom: 16px;">
-      <h1 style="font-size: 26px; font-weight: 900; margin: 0 0 12px 0;">Conversas</h1>
-      <input placeholder="🔍 Pergunte ou pesquise..." style="background: rgba(255,255,255,0.06); border-radius: 18px; border: 1px solid var(--bd); padding: 12px 18px;">
+    <div class="card">
+      <b style="font-size:20px;">💬 Pesquisa e Chat Privado (PV)</b>
+      <p class="rules">Digite o nome de qualquer amigo abaixo para achá-lo instantaneamente na rede:</p>
+      <input placeholder="🔍 Pesquisar usuário pelo nome..." oninput="filterUsersQuery(this.value)">
     </div>
-    
-    <div class="row" style="gap: 8px; margin-bottom: 16px;">
-      <button class="s ${chatFilter==='Todas'?'on':''}" onclick="chatFilter='Todas'; render();">Todas</button>
-      <button class="s ${chatFilter==='Não lidas'?'on':''}" onclick="chatFilter='Não lidas'; render();">Não lidas 4</button>
-      <button class="s ${chatFilter==='Favoritos'?'on':''}" onclick="chatFilter='Favoritos'; render();">Favoritos</button>
-      <button class="s ${chatFilter==='Grupos'?'on':''}" onclick="chatFilter='Grupos'; render();">Grupos 2</button>
-    </div>
-
-    <!-- Conversa Fixa / Assistente -->
-    <div class="chat-row" onclick="currentChatUser='assistant_bot'; render();">
-      <span class="av">🤖</span>
-      <div style="flex: 1;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <b style="font-size: 16px;">Assistente Virtual AI</b>
-          <span class="by" style="color: var(--green);">ontem</span>
-        </div>
-        <div class="by" style="margin-top: 2px;">Olá! Como posso ajudar nos seus projetos?</div>
-      </div>
-    </div>
-
-    ${keys.map(id => {
-      let u = users[id];
-      return `
-        <div class="chat-row" onclick="currentChatUser='${id}'; render();">
-          <span class="av">${esc(u.badge || '👤')}</span>
-          <div style="flex: 1;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <b style="font-size: 16px;">${esc(u.name)}</b>
-              <span class="by">ontem</span>
-            </div>
-            <div class="by" style="margin-top: 2px;">Toque para abrir conversa privada com áudio 💬</div>
+    <div id="search-results-box">
+      ${userList.map(u => `
+        <div class="contact-item" onclick="currentChatUser='${u.id}'; render();">
+          <span class="av" style="width:46px; height:46px; font-size:18px;">${esc(u.badge || '👤')}</span>
+          <div>
+            <b style="font-size:16px;">${esc(u.name)}</b>
+            <div class="by">Clique para conversar no PV 💬</div>
           </div>
         </div>
-      `;
-    }).join('')}
+      `).join('')}
+      ${userList.length === 0 ? '<div class="empty">Nenhum outro usuário cadastrado na rede ainda.</div>' : ''}
+    </div>
   `;
 }
 
 function chatPVView(targetUid) {
+  let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
+  let target = users[targetUid] || { name: 'Usuário', badge: '👤' };
+
   return `
     <div class="card row" style="justify-content:space-between; padding:14px 22px;">
       <div class="row">
         <button class="s" onclick="currentChatUser=null; render();">← Voltar</button>
-        <span class="av" style="width:42px; height:42px; font-size:16px;">🤖</span>
+        <span class="av" style="width:42px; height:42px; font-size:16px;">${esc(target.badge)}</span>
         <div>
-          <b style="font-size:16px;">Conversa Ativa</b>
-          <div class="by" style="color:#3fb950">● Online</div>
+          <b style="font-size:16px;">${esc(target.name)}</b>
+          <div class="by" style="color:#3fb950">● PV Ativo</div>
         </div>
       </div>
     </div>
-    <div id="pv-msgs" style="height:46vh; overflow-y:auto; border:1px solid var(--bd); padding:16px; border-radius:18px; background:rgba(1,4,9,0.75);">
-      <div style="margin:12px 0; display:flex; justify-content:flex-start">
-        <div style="background:var(--card); border:1px solid var(--bd); border-radius:16px; padding:12px 16px; max-width:75%; color:#fff;">
-          <div>Olá! Como posso ajudar hoje no Complete Box?</div>
-          <div style="font-size:10px; opacity:0.8; text-align:right; margin-top:4px;">agora</div>
-        </div>
-      </div>
-    </div>
+    <div id="pv-msgs" style="height:46vh; overflow-y:auto; border:1px solid var(--bd); padding:16px; border-radius:18px; background:rgba(1,4,9,0.75);"></div>
     <div class="row" style="margin-top:14px;">
-      <input id="pv-input" style="flex:1;" placeholder="Digite uma mensagem..." onkeydown="if(event.key==='Enter'){toast('Mensagem enviada!');$('#pv-input').value='';}">
-      <button class="p" onclick="toast('Mensagem enviada!');">Enviar 🚀</button>
+      <input id="pv-input" style="flex:1;" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter')sendPVMessage('${targetUid}')">
+      <button class="p" onclick="sendPVMessage('${targetUid}')">Enviar 🚀</button>
     </div>
   `;
 }
 
-function drawPVMessages(targetUid) {}
+function drawPVMessages(targetUid) {
+  const m = $('#pv-msgs');
+  if (!m) return;
+  if (!dataList.pv) dataList.pv = {};
+  let chatKey = [uid, targetUid].sort().join('_');
+  let msgs = dataList.pv[chatKey] || [];
+  if (msgs.length === 0) {
+    m.innerHTML = '<div class="empty">Nenhuma mensagem ainda. Envie a primeira!</div>';
+    return;
+  }
+  m.innerHTML = msgs.map(x => {
+    let isMe = x.sender === uid;
+    return `
+      <div style="margin:12px 0; display:flex; justify-content:${isMe ? 'flex-end' : 'flex-start'}">
+        <div style="background:${isMe ? 'linear-gradient(135deg, var(--ac), var(--ac2))' : 'var(--card)'}; border:1px solid var(--bd); border-radius:16px; padding:12px 16px; max-width:75%; color:#fff;">
+          <div style="font-size:14px; word-break:break-word;">${esc(x.text)}</div>
+          <div style="font-size:10px; opacity:0.8; text-align:right; margin-top:4px;">${timeAgo(x.ts)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  m.scrollTop = m.scrollHeight;
+}
+
+function sendPVMessage(targetUid) {
+  const input = $('#pv-input');
+  if (!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+  if (!dataList.pv) dataList.pv = {};
+  let chatKey = [uid, targetUid].sort().join('_');
+  if (!dataList.pv[chatKey]) dataList.pv[chatKey] = [];
+  dataList.pv[chatKey].push({ sender: uid, text, ts: Date.now() });
+  saveData();
+  drawPVMessages(targetUid);
+}
 
 // --- LOJA DE ACESSÓRIOS COMPLETA (60+ ITENS) ---
 const EMOJIS = ['👑','✨','🔥','⚡','🚀','💎','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','🎩','🎸','🍕','🍔','🛸','💡','🪐','🎲','🍉','🍩'];
@@ -620,7 +646,6 @@ function buyCustomization(id, price, currency, badge) {
     render();
     return toast('🎉 Item equipado instantaneamente (Dono)!');
   }
-
   if (currency === 'ultra') {
     if (myProfile.ultra < price) return toast('❌ Você não tem Ultra Coins suficientes!');
     myProfile.ultra -= price;
@@ -635,7 +660,6 @@ function buyCustomization(id, price, currency, badge) {
       myProfile.coins -= price;
     }
   }
-
   myProfile.badge = badge;
   addXp(180);
   saveProfile();
@@ -644,6 +668,7 @@ function buyCustomization(id, price, currency, badge) {
   toast('🎉 Compra realizada com sucesso! Item aplicado ao perfil.');
 }
 
+// --- DEMAIS TELAS E FUNÇÕES ---
 function leaderboardView() {
   let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
   users[uid] = { name: myProfile.name, badge: myProfile.badge, xp: myProfile.xp, coins: myProfile.coins };
@@ -829,10 +854,8 @@ function speakyDedView() {
 function aiView() {
   return `
     <div class="card" style="border: 2px solid var(--ultra);">
-      <b style="font-size:20px; color:var(--ultra);">🤖 Complete AI Quantum Master & Gerador Arcade</b>
-      <p class="rules">Converse com a inteligência artificial ou gere mini-games instantaneamente.</p>
-      <input id="ai-game-prompt" placeholder="Ex: Criar jogo estilo flappy bird">
-      <button class="p" style="margin-top:10px; width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409; font-weight:900;" onclick="generateAIGame()">⚡ Gerar Jogo com IA Quantum</button>
+      <b style="font-size:20px; color:var(--ultra);">🤖 Complete AI Quantum Master</b>
+      <p class="rules">Converse com a inteligência artificial para tirar dúvidas ou debater ideias.</p>
     </div>
     <div id="ai-chat-box" style="height: 35vh; overflow-y: auto; border: 1px solid var(--bd); padding: 14px; border-radius: 16px; background: rgba(1,4,9,0.85); margin-bottom: 14px;">
       ${dataList.aiMsgs.map(m => `<div style="margin:10px 0;"><b>${m.role==='user'?'Você':'IA'}:</b> ${esc(m.text)}</div>`).join('')}
@@ -857,15 +880,6 @@ function sendAIMessage() {
     saveData();
     render();
   }, 600);
-}
-
-function generateAIGame() {
-  const p = $('#ai-game-prompt');
-  if(!p || !p.value.trim()) return toast('Digite uma ideia!');
-  toast('⏳ Jogo arcade gerado com sucesso!');
-  dataList.aiMsgs.push({ role: 'ai', text: `Jogo "${p.value}" gerado e pronto na aba de Jogos Arcade!` });
-  saveData();
-  render();
 }
 
 function drawAIMessages() {}
@@ -950,17 +964,27 @@ function renderContentList(k) {
   if(!box) return;
   const items = dataList[k] || [];
   if(!items.length) { box.innerHTML = '<div class="empty">Nenhum conteúdo publicado.</div>'; return; }
-  box.innerHTML = items.map(x => `
-    <div class="card">
-      <div class="row" style="justify-content:space-between; margin-bottom:12px;">
-        <div class="row"><span class="av" style="width:40px;height:40px;font-size:16px;">${esc(x.authorBadge||'👤')}</span><b>${esc(x.authorName)}</b></div>
-        <button class="danger" onclick="deletePost('${k}','${x.id}')">Apagar</button>
+  
+  box.innerHTML = items.map(x => {
+    let body = '';
+    if (k === 'videos') {
+      const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+      body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
+    } else if (k === 'games') {
+      body = `<div style="text-align:center; padding:15px;"><a href="${esc(x.content)}" target="_blank" class="p" style="display:inline-block; text-decoration:none; padding:14px 28px; font-size:16px;">🎮 Jogar Agora em Tela Cheia 🚀</a></div>`;
+    }
+    return `
+      <div class="card">
+        <div class="row" style="justify-content:space-between; margin-bottom:12px;">
+          <div class="row"><span class="av" style="width:40px;height:40px;font-size:16px;">${esc(x.authorBadge||'👤')}</span><b>${esc(x.authorName)}</b></div>
+          <button class="danger" onclick="deletePost('${k}','${x.id}')">Apagar</button>
+        </div>
+        <h3 style="margin:8px 0 14px;">${esc(x.title)}</h3>
+        ${body}
+        <div class="row" style="margin-top:14px;"><button class="s" onclick="likePost('${k}','${x.id}')">❤️ Curtir (${x.likes||0})</button></div>
       </div>
-      <h3 style="margin:8px 0 14px;">${esc(x.title)}</h3>
-      ${k==='videos'?`<iframe src="https://www.youtube.com/embed/${(x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)||[])[1]||''}" allowfullscreen></iframe>`:`<div style="background:#000;border-radius:14px;padding:6px;"><iframe class="g" srcdoc="${x.content}"></iframe></div>`}
-      <div class="row" style="margin-top:14px;"><button class="s" onclick="likePost('${k}','${x.id}')">❤️ Curtir (${x.likes||0})</button></div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
