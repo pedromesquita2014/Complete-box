@@ -274,7 +274,7 @@ iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 16px; backgr
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
       <div>
         <h2 style="margin:0 0 4px; font-size:22px;">Complete Box - Quantum Supreme Master</h2>
-        <div style="font-size:13px; opacity:0.9;">O ápice mundial em jogos diretos, vídeos liberados e busca global de usuários.</div>
+        <div style="font-size:13px; opacity:0.9;">O ápice mundial em jogos, vídeos liberados e chat global.</div>
       </div>
       <div id="user-level-badge" style="background:rgba(255,255,255,0.08); border:1px solid var(--bd); padding:8px 16px; border-radius:14px; font-weight:bold; font-size:13px;">
         ⭐ Nível 1 (Novato)
@@ -385,11 +385,11 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
     { id: 'v1', title: 'Lançamento Global do Complete Box', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 450, comments: [], ts: Date.now() }
   ],
   games: [
-    { id: 'g1', title: 'Jogo Direto Arcade', content: 'https://play.gamedistribution.com/popup/arcade/', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 230, comments: [], ts: Date.now() }
+    { id: 'g1', title: 'Cyber Arcade Supreme', content: 'https://play.gamedistribution.com/popup/arcade/', img: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 320, comments: [], ts: Date.now() }
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Sistema de vídeos sem restrição e jogos diretos ativados!' }
+    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Aba de Jogos otimizada com suporte a fotos e jogabilidade direta!' }
   ]
 }));
 
@@ -397,9 +397,10 @@ function saveData() {
   localStorage.setItem('cb_datalist', JSON.stringify(dataList));
 }
 
+// --- ABA RENOMEADA ESTRITAMENTE PARA "Jogos" ---
 const TABS = [
   ['videos', '🎬 Vídeos'],
-  ['games', '🎮 Jogos Diretos'],
+  ['games', '🎮 Jogos'],
   ['chat', '💬 PV com Voz'],
   ['completeshop', '🛍️ Complete Shop'],
   ['accessories', '👑 Acessórios'],
@@ -474,15 +475,16 @@ function render() {
 
   let titles = { 
     videos: '🎬 Publicar Vídeo Global (Sem Restrição)', 
-    games: '🎮 Adicionar Jogo Direto (Joga na Hora)' 
+    games: '🎮 Publicar Novo Jogo com Foto & Link' 
   };
   
   app.innerHTML = `
     <div class="card">
       <b style="font-size:18px;">${titles[tab] || 'Publicar'}</b>
-      <p class="rules">${tab==='games' ? 'Cole o link de qualquer jogo online ou arcade web para rodar direto sem travar!' : 'Cole o link do YouTube (qualquer vídeo do mundo sem restrição).'}</p>
-      <input id="p-title" placeholder="Título chamativo" maxlength="100">
-      <input id="p-content" placeholder="${tab==='games' ? 'URL direta do jogo (ex: https://...)' : 'Link do YouTube (ex: https://youtube.com/watch?v=...)'}">
+      <p class="rules">${tab==='games' ? 'Adicione um jogo espetacular preenchendo o título, a URL do jogo e a foto de capa (URL da imagem)!' : 'Cole o link do YouTube (qualquer vídeo do mundo sem restrição).'}</p>
+      <input id="p-title" placeholder="Título do Jogo / Vídeo" maxlength="100">
+      <input id="p-content" placeholder="${tab==='games' ? 'URL do Jogo (ex: https://...)' : 'Link do YouTube (ex: https://youtube.com/watch?v=...)'}">
+      ${tab === 'games' ? '<input id="p-img" placeholder="URL da Foto de Capa do Jogo (ex: https://...)" style="margin-top:8px;">' : ''}
       <button class="p" style="margin-top:14px; width:100%;" onclick="submitPost('${tab}')">🚀 Publicar e Ganhar XP</button>
     </div>
     <div id="content-list"></div>
@@ -939,8 +941,21 @@ function profileView() {
 function submitPost(kind) {
   const t = sanitize($('#p-title').value);
   const c = $('#p-content').value;
-  if(!t || !c) return toast('Preencha todos os campos!');
-  dataList[kind].unshift({ id: 'p_'+Date.now(), title: t, content: c, by: uid, authorName: myProfile.name, authorBadge: myProfile.badge, likes: 0, comments: [], ts: Date.now() });
+  const img = kind === 'games' ? sanitize($('#p-img').value) : '';
+  if(!t || !c) return toast('Preencha todos os campos obrigatórios!');
+  
+  dataList[kind].unshift({ 
+    id: 'p_'+Date.now(), 
+    title: t, 
+    content: c, 
+    img: img || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80',
+    by: uid, 
+    authorName: myProfile.name, 
+    authorBadge: myProfile.badge, 
+    likes: 0, 
+    comments: [], 
+    ts: Date.now() 
+  });
   saveData();
   toast('Publicado com sucesso e +350 XP!');
   go(kind);
@@ -958,6 +973,19 @@ function likePost(kind, id) {
   if(item) { item.likes = (item.likes || 0) + 1; saveData(); renderContentList(kind); toast('❤️ Curtido!'); }
 }
 
+function addComment(kind, id) {
+  const inp = $(`#comment-input-${id}`);
+  if(!inp || !inp.value.trim()) return;
+  const item = dataList[kind].find(x => x.id === id);
+  if(item) {
+    if(!item.comments) item.comments = [];
+    item.comments.push({ author: myProfile.name, text: sanitize(inp.value.trim()), ts: Date.now() });
+    saveData();
+    renderContentList(kind);
+    toast('💬 Comentado!');
+  }
+}
+
 function renderContentList(k) {
   const box = $('#content-list'); 
   if(!box) return;
@@ -970,7 +998,14 @@ function renderContentList(k) {
       const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
       body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
     } else if (k === 'games') {
-      body = `<div style="text-align:center; padding:15px;"><a href="${esc(x.content)}" target="_blank" class="p" style="display:inline-block; text-decoration:none; padding:14px 28px; font-size:16px;">🎮 Jogar Agora em Tela Cheia 🚀</a></div>`;
+      body = `
+        <div style="margin-bottom:14px; border-radius:16px; overflow:hidden; border:1px solid var(--bd); background:#000;">
+          <img src="${esc(x.img)}" alt="Capa do Jogo" style="width:100%; height:220px; object-fit:cover; display:block;">
+        </div>
+        <div style="text-align:center;">
+          <a href="${esc(x.content)}" target="_blank" class="p" style="display:inline-block; text-decoration:none; padding:14px 28px; font-size:16px; width:100%;">🎮 Jogar Agora (Tela Cheia) 🚀</a>
+        </div>
+      `;
     }
     return `
       <div class="card">
@@ -980,7 +1015,19 @@ function renderContentList(k) {
         </div>
         <h3 style="margin:8px 0 14px;">${esc(x.title)}</h3>
         ${body}
-        <div class="row" style="margin-top:14px;"><button class="s" onclick="likePost('${k}','${x.id}')">❤️ Curtir (${x.likes||0})</button></div>
+        <div class="row" style="margin-top:14px; justify-content:space-between;">
+          <button class="s" onclick="likePost('${k}','${x.id}')">❤️ Curtir (${x.likes||0})</button>
+          <span class="by">${timeAgo(x.ts)}</span>
+        </div>
+        <div style="margin-top:14px; border-top:1px solid var(--bd); padding-top:12px;">
+          <div style="display:flex; gap:8px;">
+            <input id="comment-input-${x.id}" placeholder="Escreva um comentário..." style="margin:0; font-size:13px; padding:8px 12px;">
+            <button class="s" onclick="addComment('${k}','${x.id}')">Comentar</button>
+          </div>
+          <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
+            ${(x.comments || []).map(c => `<div style="font-size:12px; background:rgba(255,255,255,0.03); padding:6px 10px; border-radius:10px;"><b>${esc(c.author)}:</b> ${esc(c.text)}</div>`).join('')}
+          </div>
+        </div>
       </div>
     `;
   }).join('');
