@@ -219,6 +219,7 @@ button.danger:hover { background: rgba(218,54,51,0.3); }
 .by { font-size: 12px; color: var(--mu); }
 .empty { text-align: center; color: var(--mu); padding: 50px 20px; font-weight: 500; font-size: 15px; }
 iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 16px; background: #000; }
+iframe.game-frame { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--bd); border-radius: 16px; background: #000; }
 .av {
   width: 60px;
   height: 60px;
@@ -274,7 +275,7 @@ iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 16px; backgr
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
       <div>
         <h2 style="margin:0 0 4px; font-size:22px;">Complete Box - Quantum Supreme Master</h2>
-        <div style="font-size:13px; opacity:0.9;">O ápice mundial em jogos, vídeos liberados e chat global.</div>
+        <div style="font-size:13px; opacity:0.9;">O ápice mundial em jogos por código HTML, vídeos e rede global.</div>
       </div>
       <div id="user-level-badge" style="background:rgba(255,255,255,0.08); border:1px solid var(--bd); padding:8px 16px; border-radius:14px; font-weight:bold; font-size:13px;">
         ⭐ Nível 1 (Novato)
@@ -385,11 +386,11 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
     { id: 'v1', title: 'Lançamento Global do Complete Box', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 450, comments: [], ts: Date.now() }
   ],
   games: [
-    { id: 'g1', title: 'Cyber Arcade Supreme', content: 'https://play.gamedistribution.com/popup/arcade/', img: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 320, comments: [], ts: Date.now() }
+    { id: 'g1', title: 'Cyber Quantum Arcade', content: '<body style="background:#010409;color:#fff;text-align:center;padding-top:40px;font-family:sans-serif;"><h2>🚀 Nave Quantum</h2><canvas id="c" width="300" height="180" style="background:#111;border:2px solid #3b82f6;border-radius:12px;"></canvas><script>const ctx=document.getElementById("c").getContext("2d");let x=150;window.onkeydown=e=>{if(e.key==="ArrowLeft")x-=15;if(e.key==="ArrowRight")x+=15;};function loop(){ctx.clearRect(0,0,300,180);ctx.fillStyle="#00f0ff";ctx.fillRect(x,150,40,15);requestAnimationFrame(loop);}loop();<\/script></body>', by: 'system', authorName: 'Pedro Mesquita (Dono)', authorBadge: '👑', likes: 320, comments: [], ts: Date.now() }
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Aba de Jogos otimizada com suporte a fotos e jogabilidade direta!' }
+    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Perfil global supremo e imersivo ativado!' }
   ]
 }));
 
@@ -397,7 +398,6 @@ function saveData() {
   localStorage.setItem('cb_datalist', JSON.stringify(dataList));
 }
 
-// --- ABA RENOMEADA ESTRITAMENTE PARA "Jogos" ---
 const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
@@ -475,16 +475,15 @@ function render() {
 
   let titles = { 
     videos: '🎬 Publicar Vídeo Global (Sem Restrição)', 
-    games: '🎮 Publicar Novo Jogo com Foto & Link' 
+    games: '🎮 Publicar Jogo por Código HTML' 
   };
   
   app.innerHTML = `
     <div class="card">
       <b style="font-size:18px;">${titles[tab] || 'Publicar'}</b>
-      <p class="rules">${tab==='games' ? 'Adicione um jogo espetacular preenchendo o título, a URL do jogo e a foto de capa (URL da imagem)!' : 'Cole o link do YouTube (qualquer vídeo do mundo sem restrição).'}</p>
-      <input id="p-title" placeholder="Título do Jogo / Vídeo" maxlength="100">
-      <input id="p-content" placeholder="${tab==='games' ? 'URL do Jogo (ex: https://...)' : 'Link do YouTube (ex: https://youtube.com/watch?v=...)'}">
-      ${tab === 'games' ? '<input id="p-img" placeholder="URL da Foto de Capa do Jogo (ex: https://...)" style="margin-top:8px;">' : ''}
+      <p class="rules">${tab==='games' ? 'Cole o código HTML completo do seu jogo abaixo para rodar direto na página!' : 'Cole o link do YouTube (qualquer vídeo do mundo sem restrição).'}</p>
+      <input id="p-title" placeholder="Título chamativo do Jogo / Vídeo" maxlength="100">
+      ${tab === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML completo do jogo aqui (ex: <html>...</html>)..."></textarea>' : '<input id="p-content" placeholder="Link do YouTube (ex: https://youtube.com/watch?v=...)">'}
       <button class="p" style="margin-top:14px; width:100%;" onclick="submitPost('${tab}')">🚀 Publicar e Ganhar XP</button>
     </div>
     <div id="content-list"></div>
@@ -928,12 +927,78 @@ function bankView() {
   `;
 }
 
+// --- ABA MEU PERFIL SUPREMA & COMPLEXA ---
 function profileView() {
+  const info = getLevelInfo(myProfile.xp);
+  let myVideos = (dataList.videos || []).filter(x => x.by === uid);
+  let myGames = (dataList.games || []).filter(x => x.by === uid);
+
+  window.updateProfileName = function() {
+    const val = $('#profile-name-input').value.trim();
+    if (!val) return toast('Digite um nome válido!');
+    myProfile.name = val;
+    saveProfile();
+    let allUsers = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
+    if(allUsers[uid]) { allUsers[uid].name = val; localStorage.setItem('cb_all_users', JSON.stringify(allUsers)); }
+    render();
+    toast('🎉 Nome de perfil atualizado globalmente!');
+  };
+
   return `
-    <div class="card" style="text-align:center; padding:35px 20px;">
-      <span class="av" style="width:80px;height:80px;font-size:32px;margin:0 auto 12px;">${myProfile.badge}</span>
-      <h2 style="margin:0 0 4px;">${esc(myProfile.name)}</h2>
-      <div class="by">Nível ${getLevelInfo(myProfile.xp).level} (${getLevelInfo(myProfile.xp).title})</div>
+    <div class="card" style="text-align:center; padding:35px 20px; position:relative; overflow:hidden;">
+      <div style="position:absolute; top:0; left:0; width:100%; height:80px; background:linear-gradient(90deg, var(--ac), var(--ac2)); opacity:0.3;"></div>
+      <span class="av" style="width:90px;height:90px;font-size:38px;margin:15px auto 12px; position:relative; z-index:2;">${esc(myProfile.badge)}</span>
+      <h2 style="margin:0 0 4px; position:relative; z-index:2;">${esc(myProfile.name)}</h2>
+      <div class="by" style="position:relative; z-index:2;">⭐ Nível ${isOwner ? 99 : info.level} • ${info.title}</div>
+      <div class="xp-bar-container" style="max-width:300px; margin:16px auto 0; position:relative; z-index:2;">
+        <div class="xp-bar-fill" style="width:${isOwner ? 100 : info.percent}%"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <b style="font-size:18px;">⚙️ Configurações e Identidade Global</b>
+      <p class="rules">Altere o seu nome de exibição visível para todos na rede.</p>
+      <div class="row" style="margin-top:10px;">
+        <input id="profile-name-input" value="${esc(myProfile.name)}" placeholder="Novo nome de exibição..." style="flex:1; margin:0;">
+        <button class="p" onclick="updateProfileName()">Salvar 💾</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <b style="font-size:18px;">📊 Estatísticas Globais da Conta</b>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-top:14px;">
+        <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:16px; border-radius:16px; text-align:center;">
+          <div style="font-size:24px;">🪙</div>
+          <div style="font-size:13px; color:var(--mu); margin-top:4px;">Moedas na Carteira</div>
+          <b style="font-size:18px; color:var(--gold);">${isOwner ? '∞' : myProfile.coins}</b>
+        </div>
+        <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:16px; border-radius:16px; text-align:center;">
+          <div style="font-size:24px;">✨</div>
+          <div style="font-size:13px; color:var(--mu); margin-top:4px;">Ultra Coins</div>
+          <b style="font-size:18px; color:var(--ultra);">${isOwner ? '∞' : myProfile.ultra}</b>
+        </div>
+        <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:16px; border-radius:16px; text-align:center;">
+          <div style="font-size:24px;">⭐</div>
+          <div style="font-size:13px; color:var(--mu); margin-top:4px;">Experiência Total</div>
+          <b style="font-size:18px; color:var(--tx);">${isOwner ? '999.999' : myProfile.xp} XP</b>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <b>🎬 Seus Vídeos Publicados (${myVideos.length})</b>
+      <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+        ${myVideos.map(v => `<div style="background:rgba(1,4,9,0.6); padding:12px 16px; border-radius:14px; border:1px solid var(--bd); display:flex; justify-content:space-between; align-items:center;"><b>${esc(v.title)}</b><span class="by">❤️ ${v.likes||0} curtidas</span></div>`).join('')}
+        ${myVideos.length === 0 ? '<div class="empty" style="padding:20px;">Nenhum vídeo publicado ainda.</div>' : ''}
+      </div>
+    </div>
+
+    <div class="card">
+      <b>🎮 Seus Jogos Publicados (${myGames.length})</b>
+      <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+        ${myGames.map(g => `<div style="background:rgba(1,4,9,0.6); padding:12px 16px; border-radius:14px; border:1px solid var(--bd); display:flex; justify-content:space-between; align-items:center;"><b>${esc(g.title)}</b><span class="by">❤️ ${g.likes||0} curtidas</span></div>`).join('')}
+        ${myGames.length === 0 ? '<div class="empty" style="padding:20px;">Nenhum jogo publicado ainda.</div>' : ''}
+      </div>
     </div>
   `;
 }
@@ -941,14 +1006,12 @@ function profileView() {
 function submitPost(kind) {
   const t = sanitize($('#p-title').value);
   const c = $('#p-content').value;
-  const img = kind === 'games' ? sanitize($('#p-img').value) : '';
   if(!t || !c) return toast('Preencha todos os campos obrigatórios!');
   
   dataList[kind].unshift({ 
     id: 'p_'+Date.now(), 
     title: t, 
     content: c, 
-    img: img || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80',
     by: uid, 
     authorName: myProfile.name, 
     authorBadge: myProfile.badge, 
@@ -962,9 +1025,10 @@ function submitPost(kind) {
 }
 
 function deletePost(kind, id) {
+  if (!isOwner) return toast('❌ Apenas o dono pode apagar conteúdos!');
   dataList[kind] = dataList[kind].filter(x => x.id !== id);
   saveData();
-  toast('Publicação apagada!');
+  toast('Publicação apagada pelo Dono!');
   render();
 }
 
@@ -998,20 +1062,16 @@ function renderContentList(k) {
       const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
       body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
     } else if (k === 'games') {
-      body = `
-        <div style="margin-bottom:14px; border-radius:16px; overflow:hidden; border:1px solid var(--bd); background:#000;">
-          <img src="${esc(x.img)}" alt="Capa do Jogo" style="width:100%; height:220px; object-fit:cover; display:block;">
-        </div>
-        <div style="text-align:center;">
-          <a href="${esc(x.content)}" target="_blank" class="p" style="display:inline-block; text-decoration:none; padding:14px 28px; font-size:16px; width:100%;">🎮 Jogar Agora (Tela Cheia) 🚀</a>
-        </div>
-      `;
+      body = `<iframe class="game-frame" srcdoc="${x.content}"></iframe>`;
     }
+    
+    let deleteBtnHtml = isOwner ? `<button class="danger" onclick="deletePost('${k}','${x.id}')">Apagar</button>` : '';
+
     return `
       <div class="card">
         <div class="row" style="justify-content:space-between; margin-bottom:12px;">
           <div class="row"><span class="av" style="width:40px;height:40px;font-size:16px;">${esc(x.authorBadge||'👤')}</span><b>${esc(x.authorName)}</b></div>
-          <button class="danger" onclick="deletePost('${k}','${x.id}')">Apagar</button>
+          ${deleteBtnHtml}
         </div>
         <h3 style="margin:8px 0 14px;">${esc(x.title)}</h3>
         ${body}
