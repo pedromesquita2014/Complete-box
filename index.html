@@ -221,8 +221,8 @@ button.danger:hover { background: rgba(218,54,51,0.3); }
 iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 16px; background: #000; }
 iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 16px; border: 1px solid var(--bd); }
 .av {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--ac), var(--ac2));
   color: #fff;
@@ -232,8 +232,8 @@ iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 16px
   font-weight: 800;
   overflow: hidden;
   flex: none;
-  font-size: 26px;
-  box-shadow: 0 6px 18px rgba(37,99,235,0.4);
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
 }
 #toast {
   position: fixed;
@@ -253,8 +253,8 @@ iframe.g { aspect-ratio: 4/3; background: #fff; width: 100%; border-radius: 16px
 @keyframes toastIn {
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
-.contact-item { background: rgba(1,4,9,0.7); border: 1px solid var(--bd); padding: 14px 18px; border-radius: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; }
-.contact-item:hover { border-color: var(--ac); background: var(--card-hover); transform: translateX(4px); }
+.chat-row { background: rgba(13,17,23,0.9); border: 1px solid var(--bd); padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; margin-bottom: 8px; transition: all 0.2s; }
+.chat-row:hover { border-color: var(--ac); background: var(--card-hover); transform: translateX(4px); }
 pre { background: rgba(1,4,9,0.95); border: 1px solid var(--bd); border-radius: 14px; padding: 14px; overflow-x: auto; font-size: 12px; color: var(--ultra); }
 .xp-bar-container { background: rgba(255,255,255,0.06); border-radius: 10px; height: 10px; width: 100%; overflow: hidden; margin: 8px 0; border: 1px solid var(--bd); }
 .xp-bar-fill { background: linear-gradient(90deg, var(--ac), var(--ultra)); height: 100%; width: 0%; transition: width 0.4s ease; }
@@ -308,8 +308,8 @@ if (location.hash === '#pedromesquita2026' || localStorage.getItem(OWNER_KEY) ==
 }
 
 let isOwner = localStorage.getItem(OWNER_KEY) === 'true';
-let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 2000);
-let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 100);
+let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 25000);
+let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 250);
 let mySavings = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_savings')) || 0);
 let myXp = isOwner ? 999999 : (parseInt(localStorage.getItem('cb_xp')) || 0);
 let myBadge = localStorage.getItem('cb_badge') || (isOwner ? '👑' : '👤');
@@ -367,8 +367,7 @@ let completeShopSubTab = 'ofertas';
 let missionsSubTab = 'diarias';
 let shopCategory = 'coroas';
 let currentChatUser = null;
-let mediaRecorder = null;
-let audioChunks = [];
+let chatFilter = 'Todas';
 
 let sessionSeconds = 0;
 setInterval(() => {
@@ -404,7 +403,7 @@ function saveData() {
 const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos Arcade'],
-  ['chat', '💬 PV com Voz'],
+  ['chat', '💬 Conversas'],
   ['completeshop', '🛍️ Complete Shop'],
   ['accessories', '👑 Acessórios'],
   ['speaky', '🗣️ Speaky Voice'],
@@ -421,11 +420,12 @@ const TABS = [
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const timeAgo = ts => {
-  if (!ts) return 'agora';
+  if (!ts) return 'ontem';
   const sec = Math.floor((Date.now() - ts) / 1000);
   if (sec < 60) return 'agora';
   if (sec < 3600) return Math.floor(sec/60) + 'm atrás';
-  return Math.floor(sec/3600) + 'h atrás';
+  if (sec < 86400) return Math.floor(sec/3600) + 'h atrás';
+  return 'ontem';
 };
 
 function nav() {
@@ -488,6 +488,160 @@ function render() {
     <div id="content-list"></div>
   `;
   renderContentList(tab);
+}
+
+// --- NOVO DESIGN DE CONVERSAS ESTILO APP DE MENSAGENS ---
+function contactsListView() {
+  let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
+  delete users[uid];
+  const keys = Object.keys(users);
+
+  return `
+    <div style="margin-bottom: 16px;">
+      <h1 style="font-size: 26px; font-weight: 900; margin: 0 0 12px 0;">Conversas</h1>
+      <input placeholder="🔍 Pergunte ou pesquise..." style="background: rgba(255,255,255,0.06); border-radius: 18px; border: 1px solid var(--bd); padding: 12px 18px;">
+    </div>
+    
+    <div class="row" style="gap: 8px; margin-bottom: 16px;">
+      <button class="s ${chatFilter==='Todas'?'on':''}" onclick="chatFilter='Todas'; render();">Todas</button>
+      <button class="s ${chatFilter==='Não lidas'?'on':''}" onclick="chatFilter='Não lidas'; render();">Não lidas 4</button>
+      <button class="s ${chatFilter==='Favoritos'?'on':''}" onclick="chatFilter='Favoritos'; render();">Favoritos</button>
+      <button class="s ${chatFilter==='Grupos'?'on':''}" onclick="chatFilter='Grupos'; render();">Grupos 2</button>
+    </div>
+
+    <!-- Conversa Fixa / Assistente -->
+    <div class="chat-row" onclick="currentChatUser='assistant_bot'; render();">
+      <span class="av">🤖</span>
+      <div style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <b style="font-size: 16px;">Assistente Virtual AI</b>
+          <span class="by" style="color: var(--green);">ontem</span>
+        </div>
+        <div class="by" style="margin-top: 2px;">Olá! Como posso ajudar nos seus projetos?</div>
+      </div>
+    </div>
+
+    ${keys.map(id => {
+      let u = users[id];
+      return `
+        <div class="chat-row" onclick="currentChatUser='${id}'; render();">
+          <span class="av">${esc(u.badge || '👤')}</span>
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <b style="font-size: 16px;">${esc(u.name)}</b>
+              <span class="by">ontem</span>
+            </div>
+            <div class="by" style="margin-top: 2px;">Toque para abrir conversa privada com áudio 💬</div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+function chatPVView(targetUid) {
+  return `
+    <div class="card row" style="justify-content:space-between; padding:14px 22px;">
+      <div class="row">
+        <button class="s" onclick="currentChatUser=null; render();">← Voltar</button>
+        <span class="av" style="width:42px; height:42px; font-size:16px;">🤖</span>
+        <div>
+          <b style="font-size:16px;">Conversa Ativa</b>
+          <div class="by" style="color:#3fb950">● Online</div>
+        </div>
+      </div>
+    </div>
+    <div id="pv-msgs" style="height:46vh; overflow-y:auto; border:1px solid var(--bd); padding:16px; border-radius:18px; background:rgba(1,4,9,0.75);">
+      <div style="margin:12px 0; display:flex; justify-content:flex-start">
+        <div style="background:var(--card); border:1px solid var(--bd); border-radius:16px; padding:12px 16px; max-width:75%; color:#fff;">
+          <div>Olá! Como posso ajudar hoje no Complete Box?</div>
+          <div style="font-size:10px; opacity:0.8; text-align:right; margin-top:4px;">agora</div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px;">
+      <input id="pv-input" style="flex:1;" placeholder="Digite uma mensagem..." onkeydown="if(event.key==='Enter'){toast('Mensagem enviada!');$('#pv-input').value='';}">
+      <button class="p" onclick="toast('Mensagem enviada!');">Enviar 🚀</button>
+    </div>
+  `;
+}
+
+function drawPVMessages(targetUid) {}
+
+// --- LOJA DE ACESSÓRIOS COMPLETA (60+ ITENS) ---
+const EMOJIS = ['👑','✨','🔥','⚡','🚀','💎','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','🎩','🎸','🍕','🍔','🛸','💡','🪐','🎲','🍉','🍩'];
+const ADJ = ['Lendário','Supremo','Místico','Elite','Imperial','Divino','Solar','Lunar','Cyber','Fênix','Soberano','Alpha','Quantum','Vanguard','Stellar','Neon','Prime'];
+const TYPE = ['Coroa','Escudo','Espada','Orbe','Símbolo','Manto','Anel','Cristal','Aura','Emblema'];
+
+let SHOP_ITEMS = [];
+for (let i = 1; i <= 60; i++) {
+  let cat = i <= 15 ? 'coroas' : i <= 30 ? 'auras' : i <= 45 ? 'espadas' : 'emblemas';
+  let badge = EMOJIS[(i - 1) % EMOJIS.length];
+  let name = `${badge} ${TYPE[(i - 1) % TYPE.length]} ${ADJ[(i - 1) % TYPE.length]} #${i}`;
+  let price = 90 + (i * 35);
+  let isUltraItem = i % 5 === 0;
+  SHOP_ITEMS.push({ id: 'item_' + i, name, desc: `Customização oficial nível ${i} da Complete Shop`, price, currency: isUltraItem ? 'ultra' : 'coins', badge, category: cat });
+}
+
+function accessoriesView() {
+  const cats = [['coroas', '👑 Coroas'], ['auras', '🔥 Auras'], ['espadas', '🗡️ Espadas'], ['emblemas', '✨ Emblemas']];
+  const filtered = SHOP_ITEMS.filter(i => i.category === shopCategory);
+
+  return `
+    <div class="card">
+      <b style="font-size:20px;">👑 Loja de Acessórios & Distintivos</b>
+      <p class="rules">Adquira itens exclusivos para personalizar seu perfil global na rede.</p>
+      <div class="row" style="gap:6px; margin-top:14px;">
+        ${cats.map(([k, l]) => `<button class="s ${shopCategory===k?'on':''}" onclick="shopCategory='${k}'; render();">${l}</button>`).join('')}
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px;">
+      ${filtered.map(i => `
+        <div class="card" style="margin:0; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size:36px; margin-bottom:10px;">${i.badge}</div>
+            <b style="font-size:15px; display:block; margin-bottom:4px;">${esc(i.name)}</b>
+            <div class="rules" style="font-size:12px; margin-bottom:16px;">${esc(i.desc)}</div>
+          </div>
+          <div>
+            <div style="color:${i.currency==='ultra'?'var(--ultra)':'var(--gold)'}; font-weight:bold; margin-bottom:12px;">${i.currency==='ultra'?'✨ '+i.price+' Ultra Coins':'🪙 '+i.price}</div>
+            <button class="p" style="width:100%; padding:10px;" onclick="buyCustomization('${i.id}', ${i.price}, '${i.currency}', '${i.badge}')">Comprar e Usar 🛒</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function buyCustomization(id, price, currency, badge) {
+  if (isOwner) {
+    myProfile.badge = badge;
+    saveProfile();
+    render();
+    return toast('🎉 Item equipado instantaneamente (Dono)!');
+  }
+
+  if (currency === 'ultra') {
+    if (myProfile.ultra < price) return toast('❌ Você não tem Ultra Coins suficientes!');
+    myProfile.ultra -= price;
+  } else {
+    let tot = myProfile.coins + myProfile.savings;
+    if (tot < price) return toast('❌ Moedas insuficientes na carteira e poupança!');
+    if (myProfile.coins < price) {
+      let diff = price - myProfile.coins;
+      myProfile.coins = 0;
+      myProfile.savings -= diff;
+    } else {
+      myProfile.coins -= price;
+    }
+  }
+
+  myProfile.badge = badge;
+  addXp(180);
+  saveProfile();
+  updateHeaderStats();
+  render();
+  toast('🎉 Compra realizada com sucesso! Item aplicado ao perfil.');
 }
 
 function leaderboardView() {
@@ -672,45 +826,6 @@ function speakyDedView() {
   `;
 }
 
-function accessoriesView() {
-  return `
-    <div class="card">
-      <b style="font-size:20px;">👑 Loja de Acessórios</b>
-      <p class="rules">Personalize o seu emblema de perfil.</p>
-      <div class="row" style="margin-top:14px;">
-        <button class="p" onclick="myProfile.badge='👑'; saveProfile(); toast('Coroa equipada!');">Equipar Coroa 👑</button>
-        <button class="p" onclick="myProfile.badge='⚡'; saveProfile(); toast('Raio equipado!');">Equipar Raio ⚡</button>
-      </div>
-    </div>
-  `;
-}
-
-function contactsListView() {
-  return `
-    <div class="card">
-      <b style="font-size:20px;">💬 Chat Privado Global</b>
-      <p class="rules">Conectado na rede de mensagens seguras.</p>
-    </div>
-    <div class="contact-item" onclick="currentChatUser='bot_ai'; render();">
-      <span class="av" style="width:40px;height:40px;font-size:16px;">🤖</span>
-      <div><b>Assistente Virtual</b><div class="by">Toque para conversar</div></div>
-    </div>
-  `;
-}
-
-function chatPVView(targetUid) {
-  return `
-    <div class="card">
-      <button class="s" onclick="currentChatUser=null; render();">← Voltar</button>
-      <h3 style="margin:10px 0;">Conversa com Assistente</h3>
-      <input id="pv-input" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter'){toast('Mensagem enviada!');$('#pv-input').value='';}">
-      <button class="p" style="margin-top:10px;" onclick="toast('Mensagem enviada!');">Enviar 🚀</button>
-    </div>
-  `;
-}
-
-function drawPVMessages(targetUid) {}
-
 function aiView() {
   return `
     <div class="card" style="border: 2px solid var(--ultra);">
@@ -828,19 +943,6 @@ function deletePost(kind, id) {
 function likePost(kind, id) {
   const item = dataList[kind].find(x => x.id === id);
   if(item) { item.likes = (item.likes || 0) + 1; saveData(); renderContentList(kind); toast('❤️ Curtido!'); }
-}
-
-function addComment(kind, id) {
-  const inp = $(`#comment-input-${id}`);
-  if(!inp || !inp.value.trim()) return;
-  const item = dataList[kind].find(x => x.id === id);
-  if(item) {
-    if(!item.comments) item.comments = [];
-    item.comments.push({ author: myProfile.name, text: sanitize(inp.value.trim()), ts: Date.now() });
-    saveData();
-    renderContentList(kind);
-    toast('💬 Comentado!');
-  }
 }
 
 function renderContentList(k) {
