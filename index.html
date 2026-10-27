@@ -322,7 +322,6 @@ let myProfile = {
   xp: myXp
 };
 
-// --- SINCRONIZAÇÃO GLOBAL AUTOMÁTICA DE USUÁRIOS ---
 function syncGlobalUser() {
   let allUsers = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
   allUsers[uid] = { name: myProfile.name, badge: myProfile.badge, xp: myProfile.xp, coins: myProfile.coins };
@@ -397,7 +396,7 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Sincronização global de usuários e pesquisa instantânea ativadas!' }
+    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Sistema de conversas e DMs offline ativado!' }
   ]
 }));
 
@@ -408,7 +407,7 @@ function saveData() {
 const TABS = [
   ['videos', '🎬 Vídeos'],
   ['games', '🎮 Jogos'],
-  ['chat', '💬 PV com Voz'],
+  ['chat', '💬 Conversas (PV)'],
   ['completeshop', '🛍️ Complete Shop'],
   ['accessories', '👑 Acessórios'],
   ['speaky', '🗣️ Speaky Voice'],
@@ -499,7 +498,7 @@ function render() {
   renderContentList(tab);
 }
 
-// --- BUSCA GLOBAL DE USUÁRIOS APRIMORADA ---
+// --- ABA DE CONVERSAS (LISTA TODOS OS USUÁRIOS OFFLINE/ONLINE) ---
 function contactsListView() {
   syncGlobalUser();
   let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
@@ -511,12 +510,12 @@ function contactsListView() {
     const container = $('#search-results-box');
     if(!container) return;
     let filtered = userList.filter(u => (u.name || '').toLowerCase().includes(term));
-    container.innerHTML = filtered.length === 0 ? '<div class="empty">Nenhum usuário encontrado com esse nome.</div>' : filtered.map(u => `
+    container.innerHTML = filtered.length === 0 ? '<div class="empty">Nenhum usuário encontrado.</div>' : filtered.map(u => `
       <div class="contact-item" onclick="currentChatUser='${u.id}'; render();">
         <span class="av" style="width:46px; height:46px; font-size:18px;">${esc(u.badge || '👤')}</span>
         <div>
           <b style="font-size:16px;">${esc(u.name)}</b>
-          <div class="by">Clique para conversar no PV 💬 • Nível ${Math.floor((u.xp || 0)/500)+1}</div>
+          <div class="by">💬 Abrir aba de conversas • Nível ${Math.floor((u.xp || 0)/500)+1}</div>
         </div>
       </div>
     `).join('');
@@ -524,9 +523,9 @@ function contactsListView() {
 
   return `
     <div class="card">
-      <b style="font-size:20px;">💬 Pesquisa e Chat Privado (PV)</b>
-      <p class="rules">Digite o nome de qualquer usuário abaixo para achá-lo instantaneamente na rede:</p>
-      <input placeholder="🔍 Pesquisar usuário pelo nome..." oninput="filterUsersQuery(this.value)">
+      <b style="font-size:20px;">💬 Lista de Conversas & Amigos</b>
+      <p class="rules">Todos os usuários da rede aparecem aqui para conversarem a qualquer momento, mesmo offline:</p>
+      <input placeholder="🔍 Pesquisar amigo por nome..." oninput="filterUsersQuery(this.value)">
     </div>
     <div id="search-results-box">
       ${userList.map(u => `
@@ -534,11 +533,11 @@ function contactsListView() {
           <span class="av" style="width:46px; height:46px; font-size:18px;">${esc(u.badge || '👤')}</span>
           <div>
             <b style="font-size:16px;">${esc(u.name)}</b>
-            <div class="by">Clique para conversar no PV 💬 • Nível ${Math.floor((u.xp || 0)/500)+1}</div>
+            <div class="by">💬 Abrir aba de conversas • Nível ${Math.floor((u.xp || 0)/500)+1}</div>
           </div>
         </div>
       `).join('')}
-      ${userList.length === 0 ? '<div class="empty">Nenhum outro usuário cadastrado na rede global ainda.</div>' : ''}
+      ${userList.length === 0 ? '<div class="empty">Nenhum outro usuário na rede ainda. Assim que amigos entrarem, aparecerão aqui!</div>' : ''}
     </div>
   `;
 }
@@ -550,11 +549,11 @@ function chatPVView(targetUid) {
   return `
     <div class="card row" style="justify-content:space-between; padding:14px 22px;">
       <div class="row">
-        <button class="s" onclick="currentChatUser=null; render();">← Voltar</button>
+        <button class="s" onclick="currentChatUser=null; render();">← Voltar para Conversas</button>
         <span class="av" style="width:42px; height:42px; font-size:16px;">${esc(target.badge)}</span>
         <div>
           <b style="font-size:16px;">${esc(target.name)}</b>
-          <div class="by" style="color:#3fb950">● PV Ativo</div>
+          <div class="by" style="color:var(--mu)">💬 Conversas Privadas</div>
         </div>
       </div>
     </div>
@@ -573,7 +572,7 @@ function drawPVMessages(targetUid) {
   let chatKey = [uid, targetUid].sort().join('_');
   let msgs = dataList.pv[chatKey] || [];
   if (msgs.length === 0) {
-    m.innerHTML = '<div class="empty">Nenhuma mensagem ainda. Envie a primeira!</div>';
+    m.innerHTML = '<div class="empty">Nenhuma mensagem nesta conversa ainda. Envie a primeira!</div>';
     return;
   }
   m.innerHTML = msgs.map(x => {
