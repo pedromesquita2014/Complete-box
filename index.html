@@ -390,7 +390,7 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Jogos HTML renderizados perfeitamente com fundo imersivo!' }
+    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Loja ultramoderna e câmbio avançado ativados!' }
   ]
 }));
 
@@ -594,6 +594,137 @@ function sendPVMessage(targetUid) {
   drawPVMessages(targetUid);
 }
 
+// --- COMPLETE SHOP ULTRA AVANÇADA ---
+function completeShopView() {
+  return `
+    <div class="card row" style="gap:6px; background: rgba(13,17,23,0.95);">
+      <button class="s ${completeShopSubTab==='ofertas'?'on':''}" onclick="completeShopSubTab='ofertas'; render();">🔥 Pacotes Supreme</button>
+      <button class="s ${completeShopSubTab==='cambio'?'on':''}" onclick="completeShopSubTab='cambio'; render();">🔄 Câmbio Avançado</button>
+      <button class="s ${completeShopSubTab==='misticas'?'on':''}" onclick="completeShopSubTab='misticas'; render();">✨ Caixas & Bônus</button>
+      <button class="s ${completeShopSubTab==='cofres'?'on':''}" onclick="completeShopSubTab='cofres'; render();">🎁 Cofres de Elite</button>
+    </div>
+
+    ${completeShopSubTab === 'ofertas' ? `
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+        <div class="card" style="margin:0; border: 2px solid var(--ultra);">
+          <div class="row" style="justify-content:space-between;"><b style="color:var(--ultra);">✨ Kit Iniciante Elite</b><span style="background:rgba(35,134,54,0.25); color:#3fb950; padding:2px 8px; border-radius:8px; font-size:11px;">POPULAR</span></div>
+          <div style="font-size:28px; font-weight:900; margin:14px 0;">✨ 25 Ultra Coins</div>
+          <p class="rules">Inclui +2.500 XP bônus para subir de nível rápido.</p>
+          <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409;" onclick="buyBundle(25, 2500, 150000)">Comprar por 🪙 150.000</button>
+        </div>
+        <div class="card" style="margin:0; border: 2px solid var(--gold);">
+          <div class="row" style="justify-content:space-between;"><b style="color:var(--gold);">👑 Mega Tesouro do Dono</b><span style="background:rgba(245,158,11,0.25); color:var(--gold); padding:2px 8px; border-radius:8px; font-size:11px;">MASTER</span></div>
+          <div style="font-size:28px; font-weight:900; margin:14px 0;">✨ 100 Ultra Coins</div>
+          <p class="rules">Inclui +10.000 XP bônus e estatísticas de elite.</p>
+          <button class="p" style="width:100%; background:linear-gradient(135deg, var(--gold), var(--pink));" onclick="buyBundle(100, 10000, 550000)">Comprar por 🪙 550.000</button>
+        </div>
+      </div>
+    ` : ''}
+
+    ${completeShopSubTab === 'cambio' ? `
+      <div class="card">
+        <b style="font-size:18px;">🔄 Câmbio Avançado de Moedas & Ultra Coins</b>
+        <p class="rules">Converta seus ativos instantaneamente com taxas dinâmicas e zero burocracia.</p>
+        <div style="margin-top:20px; display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+          <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:20px; border-radius:18px; text-align:center;">
+            <div style="color:var(--gold); font-weight:bold; margin-bottom:10px;">Moedas ➔ Ultra Coins</div>
+            <div style="font-size:13px; color:var(--mu); margin-bottom:14px;">Taxa: 10.000 Moedas = 1 Ultra Coin</div>
+            <button class="p" style="width:100%;" onclick="exchangeCoinsToUltra()">Converter 10.000 🪙</button>
+          </div>
+          <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:20px; border-radius:18px; text-align:center;">
+            <div style="color:var(--ultra); font-weight:bold; margin-bottom:10px;">Ultra Coins ➔ Moedas</div>
+            <div style="font-size:13px; color:var(--mu); margin-bottom:14px;">Taxa: 1 Ultra Coin = 9.500 Moedas</div>
+            <button class="s" style="width:100%; background:var(--card-hover);" onclick="exchangeUltraToCoins()">Converter 1 ✨</button>
+          </div>
+        </div>
+      </div>
+    ` : ''}
+
+    ${completeShopSubTab === 'misticas' ? `
+      <div class="card" style="text-align:center; padding:30px;">
+        <span style="font-size:50px;">📦</span>
+        <b style="font-size:20px; display:block; margin:10px 0;">Caixa Mística Surpresa Global</b>
+        <p class="rules">Abra uma caixa misteriosa gerada pelo sistema para faturar recompensas aleatórias.</p>
+        <button class="p" style="margin-top:14px; padding:14px 30px; background:linear-gradient(135deg, var(--gold), var(--ac));" onclick="openMysticBox()">Abrir Caixa Mística 🎁</button>
+      </div>
+    ` : ''}
+
+    ${completeShopSubTab === 'cofres' ? `
+      <div class="card">
+        <b style="font-size:18px;">🎁 Cofres de Recompensas Lendários</b>
+        <p class="rules">Desbloqueie cofres para acumular grandes fortunas em moedas e experiência.</p>
+        <div class="row" style="margin-top:16px; gap:12px;">
+          <button class="s" style="flex:1; padding:16px;" onclick="openChestType('common')">Abrir Cofre Comum (🪙 500)</button>
+          <button class="p" style="flex:1; padding:16px; background:var(--ultra); color:#010409;" onclick="openChestType('ultra')">Abrir Cofre Ultra (✨ 2)</button>
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+function buyBundle(ultraAmt, xpAmt, costCoins) {
+  if (!isOwner && myProfile.coins < costCoins) return toast('❌ Moedas insuficientes!');
+  if (!isOwner) myProfile.coins -= costCoins;
+  myProfile.ultra += ultraAmt;
+  addXp(xpAmt);
+  saveProfile();
+  updateHeaderStats();
+  render();
+  toast(`🎉 Compra de pacote concluída! +${ultraAmt} Ultra Coins.`);
+}
+
+function exchangeCoinsToUltra() {
+  if (!isOwner && myProfile.coins < 10000) return toast('❌ Você precisa de 10.000 moedas!');
+  if (!isOwner) myProfile.coins -= 10000;
+  myProfile.ultra += 1;
+  saveProfile();
+  updateHeaderStats();
+  render();
+  toast('🎉 Câmbio realizado: +1 Ultra Coin!');
+}
+
+function exchangeUltraToCoins() {
+  if (!isOwner && myProfile.ultra < 1) return toast('❌ Você não tem Ultra Coins suficientes!');
+  if (!isOwner) myProfile.ultra -= 1;
+  myProfile.coins += 9500;
+  saveProfile();
+  updateHeaderStats();
+  render();
+  toast('🎉 Câmbio realizado: +9.500 Moedas!');
+}
+
+function openMysticBox() {
+  let rewardCoins = Math.floor(Math.random() * 8000) + 2000;
+  let rewardXp = Math.floor(Math.random() * 1500) + 500;
+  myProfile.coins += rewardCoins;
+  addXp(rewardXp);
+  saveProfile();
+  updateHeaderStats();
+  render();
+  toast(`✨ Caixa Mística aberta: +${rewardCoins} Moedas & +${rewardXp} XP!`);
+}
+
+function openChestType(type) {
+  if (type === 'common') {
+    if (!isOwner && myProfile.coins < 500) return toast('❌ Moedas insuficientes!');
+    if (!isOwner) myProfile.coins -= 500;
+    let reward = Math.floor(Math.random() * 3500) + 1000;
+    myProfile.coins += reward;
+    addXp(150);
+    toast(`🎁 Cofre Comum aberto: +${reward} moedas!`);
+  } else {
+    if (!isOwner && myProfile.ultra < 2) return toast('❌ Você precisa de 2 Ultra Coins!');
+    if (!isOwner) myProfile.ultra -= 2;
+    let rewardUltra = Math.floor(Math.random() * 10) + 5;
+    myProfile.ultra += rewardUltra;
+    addXp(500);
+    toast(`🎁 Cofre Ultra aberto: +${rewardUltra} Ultra Coins!`);
+  }
+  saveProfile();
+  updateHeaderStats();
+  render();
+}
+
 // --- LOJA DE ACESSÓRIOS COMPLETA (60+ ITENS) ---
 const EMOJIS = ['👑','✨','🔥','⚡','🚀','💎','🏆','🎯','🎨','🔮','🛡️','🗡️','🐉','🐯','🦅','🍀','🎩','🎸','🍕','🍔','🛸','💡','🪐','🎲','🍉','🍩'];
 const ADJ = ['Lendário','Supremo','Místico','Elite','Imperial','Divino','Solar','Lunar','Cyber','Fênix','Soberano','Alpha','Quantum','Vanguard','Stellar','Neon','Prime'];
@@ -697,112 +828,6 @@ function leaderboardView() {
       </div>
     </div>
   `;
-}
-
-function completeShopView() {
-  return `
-    <div class="card row" style="gap:6px; background: rgba(13,17,23,0.95);">
-      <button class="s ${completeShopSubTab==='ofertas'?'on':''}" onclick="completeShopSubTab='ofertas'; render();">🔥 Pacotes Supreme</button>
-      <button class="s ${completeShopSubTab==='trocas'?'on':''}" onclick="completeShopSubTab='trocas'; render();">🔄 Câmbio Rápido</button>
-      <button class="s ${completeShopSubTab==='halloween'?'on':''}" onclick="completeShopSubTab='halloween'; render();">✨ Baú Especial</button>
-      <button class="s ${completeShopSubTab==='baus'?'on':''}" onclick="completeShopSubTab='baus'; render();">🎁 Cofre Lendário</button>
-    </div>
-
-    ${completeShopSubTab === 'ofertas' ? `
-      <div class="card" style="border: 2px solid var(--ultra);">
-        <div class="row" style="justify-content:space-between;">
-          <b style="color:var(--ultra); font-size:18px;">✨ Pacote Quantum Ultra</b>
-          <span style="background:rgba(35,134,54,0.25); color:#3fb950; padding:4px 10px; border-radius:10px; font-size:12px; font-weight:bold;">OFERTA IMPERDÍVEL</span>
-        </div>
-        <div style="font-size:42px; text-align:center; margin:18px 0;">✨ 50 Ultra Complete Coins</div>
-        <p class="rules" style="text-align:center;">Adquira créditos de elite na Complete Shop para desbloquear itens exclusivos instantaneamente.</p>
-        <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409; font-weight:900;" onclick="buyUltraPackage(50, 300000)">Comprar por 🪙 300.000 Moedas</button>
-      </div>
-    ` : ''}
-
-    ${completeShopSubTab === 'trocas' ? `
-      <div class="card">
-        <b style="font-size:18px;">🔄 Câmbio da Complete Shop</b>
-        <p class="rules">Converta moedas e Ultra Complete Coins com taxa zero.</p>
-        <div style="margin:20px 0; text-align:center;">
-          <div style="font-size:20px; color:var(--ultra); margin-bottom:14px;">✨ Suas Ultra Coins: <b>${myProfile.ultra}</b></div>
-          <button class="p" style="margin-bottom:12px; width:100%;" onclick="exchangeCoinsToUltra()">Trocar 10.000 Moedas por 1 ✨ Ultra Coin</button>
-          <button class="s" style="width:100%;" onclick="exchangeUltraToCoins()">Trocar 1 ✨ Ultra Coin por 9.500 Moedas 🪙</button>
-        </div>
-      </div>
-    ` : ''}
-
-    ${completeShopSubTab === 'halloween' ? `
-      <div class="card">
-        <b style="font-size:18px;">✨ Evento Caixa Mística Global</b>
-        <p class="rules">Resgate recompensas surpresa exclusivas.</p>
-        <button class="p" style="margin-top:12px; width:100%; background:linear-gradient(135deg, var(--gold), var(--pink)); color:#fff;" onclick="toast('✨ Caixa Mística resgatada: +15 Ultra Coins & +500 XP!')">Resgatar Caixa Especial ✨</button>
-      </div>
-    ` : ''}
-
-    ${completeShopSubTab === 'baus' ? `
-      <div class="card">
-        <b style="font-size:18px;">🎁 Cofre de Recompensas Lendário</b>
-        <p class="rules">Abra cofres para faturar grandes prêmios em moedas e XP.</p>
-        <div class="row" style="margin-top:16px; gap:10px;">
-          <button class="s" style="flex:1; padding:14px;" onclick="openChestType('common')">Abrir Cofre Comum (🪙 500)</button>
-          <button class="p" style="flex:1; padding:14px; background:var(--ultra); color:#010409;" onclick="openChestType('ultra')">Abrir Cofre Ultra (✨ 2)</button>
-        </div>
-      </div>
-    ` : ''}
-  `;
-}
-
-function buyUltraPackage(amount, cost) {
-  if (!isOwner && myProfile.coins < cost) return toast('❌ Moedas insuficientes!');
-  if (!isOwner) myProfile.coins -= cost;
-  myProfile.ultra += amount;
-  addXp(300);
-  saveProfile();
-  updateHeaderStats();
-  render();
-  toast(`🎉 Adquiriu ${amount} Ultra Coins!`);
-}
-
-function exchangeCoinsToUltra() {
-  if (!isOwner && myProfile.coins < 10000) return toast('❌ Precisa de 10.000 moedas!');
-  if (!isOwner) myProfile.coins -= 10000;
-  myProfile.ultra += 1;
-  saveProfile();
-  updateHeaderStats();
-  render();
-  toast('🎉 Câmbio realizado: +1 Ultra Coin!');
-}
-
-function exchangeUltraToCoins() {
-  if (!isOwner && myProfile.ultra < 1) return toast('❌ Sem Ultra Coins suficientes!');
-  if (!isOwner) myProfile.ultra -= 1;
-  myProfile.coins += 9500;
-  saveProfile();
-  updateHeaderStats();
-  render();
-  toast('🎉 Câmbio realizado: +9.500 Moedas!');
-}
-
-function openChestType(type) {
-  if (type === 'common') {
-    if (!isOwner && myProfile.coins < 500) return toast('❌ Moedas insuficientes!');
-    if (!isOwner) myProfile.coins -= 500;
-    let reward = Math.floor(Math.random() * 3500) + 1000;
-    myProfile.coins += reward;
-    addXp(100);
-    toast(`🎁 Ganhou +${reward} moedas!`);
-  } else {
-    if (!isOwner && myProfile.ultra < 2) return toast('❌ Precisa de 2 Ultra Coins!');
-    if (!isOwner) myProfile.ultra -= 2;
-    let rewardUltra = Math.floor(Math.random() * 8) + 4;
-    myProfile.ultra += rewardUltra;
-    addXp(350);
-    toast(`🎁 Ganhou +${rewardUltra} Ultra Coins!`);
-  }
-  saveProfile();
-  updateHeaderStats();
-  render();
 }
 
 const MISSIONS_DATA = {
@@ -1061,7 +1086,6 @@ function renderContentList(k) {
       const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
       body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
     } else if (k === 'games') {
-      // Injeta estilos de fundo automático caso o HTML do jogo não venha estilizado
       let gameHtml = x.content;
       if (!gameHtml.includes('background') && !gameHtml.includes('<style>')) {
         gameHtml = `<style>body{background:#0a0e17;color:#fff;font-family:sans-serif;margin:0;padding:10px;}</style>` + gameHtml;
