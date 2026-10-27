@@ -322,6 +322,14 @@ let myProfile = {
   xp: myXp
 };
 
+// --- SINCRONIZAÇÃO GLOBAL AUTOMÁTICA DE USUÁRIOS ---
+function syncGlobalUser() {
+  let allUsers = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
+  allUsers[uid] = { name: myProfile.name, badge: myProfile.badge, xp: myProfile.xp, coins: myProfile.coins };
+  localStorage.setItem('cb_all_users', JSON.stringify(allUsers));
+}
+syncGlobalUser();
+
 function getLevelInfo(xp) {
   let level = Math.floor(xp / 500) + 1;
   let currentLevelXp = xp % 500;
@@ -334,6 +342,7 @@ function addXp(amount) {
   if (isOwner) return;
   myProfile.xp += amount;
   localStorage.setItem('cb_xp', myProfile.xp);
+  syncGlobalUser();
   updateHeaderStats();
 }
 
@@ -346,11 +355,8 @@ function saveProfile() {
     localStorage.setItem('cb_badge', myProfile.badge);
     localStorage.setItem('cb_xp', myProfile.xp);
   }
+  syncGlobalUser();
 }
-
-let allUsers = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
-allUsers[uid] = { name: myProfile.name, badge: myProfile.badge, xp: myProfile.xp, coins: myProfile.coins };
-localStorage.setItem('cb_all_users', JSON.stringify(allUsers));
 
 function toast(msg) {
   document.querySelectorAll('#toast').forEach(x => x.remove());
@@ -370,6 +376,7 @@ let currentChatUser = null;
 let sessionSeconds = 0;
 setInterval(() => {
   sessionSeconds++;
+  syncGlobalUser();
   if (sessionSeconds % 60 === 0) {
     if (!isOwner) {
       myProfile.coins += 150;
@@ -390,7 +397,7 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
   ],
   pv: {},
   aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Loja ultramoderna e câmbio avançado ativados!' }
+    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Sincronização global de usuários e pesquisa instantânea ativadas!' }
   ]
 }));
 
@@ -452,6 +459,7 @@ function updateHeaderStats() {
 }
 
 function render() {
+  syncGlobalUser();
   updateHeaderStats();
   const app = $('#app');
   if (!app) return;
@@ -491,23 +499,24 @@ function render() {
   renderContentList(tab);
 }
 
-// --- BUSCA GLOBAL DE USUÁRIOS ---
+// --- BUSCA GLOBAL DE USUÁRIOS APRIMORADA ---
 function contactsListView() {
+  syncGlobalUser();
   let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
   delete users[uid];
   let userList = Object.entries(users).map(([id, u]) => ({ id, ...u }));
 
   window.filterUsersQuery = function(q) {
-    const term = (q || '').toLowerCase();
+    const term = (q || '').toLowerCase().trim();
     const container = $('#search-results-box');
     if(!container) return;
-    let filtered = userList.filter(u => u.name.toLowerCase().includes(term));
+    let filtered = userList.filter(u => (u.name || '').toLowerCase().includes(term));
     container.innerHTML = filtered.length === 0 ? '<div class="empty">Nenhum usuário encontrado com esse nome.</div>' : filtered.map(u => `
       <div class="contact-item" onclick="currentChatUser='${u.id}'; render();">
         <span class="av" style="width:46px; height:46px; font-size:18px;">${esc(u.badge || '👤')}</span>
         <div>
           <b style="font-size:16px;">${esc(u.name)}</b>
-          <div class="by">Clique para conversar no PV 💬</div>
+          <div class="by">Clique para conversar no PV 💬 • Nível ${Math.floor((u.xp || 0)/500)+1}</div>
         </div>
       </div>
     `).join('');
@@ -516,7 +525,7 @@ function contactsListView() {
   return `
     <div class="card">
       <b style="font-size:20px;">💬 Pesquisa e Chat Privado (PV)</b>
-      <p class="rules">Digite o nome de qualquer amigo abaixo para achá-lo instantaneamente na rede:</p>
+      <p class="rules">Digite o nome de qualquer usuário abaixo para achá-lo instantaneamente na rede:</p>
       <input placeholder="🔍 Pesquisar usuário pelo nome..." oninput="filterUsersQuery(this.value)">
     </div>
     <div id="search-results-box">
@@ -525,11 +534,11 @@ function contactsListView() {
           <span class="av" style="width:46px; height:46px; font-size:18px;">${esc(u.badge || '👤')}</span>
           <div>
             <b style="font-size:16px;">${esc(u.name)}</b>
-            <div class="by">Clique para conversar no PV 💬</div>
+            <div class="by">Clique para conversar no PV 💬 • Nível ${Math.floor((u.xp || 0)/500)+1}</div>
           </div>
         </div>
       `).join('')}
-      ${userList.length === 0 ? '<div class="empty">Nenhum outro usuário cadastrado na rede ainda.</div>' : ''}
+      ${userList.length === 0 ? '<div class="empty">Nenhum outro usuário cadastrado na rede global ainda.</div>' : ''}
     </div>
   `;
 }
@@ -801,8 +810,8 @@ function buyCustomization(id, price, currency, badge) {
 
 // --- DEMAIS TELAS E FUNÇÕES ---
 function leaderboardView() {
+  syncGlobalUser();
   let users = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
-  users[uid] = { name: myProfile.name, badge: myProfile.badge, xp: myProfile.xp, coins: myProfile.coins };
   let sorted = Object.values(users).sort((a, b) => (b.xp || 0) - (a.xp || 0));
 
   return `
@@ -962,8 +971,7 @@ function profileView() {
     if (!val) return toast('Digite um nome válido!');
     myProfile.name = val;
     saveProfile();
-    let allUsers = JSON.parse(localStorage.getItem('cb_all_users') || '{}');
-    if(allUsers[uid]) { allUsers[uid].name = val; localStorage.setItem('cb_all_users', JSON.stringify(allUsers)); }
+    syncGlobalUser();
     render();
     toast('🎉 Nome de perfil atualizado globalmente!');
   };
@@ -1122,6 +1130,7 @@ function renderContentList(k) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  syncGlobalUser();
   nav();
   render();
 });
