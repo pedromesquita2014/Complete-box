@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Complete Box</title>
+<title>Complete Box • Quantum Supreme</title>
 <style>
 :root {
   --bg: #010409;
@@ -24,13 +24,13 @@
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: radial-gradient(circle at 50% -20%, rgba(37,99,235,0.3), transparent 55%), radial-gradient(circle at 50% 120%, rgba(124,58,237,0.25), transparent 65%), var(--bg);
+  background: radial-gradient(circle at 50% -20%, rgba(37,99,235,0.35), transparent 55%), radial-gradient(circle at 50% 120%, rgba(124,58,237,0.3), transparent 65%), var(--bg);
   color: var(--tx);
   font: 15px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
 }
 
-/* --- TELA DE CARREGAMENTO SUPREMA --- */
+/* --- TELA DE CARREGAMENTO CINEMATOGRÁFICA --- */
 #loader-screen {
   position: fixed;
   inset: 0;
@@ -43,13 +43,10 @@ body {
   gap: 22px;
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
 }
-#loader-screen.fade-out {
-  opacity: 0;
-  visibility: hidden;
-}
+#loader-screen.fade-out { opacity: 0; visibility: hidden; }
 .loader-logo {
   font-weight: 900;
-  font-size: 42px;
+  font-size: 44px;
   background: linear-gradient(90deg, #3b82f6, #00f0ff, #8b5cf6);
   -webkit-background-clip: text;
   background-clip: text;
@@ -59,7 +56,7 @@ body {
 }
 @keyframes pulseLogo {
   0% { transform: scale(0.96); opacity: 0.75; }
-  100% { transform: scale(1.04); opacity: 1; text-shadow: 0 0 30px rgba(0,240,255,0.6); }
+  100% { transform: scale(1.04); opacity: 1; text-shadow: 0 0 35px rgba(0,240,255,0.6); }
 }
 .loader-bar-frame {
   width: 280px;
@@ -77,25 +74,20 @@ body {
   border-radius: 12px;
   transition: width 0.1s linear;
 }
-.loader-status {
-  font-size: 13px;
-  color: var(--mu);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
+.loader-status { font-size: 13px; color: var(--mu); font-weight: 600; letter-spacing: 0.5px; }
 
 header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(1,4,9,0.88);
+  background: rgba(1,4,9,0.9);
   backdrop-filter: blur(30px);
   border-bottom: 1px solid var(--bd);
   padding: 14px 24px;
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 25px rgba(0,0,0,0.5);
 }
 .logo {
   font-weight: 900;
@@ -118,19 +110,8 @@ header {
   gap: 6px;
   font-weight: 700;
 }
-.online-dot {
-  width: 7px;
-  height: 7px;
-  background: #3fb950;
-  border-radius: 50%;
-  box-shadow: 0 0 12px #3fb950;
-}
-.wallet-box {
-  margin-left: auto;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+.online-dot { width: 7px; height: 7px; background: #3fb950; border-radius: 50%; box-shadow: 0 0 12px #3fb950; }
+.wallet-box { margin-left: auto; display: flex; gap: 8px; align-items: center; }
 .currency-pill {
   font-weight: 800;
   background: rgba(245,158,11,0.1);
@@ -148,14 +129,14 @@ header {
   box-shadow: 0 4px 15px rgba(0,240,255,0.1);
 }
 
-/* MENU RÁPIDO REFINADO */
+/* MENU RÁPIDO OTIMIZADO */
 .quick-menu {
   display: flex;
   gap: 8px;
   overflow-x: auto;
   padding: 14px 24px;
   scrollbar-width: none;
-  background: rgba(1,4,9,0.75);
+  background: rgba(1,4,9,0.8);
   border-bottom: 1px solid var(--bd);
 }
 .quick-menu::-webkit-scrollbar { display: none; }
@@ -181,11 +162,7 @@ header {
   box-shadow: 0 6px 20px rgba(37,99,235,0.4);
 }
 
-main {
-  max-width: 940px;
-  margin: 0 auto;
-  padding: 24px 20px 80px;
-}
+main { max-width: 940px; margin: 0 auto; padding: 24px 20px 80px; }
 .hero {
   margin: 0 0 20px;
   padding: 26px 30px;
@@ -309,9 +286,7 @@ iframe.game-frame { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--bd)
   opacity: 0;
   animation: toastIn 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-@keyframes toastIn {
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
+@keyframes toastIn { to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 .contact-item { background: rgba(1,4,9,0.65); border: 1px solid var(--bd); padding: 14px 18px; border-radius: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; }
 .contact-item:hover { border-color: var(--ac); background: var(--card-hover); transform: translateX(4px); box-shadow: 0 4px 15px rgba(37,99,235,0.15); }
 .xp-bar-container { background: rgba(255,255,255,0.04); border-radius: 10px; height: 10px; width: 100%; overflow: hidden; margin: 8px 0; border: 1px solid var(--bd); box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); }
@@ -320,13 +295,12 @@ iframe.game-frame { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--bd)
 </head>
 <body>
 
-<!-- TELA DE CARREGAMENTO SUPREMA -->
 <div id="loader-screen">
   <div class="loader-logo">Complete Box</div>
   <div class="loader-bar-frame">
     <div class="loader-bar-progress" id="loader-bar-progress"></div>
   </div>
-  <div class="loader-status" id="loader-status-text">Inicializando motores quânticos...</div>
+  <div class="loader-status" id="loader-status-text">Carregando motores quânticos supremos...</div>
 </div>
 
 <header>
@@ -345,7 +319,7 @@ iframe.game-frame { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--bd)
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
       <div>
         <h2 style="margin:0 0 4px; font-size:22px;">Complete Box - Quantum Supreme Master</h2>
-        <div style="font-size:13px; opacity:0.9;">O ápice mundial em jogos por código HTML, vídeos e rede global.</div>
+        <div style="font-size:13px; opacity:0.9;">O ecossistema definitivo em vídeos, códigos HTML e comunidade.</div>
       </div>
       <div id="user-level-badge" style="background:rgba(255,255,255,0.06); border:1px solid var(--bd); padding:8px 16px; border-radius:14px; font-weight:bold; font-size:13px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
         ⭐ Nível 1 (Novato)
@@ -360,9 +334,7 @@ iframe.game-frame { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--bd)
 </main>
 
 <script>
-function sanitize(input) {
-  return typeof input === 'string' ? input : '';
-}
+function sanitize(input) { return typeof input === 'string' ? input : ''; }
 
 let uid = localStorage.getItem('cb_uid');
 if (!uid) {
@@ -376,7 +348,6 @@ if (location.hash === '#pedromesquita2026' || localStorage.getItem(OWNER_KEY) ==
 }
 
 let isOwner = localStorage.getItem(OWNER_KEY) === 'true';
-
 let myCoins = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_coins')) || 0);
 let myUltra = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_ultra')) || 0);
 let mySavings = isOwner ? Infinity : (parseInt(localStorage.getItem('cb_savings')) || 0);
@@ -446,19 +417,16 @@ let sessionSeconds = 0;
 setInterval(() => {
   sessionSeconds++;
   syncGlobalUser();
-  if (sessionSeconds % 60 === 0) {
-    if (!isOwner) {
-      myProfile.coins += 50;
-      addXp(100);
-      saveProfile();
-    }
+  if (sessionSeconds % 60 === 0 && !isOwner) {
+    myProfile.coins += 50;
+    addXp(100);
+    saveProfile();
     updateHeaderStats();
     toast('⏱️ +50 Sete Box & +100 XP por tempo online!');
   }
 }, 1000);
 
 const globalSyncChannel = new BroadcastChannel('complete_box_global_sync_v2');
-
 globalSyncChannel.onmessage = (event) => {
   if (event.data && event.data.type === 'UPDATE_DATALIST') {
     dataList = event.data.payload;
@@ -471,16 +439,12 @@ let dataList = JSON.parse(localStorage.getItem('cb_datalist') || JSON.stringify(
   videos: [],
   games: [],
   pv: {},
-  aiMsgs: [
-    { role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master. Rede global sincronizada ativada!' }
-  ]
+  aiMsgs: [{ role: 'ai', text: 'Olá! Sou a Complete AI Quantum Master.' }]
 }));
 
 function saveData() {
   localStorage.setItem('cb_datalist', JSON.stringify(dataList));
-  try {
-    globalSyncChannel.postMessage({ type: 'UPDATE_DATALIST', payload: dataList });
-  } catch(e) {}
+  try { globalSyncChannel.postMessage({ type: 'UPDATE_DATALIST', payload: dataList }); } catch(e) {}
 }
 
 const TABS = [
@@ -515,11 +479,11 @@ function nav() {
   if (el) el.innerHTML = TABS.map(([k, l]) => `<button class="${k === tab ? 'on' : ''}" onclick="go('${k}')">${l}</button>`).join('');
 }
 
-function go(k) { 
+function go(k) {
   if (k === 'chat') currentChatUser = null;
-  tab = k; 
-  nav(); 
-  render(); 
+  tab = k;
+  nav();
+  render();
 }
 
 function updateHeaderStats() {
@@ -542,15 +506,15 @@ function render() {
   const app = $('#app');
   if (!app) return;
 
-  if (tab === 'chat') { 
+  if (tab === 'chat') {
     if (!currentChatUser) app.innerHTML = contactsListView();
     else { app.innerHTML = chatPVView(currentChatUser); drawPVMessages(currentChatUser); }
-    return; 
+    return;
   }
   if (tab === 'completeshop') { app.innerHTML = completeShopView(); return; }
   if (tab === 'accessories') { app.innerHTML = accessoriesView(); return; }
   if (tab === 'speaky') { app.innerHTML = speakyDedView(); return; }
-  if (tab === 'ai') { app.innerHTML = aiView(); drawAIMessages(); return; }
+  if (tab === 'ai') { app.innerHTML = aiView(); return; }
   if (tab === 'missions') { app.innerHTML = missionsView(); return; }
   if (tab === 'leaderboard') { app.innerHTML = leaderboardView(); return; }
   if (tab === 'chest') { app.innerHTML = chestView(); return; }
@@ -559,24 +523,21 @@ function render() {
   if (tab === 'bank') { app.innerHTML = bankView(); return; }
   if (tab === 'me') { app.innerHTML = profileView(); return; }
 
-  let titles = { 
-    videos: '🎬 Publicar Vídeo Global (Comunidade)', 
-    games: '🎮 Publicar Jogo por Código HTML (Comunidade)' 
-  };
+  let titles = { videos: '🎬 Publicar Vídeo Global', games: '🎮 Publicar Jogo por Código HTML' };
   
   app.innerHTML = `
     <div class="card">
-      <b style="font-size:18px;">${titles[tab] || 'Publicar'}</b>
-      <p class="rules">${tab==='games' ? 'Cole o código HTML completo do seu jogo abaixo para rodar direto na página para todos!' : 'Cole o link do YouTube (qualquer vídeo do mundo para a comunidade).'}</p>
-      <input id="p-title" placeholder="Título chamativo do Jogo / Vídeo" maxlength="100">
-      ${tab === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML completo do jogo aqui (ex: <html>...</html>)..."></textarea>' : '<input id="p-content" placeholder="Link do YouTube (ex: https://youtube.com/watch?v=...)">'}
-      <button class="p" style="margin-top:14px; width:100%;" onclick="submitPost('${tab}')">🚀 Publicar Globalmente para Todos e Ganhar XP</button>
+      <b style="font-size:18px;">${titles[tab]}</b>
+      <p class="rules">${tab==='games' ? 'Cole o código HTML completo do seu jogo para rodar direto para todos!' : 'Cole o link do YouTube para a comunidade assistir.'}</p>
+      <input id="p-title" placeholder="Título chamativo..." maxlength="100">
+      ${tab === 'games' ? '<textarea id="p-content" placeholder="Cole o código HTML aqui (ex: <html>...</html>)..."></textarea>' : '<input id="p-content" placeholder="Link do YouTube (ex: https://youtube.com/watch?v=...)">'}
+      <button class="p" style="margin-top:14px; width:100%;" onclick="submitPost('${tab}')">🚀 Publicar Globalmente</button>
     </div>
 
     <div class="card" style="padding:16px 20px;">
       <div class="row" style="gap:10px;">
-        <input id="search-content-input" placeholder="🔍 Pesquisar por título ou autor..." oninput="filterContentList('${tab}')" style="flex:1; margin:0;">
-        <select id="sort-content-select" onchange="filterContentList('${tab}')" style="width:160px; margin:0; background:rgba(1,4,9,0.95); color:var(--tx); border:1px solid var(--bd); border-radius:14px; padding:10px;">
+        <input id="search-content-input" placeholder="🔍 Pesquisar por título ou autor..." oninput="renderContentList('${tab}')" style="flex:1; margin:0;">
+        <select id="sort-content-select" onchange="renderContentList('${tab}')" style="width:160px; margin:0;">
           <option value="recent">🕒 Mais Recentes</option>
           <option value="likes">❤️ Mais Curtidos</option>
         </select>
@@ -588,38 +549,24 @@ function render() {
   renderContentList(tab);
 }
 
-function filterContentList(k) {
-  renderContentList(k);
-}
-
 function renderContentList(k) {
-  const box = $('#content-list'); 
+  const box = $('#content-list');
   if(!box) return;
   
   let currentData = JSON.parse(localStorage.getItem('cb_datalist') || '{}');
   if (currentData[k]) dataList[k] = currentData[k];
   
   const items = dataList[k] || [];
-  const searchInput = $('#search-content-input');
-  const sortSelect = $('#sort-content-select');
-  
-  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-  const sortBy = sortSelect ? sortSelect.value : 'recent';
+  const query = ($('#search-content-input')?.value || '').toLowerCase().trim();
+  const sortBy = $('#sort-content-select')?.value || 'recent';
 
-  let filtered = items.filter(x => 
-    (x.title || '').toLowerCase().includes(query) || 
-    (x.authorName || '').toLowerCase().includes(query)
-  );
+  let filtered = items.filter(x => (x.title || '').toLowerCase().includes(query) || (x.authorName || '').toLowerCase().includes(query));
+  if (sortBy === 'likes') filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+  else filtered.sort((a, b) => (b.ts || 0) - (a.ts || 0));
 
-  if (sortBy === 'likes') {
-    filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-  } else {
-    filtered.sort((a, b) => (b.ts || 0) - (a.ts || 0));
-  }
-
-  if(!filtered.length) { 
-    box.innerHTML = '<div class="empty">Nenhum conteúdo publicado ainda. Seja o primeiro a publicar para todos verem!</div>'; 
-    return; 
+  if(!filtered.length) {
+    box.innerHTML = '<div class="empty">Nenhum conteúdo publicado ainda. Seja o primeiro a publicar!</div>';
+    return;
   }
   
   box.innerHTML = filtered.map(x => {
@@ -627,7 +574,7 @@ function renderContentList(k) {
     if (k === 'videos') {
       const ytMatch = x.content.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
       body = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>` : `<a href="${esc(x.content)}" target="_blank" style="color:var(--ac)">🔗 ${esc(x.content)}</a>`;
-    } else if (k === 'games') {
+    } else {
       let gameHtml = x.content;
       if (!gameHtml.includes('background') && !gameHtml.includes('<style>')) {
         gameHtml = `<style>body{background:#0a0e17;color:#fff;font-family:sans-serif;margin:0;padding:10px;}</style>` + gameHtml;
@@ -677,31 +624,25 @@ function contactsListView() {
     container.innerHTML = filtered.length === 0 ? '<div class="empty">Nenhum usuário encontrado.</div>' : filtered.map(u => `
       <div class="contact-item" onclick="currentChatUser='${u.id}'; render();">
         <span class="av" style="width:46px; height:46px; font-size:18px;">${esc(u.badge || '👤')}</span>
-        <div>
-          <b style="font-size:16px;">${esc(u.name)}</b>
-          <div class="by">💬 Abrir aba de conversas • Nível ${Math.floor((u.xp || 0)/500)+1}</div>
-        </div>
+        <div><b style="font-size:16px;">${esc(u.name)}</b><div class="by">💬 Conversar • Nível ${Math.floor((u.xp || 0)/500)+1}</div></div>
       </div>
     `).join('');
   };
 
   return `
     <div class="card">
-      <b style="font-size:20px;">💬 Lista de Conversas & Amigos</b>
-      <p class="rules">Todos os usuários da rede aparecem aqui para conversarem a qualquer momento, mesmo offline:</p>
-      <input placeholder="🔍 Pesquisar amigo por nome..." oninput="filterUsersQuery(this.value)">
+      <b style="font-size:20px;">💬 Conversas Privadas & Amigos</b>
+      <p class="rules">Selecione um usuário para conversar em tempo real:</p>
+      <input placeholder="🔍 Pesquisar amigo..." oninput="filterUsersQuery(this.value)">
     </div>
     <div id="search-results-box">
       ${userList.map(u => `
         <div class="contact-item" onclick="currentChatUser='${u.id}'; render();">
           <span class="av" style="width:46px; height:46px; font-size:18px;">${esc(u.badge || '👤')}</span>
-          <div>
-            <b style="font-size:16px;">${esc(u.name)}</b>
-            <div class="by">💬 Abrir aba de conversas • Nível ${Math.floor((u.xp || 0)/500)+1}</div>
-          </div>
+          <div><b style="font-size:16px;">${esc(u.name)}</b><div class="by">💬 Conversar • Nível ${Math.floor((u.xp || 0)/500)+1}</div></div>
         </div>
       `).join('')}
-      ${userList.length === 0 ? '<div class="empty">Nenhum outro usuário na rede ainda. Assim que amigos entrarem, aparecerão aqui!</div>' : ''}
+      ${userList.length === 0 ? '<div class="empty">Nenhum outro usuário na rede ainda.</div>' : ''}
     </div>
   `;
 }
@@ -713,12 +654,9 @@ function chatPVView(targetUid) {
   return `
     <div class="card row" style="justify-content:space-between; padding:14px 22px;">
       <div class="row">
-        <button class="s" onclick="currentChatUser=null; render();">← Voltar para Conversas</button>
+        <button class="s" onclick="currentChatUser=null; render();">← Voltar</button>
         <span class="av" style="width:42px; height:42px; font-size:16px;">${esc(target.badge)}</span>
-        <div>
-          <b style="font-size:16px;">${esc(target.name)}</b>
-          <div class="by" style="color:var(--mu)">💬 Conversas Privadas</div>
-        </div>
+        <div><b style="font-size:16px;">${esc(target.name)}</b><div class="by">💬 Chat Privado</div></div>
       </div>
     </div>
     <div id="pv-msgs" style="height:46vh; overflow-y:auto; border:1px solid var(--bd); padding:16px; border-radius:18px; background:rgba(1,4,9,0.75);"></div>
@@ -735,8 +673,8 @@ function drawPVMessages(targetUid) {
   if (!dataList.pv) dataList.pv = {};
   let chatKey = [uid, targetUid].sort().join('_');
   let msgs = dataList.pv[chatKey] || [];
-  if (msgs.length === 0) {
-    m.innerHTML = '<div class="empty">Nenhuma mensagem nesta conversa ainda. Envie a primeira!</div>';
+  if (!msgs.length) {
+    m.innerHTML = '<div class="empty">Nenhuma mensagem ainda. Envie a primeira!</div>';
     return;
   }
   m.innerHTML = msgs.map(x => {
@@ -769,43 +707,42 @@ function sendPVMessage(targetUid) {
 function completeShopView() {
   return `
     <div class="card row" style="gap:6px; background: rgba(13,17,23,0.95);">
-      <button class="s ${completeShopSubTab==='ofertas'?'on':''}" onclick="completeShopSubTab='ofertas'; render();">🔥 Pacotes Supreme</button>
-      <button class="s ${completeShopSubTab==='cambio'?'on':''}" onclick="completeShopSubTab='cambio'; render();">🔄 Câmbio Sete Box</button>
-      <button class="s ${completeShopSubTab==='misticas'?'on':''}" onclick="completeShopSubTab='misticas'; render();">✨ Caixas & Bônus</button>
-      <button class="s ${completeShopSubTab==='cofres'?'on':''}" onclick="completeShopSubTab='cofres'; render();">🎁 Cofres de Elite</button>
+      <button class="s ${completeShopSubTab==='ofertas'?'on':''}" onclick="completeShopSubTab='ofertas'; render();">🔥 Pacotes</button>
+      <button class="s ${completeShopSubTab==='cambio'?'on':''}" onclick="completeShopSubTab='cambio'; render();">🔄 Câmbio</button>
+      <button class="s ${completeShopSubTab==='misticas'?'on':''}" onclick="completeShopSubTab='misticas'; render();">✨ Caixas</button>
+      <button class="s ${completeShopSubTab==='cofres'?'on':''}" onclick="completeShopSubTab='cofres'; render();">🎁 Cofres</button>
     </div>
 
     ${completeShopSubTab === 'ofertas' ? `
       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
         <div class="card" style="margin:0; border: 2px solid var(--gold);">
-          <div class="row" style="justify-content:space-between;"><b style="color:var(--gold);">👑 Sete Box de Ouro Puro</b><span style="background:rgba(245,158,11,0.25); color:var(--gold); padding:2px 8px; border-radius:8px; font-size:11px;">SUPREMA</span></div>
+          <div class="row" style="justify-content:space-between;"><b style="color:var(--gold);">👑 Ouro Puro</b><span style="background:rgba(245,158,11,0.25); color:var(--gold); padding:2px 8px; border-radius:8px; font-size:11px;">SUPREMA</span></div>
           <div style="font-size:24px; font-weight:900; margin:14px 0;">🪙 1.000.000 Sete Box</div>
-          <p class="rules">A moeda mais cara, valiosa e lendária de todo o ecossistema Complete Box!</p>
+          <p class="rules">O item mais lendário de todo o Complete Box!</p>
           <button class="p" style="width:100%; background:linear-gradient(135deg, var(--gold), var(--pink));" onclick="buySupremeGoldCurrency()">Comprar por ✨ 50 Ultra Coins</button>
         </div>
         <div class="card" style="margin:0; border: 2px solid var(--ultra);">
-          <div class="row" style="justify-content:space-between;"><b style="color:var(--ultra);">✨ Kit Iniciante Sete</b><span style="background:rgba(35,134,54,0.25); color:#3fb950; padding:2px 8px; border-radius:8px; font-size:11px;">POPULAR</span></div>
+          <div class="row" style="justify-content:space-between;"><b style="color:var(--ultra);">✨ Kit Iniciante</b><span style="background:rgba(35,134,54,0.25); color:#3fb950; padding:2px 8px; border-radius:8px; font-size:11px;">POPULAR</span></div>
           <div style="font-size:28px; font-weight:900; margin:14px 0;">✨ 25 Ultra Coins</div>
-          <p class="rules">Inclui +2.500 XP bônus para subir de nível rápido.</p>
-          <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409;" onclick="buyBundle(25, 2500, 50000)">Comprar por 🪙 50.000 Sete Box</button>
+          <p class="rules">Inclui +2.500 XP de bônus imediato.</p>
+          <button class="p" style="width:100%; background:linear-gradient(135deg, var(--ac), var(--ultra)); color:#010409;" onclick="buyBundle(25, 2500, 50000)">Comprar por 🪙 50.000</button>
         </div>
       </div>
     ` : ''}
 
     ${completeShopSubTab === 'cambio' ? `
       <div class="card">
-        <b style="font-size:18px;">🔄 Câmbio Avançado de Sete Box & Ultra Coins</b>
-        <p class="rules">Converta seus ativos instantaneamente com taxas dinâmicas e zero burocracia.</p>
+        <b style="font-size:18px;">🔄 Câmbio de Moedas</b>
         <div style="margin-top:20px; display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
           <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:20px; border-radius:18px; text-align:center;">
             <div style="color:var(--gold); font-weight:bold; margin-bottom:10px;">Sete Box ➔ Ultra Coins</div>
-            <div style="font-size:13px; color:var(--mu); margin-bottom:14px;">Taxa: 10.000 Sete Box = 1 Ultra Coin</div>
+            <div style="font-size:13px; color:var(--mu); margin-bottom:14px;">10.000 Sete Box = 1 Ultra Coin</div>
             <button class="p" style="width:100%;" onclick="exchangeCoinsToUltra()">Converter 10.000 🪙</button>
           </div>
           <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:20px; border-radius:18px; text-align:center;">
             <div style="color:var(--ultra); font-weight:bold; margin-bottom:10px;">Ultra Coins ➔ Sete Box</div>
-            <div style="font-size:13px; color:var(--mu); margin-bottom:14px;">Taxa: 1 Ultra Coin = 9.500 Sete Box</div>
-            <button class="s" style="width:100%; background:var(--card-hover);" onclick="exchangeUltraToCoins()">Converter 1 ✨</button>
+            <div style="font-size:13px; color:var(--mu); margin-bottom:14px;">1 Ultra Coin = 9.500 Sete Box</div>
+            <button class="s" style="width:100%;" onclick="exchangeUltraToCoins()">Converter 1 ✨</button>
           </div>
         </div>
       </div>
@@ -814,19 +751,17 @@ function completeShopView() {
     ${completeShopSubTab === 'misticas' ? `
       <div class="card" style="text-align:center; padding:30px;">
         <span style="font-size:50px;">📦</span>
-        <b style="font-size:20px; display:block; margin:10px 0;">Caixa Mística Surpresa Global</b>
-        <p class="rules">Abra uma caixa misteriosa gerada pelo sistema para faturar recompensas aleatórias em Sete Box.</p>
-        <button class="p" style="margin-top:14px; padding:14px 30px; background:linear-gradient(135deg, var(--gold), var(--ac));" onclick="openMysticBox()">Abrir Caixa Mística 🎁</button>
+        <b style="font-size:20px; display:block; margin:10px 0;">Caixa Mística Surpresa</b>
+        <button class="p" style="margin-top:14px; padding:14px 30px; background:linear-gradient(135deg, var(--gold), var(--ac));" onclick="openMysticBox()">Abrir Caixa 🎁</button>
       </div>
     ` : ''}
 
     ${completeShopSubTab === 'cofres' ? `
       <div class="card">
-        <b style="font-size:18px;">🎁 Cofres de Recompensas Lendários</b>
-        <p class="rules">Desbloqueie cofres para acumular grandes fortunas em Sete Box e experiência.</p>
+        <b style="font-size:18px;">🎁 Cofres Lendários</b>
         <div class="row" style="margin-top:16px; gap:12px;">
-          <button class="s" style="flex:1; padding:16px;" onclick="openChestType('common')">Abrir Cofre Comum (🪙 500)</button>
-          <button class="p" style="flex:1; padding:16px; background:var(--ultra); color:#010409;" onclick="openChestType('ultra')">Abrir Cofre Ultra (✨ 2)</button>
+          <button class="s" style="flex:1; padding:16px;" onclick="openChestType('common')">Cofre Comum (🪙 500)</button>
+          <button class="p" style="flex:1; padding:16px; background:var(--ultra); color:#010409;" onclick="openChestType('ultra')">Cofre Ultra (✨ 2)</button>
         </div>
       </div>
     ` : ''}
@@ -834,14 +769,14 @@ function completeShopView() {
 }
 
 function buySupremeGoldCurrency() {
-  if (!isOwner && myProfile.ultra < 50) return toast('❌ Você precisa de 50 Ultra Coins para comprar a Sete Box de Ouro Puro!');
+  if (!isOwner && myProfile.ultra < 50) return toast('❌ Você precisa de 50 Ultra Coins!');
   if (!isOwner) myProfile.ultra -= 50;
   myProfile.coins += 1000000;
   addXp(25000);
   saveProfile();
   updateHeaderStats();
   render();
-  toast('👑 LENDÁRIO! Você adquiriu a Sete Box de Ouro Puro (+1.000.000 Sete Box)!');
+  toast('👑 LENDÁRIO! Adquiriu a Sete Box de Ouro Puro (+1.000.000)!');
 }
 
 function buyBundle(ultraAmt, xpAmt, costCoins) {
@@ -852,11 +787,11 @@ function buyBundle(ultraAmt, xpAmt, costCoins) {
   saveProfile();
   updateHeaderStats();
   render();
-  toast(`🎉 Compra de pacote concluída! +${ultraAmt} Ultra Coins.`);
+  toast('🎉 Pacote adquirido com sucesso!');
 }
 
 function exchangeCoinsToUltra() {
-  if (!isOwner && myProfile.coins < 10000) return toast('❌ Você precisa de 10.000 Sete Box!');
+  if (!isOwner && myProfile.coins < 10000) return toast('❌ Necessário 10.000 Sete Box!');
   if (!isOwner) myProfile.coins -= 10000;
   myProfile.ultra += 1;
   saveProfile();
@@ -866,7 +801,7 @@ function exchangeCoinsToUltra() {
 }
 
 function exchangeUltraToCoins() {
-  if (!isOwner && myProfile.ultra < 1) return toast('❌ Você não tem Ultra Coins suficientes!');
+  if (!isOwner && myProfile.ultra < 1) return toast('❌ Ultra Coins insuficientes!');
   if (!isOwner) myProfile.ultra -= 1;
   myProfile.coins += 9500;
   saveProfile();
@@ -876,31 +811,31 @@ function exchangeUltraToCoins() {
 }
 
 function openMysticBox() {
-  let rewardCoins = Math.floor(Math.random() * 5000) + 1000;
-  let rewardXp = Math.floor(Math.random() * 1000) + 300;
-  myProfile.coins += rewardCoins;
-  addXp(rewardXp);
+  let rc = Math.floor(Math.random() * 5000) + 1000;
+  let rx = Math.floor(Math.random() * 1000) + 300;
+  myProfile.coins += rc;
+  addXp(rx);
   saveProfile();
   updateHeaderStats();
   render();
-  toast(`✨ Caixa Mística aberta: +${rewardCoins} Sete Box & +${rewardXp} XP!`);
+  toast(`✨ Caixa Mística: +${rc} Sete Box & +${rx} XP!`);
 }
 
 function openChestType(type) {
   if (type === 'common') {
     if (!isOwner && myProfile.coins < 500) return toast('❌ Sete Box insuficientes!');
     if (!isOwner) myProfile.coins -= 500;
-    let reward = Math.floor(Math.random() * 2500) + 500;
-    myProfile.coins += reward;
+    let r = Math.floor(Math.random() * 2500) + 500;
+    myProfile.coins += r;
     addXp(150);
-    toast(`🎁 Cofre Comum aberto: +${reward} Sete Box!`);
+    toast(`🎁 Cofre Comum: +${r} Sete Box!`);
   } else {
-    if (!isOwner && myProfile.ultra < 2) return toast('❌ Você precisa de 2 Ultra Coins!');
+    if (!isOwner && myProfile.ultra < 2) return toast('❌ Necessário 2 Ultra Coins!');
     if (!isOwner) myProfile.ultra -= 2;
-    let rewardUltra = Math.floor(Math.random() * 10) + 5;
-    myProfile.ultra += rewardUltra;
+    let ru = Math.floor(Math.random() * 10) + 5;
+    myProfile.ultra += ru;
     addXp(500);
-    toast(`🎁 Cofre Ultra aberto: +${rewardUltra} Ultra Coins!`);
+    toast(`🎁 Cofre Ultra: +${ru} Ultra Coins!`);
   }
   saveProfile();
   updateHeaderStats();
@@ -918,7 +853,7 @@ for (let i = 1; i <= 60; i++) {
   let name = `${badge} ${TYPE[(i - 1) % TYPE.length]} ${ADJ[(i - 1) % TYPE.length]} #${i}`;
   let price = 100 + (i * 50);
   let isUltraItem = i % 5 === 0;
-  SHOP_ITEMS.push({ id: 'item_' + i, name, desc: `Customização oficial nível ${i} da Complete Shop`, price, currency: isUltraItem ? 'ultra' : 'coins', badge, category: cat });
+  SHOP_ITEMS.push({ id: 'item_' + i, name, desc: `Customização oficial nível ${i}`, price, currency: isUltraItem ? 'ultra' : 'coins', badge, category: cat });
 }
 
 function accessoriesView() {
@@ -927,8 +862,8 @@ function accessoriesView() {
 
   return `
     <div class="card">
-      <b style="font-size:20px;">👑 Loja de Acessórios & Distintivos</b>
-      <p class="rules">Adquira itens exclusivos usando Sete Box para personalizar seu perfil global na rede.</p>
+      <b style="font-size:20px;">👑 Loja de Acessórios</b>
+      <p class="rules">Personalize seu perfil global na rede.</p>
       <div class="row" style="gap:6px; margin-top:14px;">
         ${cats.map(([k, l]) => `<button class="s ${shopCategory===k?'on':''}" onclick="shopCategory='${k}'; render();">${l}</button>`).join('')}
       </div>
@@ -959,11 +894,11 @@ function buyCustomization(id, price, currency, badge) {
     return toast('🎉 Item equipado instantaneamente (Dono)!');
   }
   if (currency === 'ultra') {
-    if (myProfile.ultra < price) return toast('❌ Você não tem Ultra Coins suficientes!');
+    if (myProfile.ultra < price) return toast('❌ Ultra Coins insuficientes!');
     myProfile.ultra -= price;
   } else {
     let tot = myProfile.coins + myProfile.savings;
-    if (tot < price) return toast('❌ Sete Box insuficientes na carteira e poupança!');
+    if (tot < price) return toast('❌ Sete Box insuficientes!');
     if (myProfile.coins < price) {
       let diff = price - myProfile.coins;
       myProfile.coins = 0;
@@ -977,7 +912,7 @@ function buyCustomization(id, price, currency, badge) {
   saveProfile();
   updateHeaderStats();
   render();
-  toast('🎉 Compra realizada com sucesso! Item aplicado ao perfil.');
+  toast('🎉 Compra realizada com sucesso!');
 }
 
 function leaderboardView() {
@@ -988,21 +923,15 @@ function leaderboardView() {
   return `
     <div class="card">
       <b style="font-size:20px;">🏆 Placar de Líderes Global</b>
-      <p class="rules">Os usuários mais ativos e poderosos da rede Complete Box.</p>
       <div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
         ${sorted.map((u, index) => `
           <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(1,4,9,0.75); border:1px solid var(--bd); padding:14px 18px; border-radius:16px;">
             <div class="row">
               <span style="font-weight:900; font-size:16px; width:28px; color:${index===0?'var(--gold)':index===1?'var(--mu)':index===2?'#b45309':'var(--tx)'}">#${index+1}</span>
               <span class="av" style="width:40px; height:40px; font-size:16px;">${esc(u.badge || '👤')}</span>
-              <div>
-                <b style="font-size:15px;">${esc(u.name)}</b>
-                <div class="by">Nível ${Math.floor((u.xp || 0)/500)+1}</div>
-              </div>
+              <div><b style="font-size:15px;">${esc(u.name)}</b><div class="by">Nível ${Math.floor((u.xp || 0)/500)+1}</div></div>
             </div>
-            <div style="text-align:right; font-weight:bold; color:var(--ultra);">
-              ⭐ ${u.xp || 0} XP
-            </div>
+            <div style="text-align:right; font-weight:bold; color:var(--ultra);">⭐ ${u.xp || 0} XP</div>
           </div>
         `).join('')}
       </div>
@@ -1012,22 +941,17 @@ function leaderboardView() {
 
 const MISSIONS_DATA = {
   diarias: [
-    { id: 'm_d1', title: 'Girar a Roleta Diária', desc: 'Gire a roleta hoje.', rewardCoins: 350, rewardUltra: 0, xp: 100 },
-    { id: 'm_d2', title: 'Mineração Ativa Pro', desc: 'Clique 10 vezes no bloco.', rewardCoins: 400, rewardUltra: 0, xp: 120 }
+    { title: 'Girar a Roleta Diária', desc: 'Gire a roleta hoje.', rewardCoins: 350 },
+    { title: 'Mineração Ativa', desc: 'Clique 10 vezes no bloco.', rewardCoins: 400 }
   ],
-  semanais: [
-    { id: 'm_s1', title: 'Criador Master', desc: 'Publique 2 conteúdos.', rewardCoins: 4000, rewardUltra: 12, xp: 700 }
-  ],
-  mensais: [
-    { id: 'm_me1', title: 'Lenda Suprema', desc: 'Mantenha-se ativo.', rewardCoins: 35000, rewardUltra: 60, xp: 4000 }
-  ]
+  semanais: [{ title: 'Criador Master', desc: 'Publique 2 conteúdos.', rewardCoins: 4000 }],
+  mensais: [{ title: 'Lenda Suprema', desc: 'Mantenha-se ativo.', rewardCoins: 35000 }]
 };
 
 function missionsView() {
   return `
     <div class="card">
-      <b style="font-size:20px;">🎯 Central de Missões Supremas</b>
-      <p class="rules">Complete missões para coletar recompensas!</p>
+      <b style="font-size:20px;">🎯 Central de Missões</b>
       <div class="row" style="gap:6px; margin-top:14px;">
         <button class="s ${missionsSubTab==='diarias'?'on':''}" onclick="missionsSubTab='diarias'; render();">Diárias</button>
         <button class="s ${missionsSubTab==='semanais'?'on':''}" onclick="missionsSubTab='semanais'; render();">Semanais</button>
@@ -1060,7 +984,7 @@ function aiView() {
   return `
     <div class="card" style="border: 2px solid var(--ultra);">
       <b style="font-size:20px; color:var(--ultra);">🤖 Complete AI Quantum Master</b>
-      <p class="rules">Converse com a inteligência artificial para tirar dúvidas ou debater ideias.</p>
+      <p class="rules">Converse com a inteligência artificial.</p>
     </div>
     <div id="ai-chat-box" style="height: 35vh; overflow-y: auto; border: 1px solid var(--bd); padding: 14px; border-radius: 16px; background: rgba(1,4,9,0.85); margin-bottom: 14px;">
       ${dataList.aiMsgs.map(m => `<div style="margin:10px 0;"><b>${m.role==='user'?'Você':'IA'}:</b> ${esc(m.text)}</div>`).join('')}
@@ -1081,55 +1005,23 @@ function sendAIMessage() {
   saveData();
   render();
   setTimeout(() => {
-    dataList.aiMsgs.push({ role: 'ai', text: 'Entendido perfeitamente! Como posso ajudar mais?' });
+    dataList.aiMsgs.push({ role: 'ai', text: 'Entendido! Como posso ajudar mais?' });
     saveData();
     render();
   }, 600);
 }
 
-function drawAIMessages() {}
-
 function chestView() {
-  return `
-    <div class="card" style="text-align:center; padding:35px 20px;">
-      <b style="font-size:24px;">🎁 Baú Misterioso de 1 Hora</b>
-      <div style="font-size:70px; margin:20px 0;">📦</div>
-      <button class="p" style="padding:14px 30px;" onclick="toast('🎉 Baú aberto com sucesso! +150 Sete Box!')">Abrir Baú 🔓</button>
-    </div>
-  `;
+  return `<div class="card" style="text-align:center; padding:35px 20px;"><b style="font-size:24px;">🎁 Baú Misterioso</b><div style="font-size:70px; margin:20px 0;">📦</div><button class="p" style="padding:14px 30px;" onclick="toast('🎉 +150 Sete Box no Baú!')">Abrir Baú 🔓</button></div>`;
 }
-
 function minerView() {
-  return `
-    <div class="card" style="text-align:center; padding:35px 20px;">
-      <b style="font-size:24px;">⛏️ Mineração Pro</b>
-      <div style="margin:25px auto; width:130px; height:130px; background:var(--ultra); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:45px; cursor:pointer;" onclick="toast('⚡ +25 Sete Box mineradas!')">💎</div>
-    </div>
-  `;
+  return `<div class="card" style="text-align:center; padding:35px 20px;"><b style="font-size:24px;">⛏️ Mineração Pro</b><div style="margin:25px auto; width:130px; height:130px; background:var(--ultra); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:45px; cursor:pointer;" onclick="toast('⚡ +25 Sete Box mineradas!')">💎</div></div>`;
 }
-
 function spinView() {
-  return `
-    <div class="card" style="text-align:center; padding:35px 20px;">
-      <b style="font-size:24px;">🎡 Roleta da Sorte Diária</b>
-      <div style="color:var(--gold); font-size:22px; font-weight:bold; margin:20px 0;">Giro Pronto!</div>
-      <button class="p" style="padding:14px 30px;" onclick="toast('🎉 Ganhou +500 Sete Box na Roleta!')">Girar Agora 🎰</button>
-    </div>
-  `;
+  return `<div class="card" style="text-align:center; padding:35px 20px;"><b style="font-size:24px;">🎡 Roleta da Sorte</b><div style="color:var(--gold); font-size:22px; font-weight:bold; margin:20px 0;">Giro Pronto!</div><button class="p" style="padding:14px 30px;" onclick="toast('🎉 Ganhou +500 Sete Box na Roleta!')">Girar Agora 🎰</button></div>`;
 }
-
 function bankView() {
-  return `
-    <div class="card">
-      <b style="font-size:20px;">🏦 Banco & Poupança Global</b>
-      <p class="rules" style="margin-top:10px;">Guarde seus Sete Box com segurança.</p>
-      <input id="bk-amt" type="number" placeholder="Quantidade" min="1">
-      <div class="row" style="margin-top:12px;">
-        <button class="p" style="flex:1;" onclick="toast('Depositado com sucesso!')">Depositar 📥</button>
-        <button class="s" style="flex:1;" onclick="toast('Sacado com sucesso!')">Sacar 📤</button>
-      </div>
-    </div>
-  `;
+  return `<div class="card"><b style="font-size:20px;">🏦 Banco & Poupança</b><input id="bk-amt" type="number" placeholder="Quantidade" min="1"><div class="row" style="margin-top:12px;"><button class="p" style="flex:1;" onclick="toast('Depositado com sucesso!')">Depositar 📥</button><button class="s" style="flex:1;" onclick="toast('Sacado com sucesso!')">Sacar 📤</button></div></div>`;
 }
 
 function profileView() {
@@ -1144,7 +1036,7 @@ function profileView() {
     saveProfile();
     syncGlobalUser();
     render();
-    toast('🎉 Nome de perfil atualizado globalmente!');
+    toast('🎉 Nome de perfil atualizado!');
   };
 
   return `
@@ -1159,48 +1051,26 @@ function profileView() {
     </div>
 
     <div class="card">
-      <b style="font-size:18px;">⚙️ Configurações e Identidade Global</b>
-      <p class="rules">Altere o seu nome de exibição visível para todos na rede.</p>
+      <b style="font-size:18px;">⚙️ Configurações de Identidade</b>
       <div class="row" style="margin-top:10px;">
-        <input id="profile-name-input" value="${esc(myProfile.name)}" placeholder="Novo nome de exibição..." style="flex:1; margin:0;">
+        <input id="profile-name-input" value="${esc(myProfile.name)}" placeholder="Novo nome..." style="flex:1; margin:0;">
         <button class="p" onclick="updateProfileName()">Salvar 💾</button>
       </div>
     </div>
 
     <div class="card">
-      <b style="font-size:18px;">📊 Estatísticas Globais da Conta</b>
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-top:14px;">
-        <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:16px; border-radius:16px; text-align:center;">
-          <div style="font-size:24px;">🪙</div>
-          <div style="font-size:13px; color:var(--mu); margin-top:4px;">Sete Box na Carteira</div>
-          <b style="font-size:18px; color:var(--gold);">${isOwner ? '∞' : myProfile.coins}</b>
-        </div>
-        <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:16px; border-radius:16px; text-align:center;">
-          <div style="font-size:24px;">✨</div>
-          <div style="font-size:13px; color:var(--mu); margin-top:4px;">Ultra Coins</div>
-          <b style="font-size:18px; color:var(--ultra);">${isOwner ? '∞' : myProfile.ultra}</b>
-        </div>
-        <div style="background:rgba(1,4,9,0.7); border:1px solid var(--bd); padding:16px; border-radius:16px; text-align:center;">
-          <div style="font-size:24px;">⭐</div>
-          <div style="font-size:13px; color:var(--mu); margin-top:4px;">Experiência Total</div>
-          <b style="font-size:18px; color:var(--tx);">${isOwner ? '999.999' : myProfile.xp} XP</b>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <b>🎬 Seus Vídeos Publicados (${myVideos.length})</b>
+      <b>🎬 Seus Vídeos (${myVideos.length})</b>
       <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
         ${myVideos.map(v => `<div style="background:rgba(1,4,9,0.6); padding:12px 16px; border-radius:14px; border:1px solid var(--bd); display:flex; justify-content:space-between; align-items:center;"><b>${esc(v.title)}</b><span class="by">❤️ ${v.likes||0} curtidas</span></div>`).join('')}
-        ${myVideos.length === 0 ? '<div class="empty" style="padding:20px;">Nenhum vídeo publicado ainda.</div>' : ''}
+        ${myVideos.length === 0 ? '<div class="empty" style="padding:20px;">Nenhum vídeo publicado.</div>' : ''}
       </div>
     </div>
 
     <div class="card">
-      <b>🎮 Seus Jogos Publicados (${myGames.length})</b>
+      <b>🎮 Seus Jogos (${myGames.length})</b>
       <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
         ${myGames.map(g => `<div style="background:rgba(1,4,9,0.6); padding:12px 16px; border-radius:14px; border:1px solid var(--bd); display:flex; justify-content:space-between; align-items:center;"><b>${esc(g.title)}</b><span class="by">❤️ ${g.likes||0} curtidas</span></div>`).join('')}
-        ${myGames.length === 0 ? '<div class="empty" style="padding:20px;">Nenhum jogo publicado ainda.</div>' : ''}
+        ${myGames.length === 0 ? '<div class="empty" style="padding:20px;">Nenhum jogo publicado.</div>' : ''}
       </div>
     </div>
   `;
@@ -1209,26 +1079,27 @@ function profileView() {
 function submitPost(kind) {
   const t = sanitize($('#p-title').value);
   const c = $('#p-content').value;
-  if(!t || !c) return toast('Preencha todos os campos obrigatórios!');
+  if(!t || !c) return toast('Preencha todos os campos!');
   
-  dataList[kind].unshift({ 
-    id: 'p_'+Date.now(), 
-    title: t, 
-    content: c, 
-    by: uid, 
-    authorName: myProfile.name, 
-    authorBadge: myProfile.badge, 
-    likes: 0, 
-    comments: [], 
-    ts: Date.now() 
+  dataList[kind].unshift({
+    id: 'p_'+Date.now(),
+    title: t,
+    content: c,
+    by: uid,
+    authorName: myProfile.name,
+    authorBadge: myProfile.badge,
+    likes: 0,
+    comments: [],
+    ts: Date.now()
   });
   saveData();
+  addXp(350);
   toast('Publicado com sucesso e +350 XP!');
   go(kind);
 }
 
 function deletePost(kind, id) {
-  if (!isOwner) return toast('❌ Apenas o dono pode apagar conteúdos!');
+  if (!isOwner) return toast('❌ Apenas o dono pode apagar!');
   dataList[kind] = dataList[kind].filter(x => x.id !== id);
   saveData();
   toast('Publicação apagada pelo Dono!');
@@ -1237,11 +1108,11 @@ function deletePost(kind, id) {
 
 function likePost(kind, id) {
   const item = dataList[kind].find(x => x.id === id);
-  if(item) { 
-    item.likes = (item.likes || 0) + 1; 
-    saveData(); 
-    renderContentList(kind); 
-    toast('❤️ Curtido!'); 
+  if(item) {
+    item.likes = (item.likes || 0) + 1;
+    saveData();
+    renderContentList(kind);
+    toast('❤️ Curtido!');
   }
 }
 
@@ -1264,23 +1135,11 @@ window.addEventListener('DOMContentLoaded', () => {
   const loaderScreen = $('#loader-screen');
   const statusText = $('#loader-status-text');
 
-  const statuses = [
-    "Inicializando motores quânticos...",
-    "Sincronizando rede global de usuários...",
-    "Carregando a Complete Shop & Sete Box...",
-    "Tudo pronto! Bem-vindo ao Complete Box."
-  ];
-
   const interval = setInterval(() => {
-    progress += Math.floor(Math.random() * 15) + 10;
+    progress += Math.floor(Math.random() * 20) + 15;
     if (progress > 100) progress = 100;
-    
     if (progressBar) progressBar.style.width = progress + '%';
     
-    if (progress > 75) statusText.textContent = statuses[3];
-    else if (progress > 50) statusText.textContent = statuses[2];
-    else if (progress > 25) statusText.textContent = statuses[1];
-
     if (progress === 100) {
       clearInterval(interval);
       setTimeout(() => {
@@ -1290,7 +1149,7 @@ window.addEventListener('DOMContentLoaded', () => {
         render();
       }, 300);
     }
-  }, 80);
+  }, 60);
 });
 </script>
 </body>
